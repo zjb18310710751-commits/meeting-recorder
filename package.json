@@ -1,0 +1,13 @@
+{
+  "name": "meeting-recorder",
+  "version": "1.0.0",
+  "description": "会议录音助手 - 实时录音转文字 + serveo.net公网隧道",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "multer": "^2.2.0"
+  }
+}

@@ -1,0 +1,3409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>会议录音助手 - Meeting Recorder</title>
+    <style>
+/* ========== CSS Variables & Design Tokens ========== */
+:root {
+    --primary: #5B6CF0;
+    --primary-hover: #4A56E0;
+    --primary-light: #EEF0FF;
+    --primary-soft: #F5F6FF;
+    --primary-gradient: linear-gradient(135deg, #5B6CF0 0%, #7C5CF0 50%, #9B6CF0 100%);
+    --accent: #7C5CF0;
+    --danger: #F43F5E;
+    --danger-hover: #E11D48;
+    --danger-light: #FFF1F2;
+    --success: #10B981;
+    --success-light: #ECFDF5;
+    --warning: #F59E0B;
+    --warning-light: #FFFBEB;
+    --info: #3B82F6;
+    --info-light: #EFF6FF;
+
+    --bg-app: #F0F3FA;
+    --bg: #F7F8FC;
+    --bg-subtle: #FAFBFF;
+    --surface: #FFFFFF;
+    --surface-hover: #F8F9FD;
+    --surface-raised: #FFFFFF;
+
+    --border: #E6E8F0;
+    --border-light: #F1F3F9;
+    --border-accent: rgba(91, 108, 240, 0.12);
+
+    --text: #1A1F36;
+    --text-secondary: #5A6072;
+    --text-muted: #9BA0B4;
+    --text-placeholder: #B8BDCC;
+
+    --shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.04);
+    --shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
+    --shadow: 0 4px 12px rgba(16, 24, 40, 0.06), 0 2px 4px rgba(16, 24, 40, 0.04);
+    --shadow-md: 0 8px 24px rgba(16, 24, 40, 0.08), 0 4px 8px rgba(16, 24, 40, 0.04);
+    --shadow-lg: 0 12px 40px rgba(16, 24, 40, 0.1), 0 6px 12px rgba(16, 24, 40, 0.04);
+    --shadow-xl: 0 20px 60px rgba(16, 24, 40, 0.14), 0 8px 20px rgba(16, 24, 40, 0.06);
+    --shadow-primary: 0 4px 16px rgba(91, 108, 240, 0.25);
+    --shadow-danger: 0 4px 16px rgba(244, 63, 94, 0.25);
+
+    --radius-xs: 6px;
+    --radius-sm: 10px;
+    --radius: 14px;
+    --radius-lg: 18px;
+    --radius-xl: 24px;
+
+    --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    --font-mono: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Consolas', monospace;
+
+    /* Organized content */
+    --oc-keypoint-bg: #EEF0FF;
+    --oc-keypoint-border: #C7CCFA;
+    --oc-keyword-bg: #F0F7FF;
+    --oc-keyword-text: #1E6FAF;
+    --oc-keyword-border: #BEDCFF;
+    --oc-timestamp-bg: #F7F8FC;
+    --oc-filtered-bg: #FFFBF0;
+    --oc-filtered-border: #FDE68A;
+    --oc-h3-border: #EEF0FF;
+    --panel-header-bg: #FAFBFF;
+    --btn-ghost-hover: #F0F3FA;
+    --editor-bg: transparent;
+    --editor-caret: #1A1F36;
+    --waveform-bar: #D0D5E0;
+    --waveform-bar-active: #5B6CF0;
+}
+
+/* ========== Dark Mode ========== */
+.dark,
+[data-theme="dark"] {
+    --primary: #818CF8;
+    --primary-hover: #6366F1;
+    --primary-light: #1E2040;
+    --primary-soft: #151730;
+    --primary-gradient: linear-gradient(135deg, #6366F1 0%, #818CF8 50%, #A78BFA 100%);
+    --accent: #A78BFA;
+    --danger: #FB7185;
+    --danger-hover: #F43F5E;
+    --danger-light: #2D1520;
+    --success: #34D399;
+    --success-light: #0D2820;
+    --warning: #FBBF24;
+    --warning-light: #2D2408;
+    --info: #60A5FA;
+    --info-light: #0F1F30;
+
+    --bg-app: #0A0E1A;
+    --bg: #121827;
+    --bg-subtle: #0F1422;
+    --surface: #161D2E;
+    --surface-hover: #1C2538;
+    --surface-raised: #1A2133;
+
+    --border: #2A3146;
+    --border-light: #1E2638;
+    --border-accent: rgba(129, 140, 248, 0.15);
+
+    --text: #EDF0F7;
+    --text-secondary: #9CA3B8;
+    --text-muted: #606A80;
+    --text-placeholder: #4B5570;
+
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.15);
+    --shadow: 0 4px 14px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.35), 0 4px 8px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 12px 44px rgba(0, 0, 0, 0.4), 0 6px 12px rgba(0, 0, 0, 0.25);
+    --shadow-xl: 0 20px 64px rgba(0, 0, 0, 0.45), 0 8px 20px rgba(0, 0, 0, 0.3);
+    --shadow-primary: 0 4px 20px rgba(129, 140, 248, 0.3);
+    --shadow-danger: 0 4px 20px rgba(251, 113, 133, 0.3);
+
+    --oc-keypoint-bg: #1E2040;
+    --oc-keypoint-border: #2A3070;
+    --oc-keyword-bg: #0F1F38;
+    --oc-keyword-text: #93C5FD;
+    --oc-keyword-border: #1C3A5C;
+    --oc-timestamp-bg: #1A2133;
+    --oc-filtered-bg: #2D2408;
+    --oc-filtered-border: #5C4A10;
+    --oc-h3-border: #1E2040;
+    --panel-header-bg: #121A2A;
+    --btn-ghost-hover: #1E2638;
+    --editor-bg: transparent;
+    --editor-caret: #EDF0F7;
+    --waveform-bar: #2A3146;
+    --waveform-bar-active: #818CF8;
+}
+
+/* ========== Reset & Base ========== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+        'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+    background: var(--bg-app);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+    transition: background 0.4s ease, color 0.3s ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Subtle background dot pattern (light mode only) */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(91, 108, 240, 0.03) 1px, transparent 1px);
+    background-size: 24px 24px;
+    pointer-events: none;
+    z-index: 0;
+    transition: opacity 0.4s ease;
+}
+.dark body::before,
+[data-theme="dark"] body::before {
+    background-image: radial-gradient(circle, rgba(129, 140, 248, 0.04) 1px, transparent 1px);
+}
+
+/* ========== App Container ========== */
+#app {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+    min-height: 0;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 14px 20px;
+    gap: 12px;
+    width: 100%;
+}
+
+/* ========== Header / Toolbar (Glass Morphism) ========== */
+.header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 22px;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    transition: all var(--transition-slow);
+    position: relative;
+    z-index: 10;
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 50%);
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.dark .header::before,
+[data-theme="dark"] .header::before {
+    background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 50%);
+}
+
+.header-logo {
+    font-size: 20px;
+    font-weight: 800;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: -0.3px;
+}
+.header-logo .icon {
+    font-size: 26px;
+    -webkit-text-fill-color: initial;
+    background: none;
+}
+.header-spacer { flex: 1; min-width: 8px; }
+
+/* ========== Dark Mode Toggle ========== */
+.theme-toggle {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all var(--transition);
+    flex-shrink: 0;
+    color: var(--text-secondary);
+    position: relative;
+    z-index: 1;
+}
+.theme-toggle:hover {
+    background: var(--btn-ghost-hover);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--border-accent);
+    transform: rotate(15deg) scale(1.05);
+    color: var(--primary);
+}
+
+/* ========== Buttons ========== */
+.btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 18px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 13.5px; font-weight: 550;
+    cursor: pointer;
+    transition: all var(--transition);
+    white-space: nowrap;
+    font-family: inherit;
+    outline: none;
+    position: relative;
+    letter-spacing: 0.1px;
+    line-height: 1.4;
+}
+.btn:hover {
+    background: var(--surface-hover);
+    border-color: #CBD5E1;
+    box-shadow: var(--shadow-xs);
+    transform: translateY(-1px);
+}
+.btn:active { transform: scale(0.97) translateY(0); }
+
+.btn-primary {
+    background: var(--primary-gradient);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: var(--shadow-primary);
+    font-weight: 600;
+}
+.btn-primary:hover {
+    background: var(--primary-gradient);
+    border-color: transparent;
+    box-shadow: 0 6px 20px rgba(91, 108, 240, 0.4);
+    transform: translateY(-1.5px);
+    filter: brightness(1.05);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #F43F5E, #E11D48);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: var(--shadow-danger);
+    font-weight: 600;
+}
+.btn-danger:hover {
+    background: linear-gradient(135deg, #FB7185, #F43F5E);
+    border-color: transparent;
+    box-shadow: 0 6px 20px rgba(244, 63, 94, 0.4);
+    transform: translateY(-1.5px);
+    filter: brightness(1.05);
+}
+
+.btn-ghost {
+    background: transparent;
+    border-color: transparent;
+    color: var(--text-secondary);
+}
+.btn-ghost:hover {
+    background: var(--btn-ghost-hover);
+    border-color: transparent;
+    box-shadow: none;
+    color: var(--text);
+}
+
+.btn-sm {
+    padding: 6px 13px;
+    font-size: 12.5px;
+    border-radius: 8px;
+    gap: 5px;
+    font-weight: 500;
+}
+
+.btn-xs {
+    padding: 4px 9px;
+    font-size: 11px;
+    border-radius: 6px;
+    gap: 3px;
+}
+
+.btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+    transform: none !important;
+    filter: none !important;
+}
+
+/* Button with icon highlight */
+.btn-sm .btn-icon {
+    font-size: 14px;
+    line-height: 1;
+}
+
+/* ========== Language Toggle ========== */
+.lang-toggle {
+    display: flex;
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 4px;
+    gap: 2px;
+    border: 1px solid var(--border);
+}
+.lang-toggle button {
+    padding: 7px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 550;
+    color: var(--text-secondary);
+    transition: all var(--transition);
+    font-family: inherit;
+    letter-spacing: 0.1px;
+}
+.lang-toggle button.active {
+    background: var(--surface);
+    color: var(--primary);
+    box-shadow: var(--shadow-xs);
+    font-weight: 650;
+    border: 1px solid var(--border);
+}
+.lang-toggle button:hover:not(.active) {
+    color: var(--text);
+    background: var(--surface-hover);
+}
+
+/* ========== Recording Status ========== */
+.recording-dot {
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    transition: all var(--transition);
+    flex-shrink: 0;
+    box-shadow: 0 0 0 4px transparent;
+}
+.recording-dot.active {
+    background: var(--danger);
+    box-shadow: 0 0 0 6px rgba(244, 63, 94, 0.15);
+    animation: recordingPulse 1.8s ease-in-out infinite;
+}
+@keyframes recordingPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.3); }
+    50% { box-shadow: 0 0 0 14px rgba(244, 63, 94, 0); }
+}
+
+.recording-timer {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-muted);
+    min-width: 52px;
+    letter-spacing: 0.5px;
+    transition: all var(--transition);
+}
+.recording-timer.active {
+    color: var(--danger);
+    font-weight: 700;
+}
+
+/* ========== Main Content Area ========== */
+.main-content {
+    display: flex;
+    flex: 1;
+    gap: 0;
+    min-height: 0;
+    position: relative;
+    z-index: 1;
+}
+
+/* ========== Panels ========== */
+.panel {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    min-width: 200px;
+    transition: all var(--transition-slow);
+    position: relative;
+}
+
+.panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+    pointer-events: none;
+    z-index: 2;
+    border-radius: var(--radius) var(--radius) 0 0;
+}
+.dark .panel::before,
+[data-theme="dark"] .panel::before {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+}
+
+.panel-left {
+    width: 50%;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: none;
+}
+.panel-right {
+    width: 50%;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: none;
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border-bottom: 1.5px solid var(--border);
+    font-weight: 650;
+    font-size: 14px;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+    background: var(--panel-header-bg);
+    transition: all var(--transition-slow);
+    letter-spacing: 0.2px;
+}
+.panel-header .icon { font-size: 17px; color: var(--primary); }
+.panel-header-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+}
+
+.panel-body {
+    flex: 1;
+    padding: 18px 20px;
+    overflow-y: auto;
+    min-height: 0;
+    font-size: 15px;
+    line-height: 1.75;
+}
+.panel-left .panel-body {
+    overflow-y: auto;
+}
+.panel-right .panel-body {
+    overflow: hidden;
+    padding: 0;
+    position: relative;
+}
+
+/* Word count badge */
+.word-count-badge {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    background: var(--bg);
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-weight: 550;
+    transition: all var(--transition);
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+    letter-spacing: 0.2px;
+}
+
+/* ========== Organized Content ========== */
+.organized-content {
+    color: var(--text);
+    word-break: break-word;
+}
+.organized-content.fade-in {
+    animation: fadeSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Organizing shimmer */
+.organizing-shimmer {
+    display: none;
+    margin-bottom: 14px;
+    padding: 10px 16px;
+    background: var(--primary-soft);
+    border-radius: var(--radius-sm);
+    gap: 8px;
+    align-items: center;
+    font-size: 13px;
+    color: var(--primary);
+    font-weight: 500;
+    border: 1px solid var(--border-accent);
+}
+.organizing-shimmer.active { display: flex; }
+.shimmer-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--primary);
+    animation: shimmerBounce 0.7s ease-in-out infinite;
+}
+.shimmer-dot:nth-child(2) { animation-delay: 0.12s; }
+.shimmer-dot:nth-child(3) { animation-delay: 0.24s; }
+@keyframes shimmerBounce {
+    0%, 100% { opacity: 0.15; transform: scale(0.7); }
+    50% { opacity: 1; transform: scale(1.4); }
+}
+
+/* Empty state */
+.organized-content .placeholder {
+    color: var(--text-muted);
+    text-align: center;
+    padding: 50px 20px;
+    font-size: 14.5px;
+    line-height: 2;
+}
+.organized-content .placeholder .icon {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 16px;
+    opacity: 0.4;
+    filter: grayscale(0.3);
+}
+.organized-content .placeholder small {
+    display: block;
+    color: var(--text-muted);
+    font-size: 12.5px;
+    margin-top: 4px;
+    opacity: 0.7;
+}
+
+/* Organized content formatting */
+.organized-content h3 {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 22px 0 10px;
+    padding: 0 0 8px 0;
+    border-bottom: 2px solid var(--oc-h3-border);
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.organized-content h3:first-child { margin-top: 0; }
+
+.organized-content .key-point {
+    background: var(--oc-keypoint-bg);
+    border-left: 4px solid var(--primary);
+    padding: 12px 16px;
+    margin: 10px 0;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-weight: 500;
+    font-size: 14.5px;
+    transition: all var(--transition);
+    border: 1px solid var(--oc-keypoint-border);
+    border-left-width: 4px;
+    position: relative;
+}
+.organized-content .key-point:hover {
+    transform: translateX(4px);
+    box-shadow: var(--shadow-xs);
+    background: var(--primary-soft);
+}
+
+.organized-content .keyword-tag {
+    display: inline-block;
+    background: var(--oc-keyword-bg);
+    color: var(--oc-keyword-text);
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    margin: 4px 6px;
+    font-weight: 550;
+    transition: all var(--transition);
+    border: 1px solid var(--oc-keyword-border);
+}
+.organized-content .keyword-tag:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xs);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.organized-content .timestamp {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    background: var(--oc-timestamp-bg);
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.organized-content .filtered-note {
+    color: var(--text-muted);
+    font-size: 12.5px;
+    margin: 14px 0 6px;
+    padding: 10px 16px;
+    background: var(--oc-filtered-bg);
+    border-radius: var(--radius-sm);
+    border-left: 4px solid var(--oc-filtered-border);
+    font-style: normal;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ========== Right Panel - Raw Editor ========== */
+#panelRight .panel-body {
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.raw-editor {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    border: none;
+    resize: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--text);
+    padding: 18px 20px;
+    outline: none;
+    background: var(--editor-bg);
+    caret-color: var(--editor-caret);
+    transition: color 0.3s ease, background 0.3s ease;
+    display: block;
+    -webkit-appearance: none;
+}
+.raw-editor::placeholder { color: var(--text-placeholder); }
+
+/* Recording overlay */
+.recording-overlay {
+    position: absolute;
+    bottom: 20px; right: 20px;
+    background: rgba(244, 63, 94, 0.94);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 24px;
+    font-size: 12.5px;
+    font-weight: 650;
+    display: none;
+    align-items: center;
+    gap: 7px;
+    pointer-events: none;
+    z-index: 10;
+    box-shadow: 0 6px 24px rgba(244, 63, 94, 0.35);
+    animation: fadeSlideIn 0.3s ease;
+    letter-spacing: 0.3px;
+}
+.recording-overlay.active { display: flex; }
+.recording-overlay .mini-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #fff;
+    animation: recordingPulse 1.2s ease-in-out infinite;
+}
+
+/* ========== Waveform Visualizer ========== */
+.waveform-container {
+    display: none;
+    align-items: flex-end;
+    gap: 4px;
+    height: 28px;
+    padding: 0 6px;
+    flex-shrink: 0;
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+}
+.waveform-container.active { display: flex; }
+.waveform-bar {
+    width: 3px;
+    border-radius: 3px;
+    background: var(--waveform-bar);
+    min-height: 3px;
+    transition: background 0.3s ease;
+}
+.waveform-container.active .waveform-bar {
+    animation: waveBounce 0.65s ease-in-out infinite;
+}
+.waveform-container.active .waveform-bar:nth-child(1){animation-delay:0.00s}.waveform-container.active .waveform-bar:nth-child(2){animation-delay:0.05s}.waveform-container.active .waveform-bar:nth-child(3){animation-delay:0.10s}.waveform-container.active .waveform-bar:nth-child(4){animation-delay:0.15s}.waveform-container.active .waveform-bar:nth-child(5){animation-delay:0.20s}.waveform-container.active .waveform-bar:nth-child(6){animation-delay:0.25s}.waveform-container.active .waveform-bar:nth-child(7){animation-delay:0.30s}.waveform-container.active .waveform-bar:nth-child(8){animation-delay:0.35s}.waveform-container.active .waveform-bar:nth-child(9){animation-delay:0.40s}.waveform-container.active .waveform-bar:nth-child(10){animation-delay:0.45s}.waveform-container.active .waveform-bar:nth-child(11){animation-delay:0.50s}.waveform-container.active .waveform-bar:nth-child(12){animation-delay:0.55s}
+@keyframes waveBounce {
+    0%,100%{height:5px;background:var(--waveform-bar)}
+    25%{height:24px;background:var(--waveform-bar-active)}
+    50%{height:8px;background:var(--waveform-bar)}
+    80%{height:20px;background:var(--waveform-bar-active)}
+}
+
+/* ========== Divider ========== */
+.divider {
+    width: 12px;
+    background: transparent;
+    cursor: col-resize;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 5;
+    transition: background var(--transition);
+    margin: 0 -2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.divider:hover,
+.divider.dragging {
+    background: rgba(91, 108, 240, 0.04);
+}
+.divider::after {
+    content: '';
+    width: 4px;
+    height: 44px;
+    border-radius: 4px;
+    background: var(--border);
+    transition: all var(--transition);
+}
+.divider:hover::after,
+.divider.dragging::after {
+    background: var(--primary);
+    height: 56px;
+    box-shadow: 0 0 12px rgba(91, 108, 240, 0.3);
+    width: 5px;
+}
+
+/* ========== Bottom History Bar ========== */
+.history-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    overflow-x: auto;
+    min-height: 50px;
+    transition: all var(--transition-slow);
+}
+.history-label {
+    font-size: 13px;
+    font-weight: 650;
+    color: var(--text-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: 0.2px;
+}
+.history-list {
+    display: flex;
+    gap: 7px;
+    flex: 1;
+    overflow-x: auto;
+    padding: 4px 0;
+}
+.history-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 24px;
+    font-size: 12.5px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--transition);
+    flex-shrink: 0;
+    font-weight: 500;
+}
+.history-item:hover {
+    background: var(--primary-soft);
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-1.5px);
+    box-shadow: var(--shadow-xs);
+}
+.history-item .delete-btn {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: none;
+    background: var(--border);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all var(--transition);
+    flex-shrink: 0;
+    font-weight: 600;
+}
+.history-item .delete-btn:hover {
+    background: var(--danger);
+    color: #fff;
+    transform: scale(1.15);
+}
+.history-empty {
+    color: var(--text-muted);
+    font-size: 12.5px;
+    white-space: nowrap;
+    opacity: 0.7;
+}
+
+/* ========== Server Status Bar ========== */
+.server-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 18px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-xs);
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    font-size: 12px;
+    min-height: 38px;
+    transition: all var(--transition-slow);
+    flex-wrap: wrap;
+}
+.server-status .status-indicator {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.server-status .status-indicator.online {
+    background: var(--success);
+    box-shadow: 0 0 8px var(--success);
+    animation: statusPulse 3s ease-in-out infinite;
+}
+.server-status .status-indicator.offline {
+    background: var(--text-muted);
+}
+@keyframes statusPulse {
+    0%,100%{opacity:1}50%{opacity:0.3}
+}
+.server-status .status-label {
+    font-weight: 650;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    font-size: 12px;
+}
+.server-status .status-label.online { color: var(--success); }
+.server-status .public-url {
+    min-width: 0;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--primary);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all var(--transition);
+    flex-shrink: 1;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+.server-status .public-url:hover {
+    background: var(--primary-soft);
+}
+.server-status .copy-url-btn {
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 550;
+    transition: all var(--transition);
+    white-space: nowrap;
+    font-family: inherit;
+}
+.server-status .copy-url-btn:hover {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+    box-shadow: var(--shadow-primary);
+}
+.server-status .copy-url-btn.copied {
+    background: var(--success);
+    color: #fff;
+    border-color: var(--success);
+}
+
+/* ========== Toast Notification ========== */
+.toast {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-16px);
+    background: rgba(26, 31, 54, 0.94);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    color: #fff;
+    padding: 12px 28px;
+    border-radius: 24px;
+    font-size: 13.5px;
+    font-weight: 550;
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.2px;
+}
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+.dark .toast,
+[data-theme="dark"] .toast {
+    background: rgba(237, 240, 247, 0.95);
+    color: #1A1F36;
+    box-shadow: 0 12px 40px rgba(255, 255, 255, 0.08);
+}
+
+/* ========== Scrollbar Styling ========== */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.35);
+    border-radius: 20px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.55);
+    border-radius: 20px;
+    border: 1px solid transparent;
+    background-clip: content-box;
+}
+
+/* ========== Translation Panel ========== */
+.translation-panel {
+    border-top: 1.5px solid var(--border);
+    margin-top: 0;
+    flex-shrink: 0;
+    transition: all var(--transition);
+    background: var(--panel-header-bg);
+}
+.translation-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 20px;
+    cursor: pointer;
+    font-weight: 650;
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    user-select: none;
+    transition: all var(--transition);
+    border-bottom: 1.5px solid transparent;
+    letter-spacing: 0.2px;
+}
+.translation-panel-header:hover {
+    background: var(--surface-hover);
+}
+.translation-panel-header .icon { font-size: 17px; color: var(--primary); }
+.translation-panel-header .collapse-arrow {
+    margin-left: auto;
+    transition: transform var(--transition);
+    font-size: 11px;
+    color: var(--text-muted);
+    opacity: 0.6;
+}
+.translation-panel.expanded .translation-panel-header {
+    border-bottom-color: var(--border);
+}
+.translation-panel.expanded .collapse-arrow {
+    transform: rotate(180deg);
+    opacity: 1;
+}
+.translation-panel-body {
+    display: none;
+    padding: 14px 20px;
+    font-size: 14px;
+    line-height: 1.75;
+    max-height: 260px;
+    overflow-y: auto;
+    color: var(--text);
+    transition: all var(--transition);
+}
+.translation-panel.expanded .translation-panel-body { display: block; }
+
+.translation-placeholder {
+    color: var(--text-muted);
+    text-align: center;
+    padding: 20px 8px;
+    font-size: 13px;
+    line-height: 1.8;
+    opacity: 0.7;
+}
+.translation-placeholder small {
+    display: block;
+    margin-top: 4px;
+}
+
+.translation-loading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary);
+    font-size: 13.5px;
+    font-weight: 500;
+    padding: 8px 0;
+}
+.translation-loading .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--primary);
+    animation: dotBounce 0.6s ease-in-out infinite;
+}
+.translation-loading .dot:nth-child(2){animation-delay:0.15s}.translation-loading .dot:nth-child(3){animation-delay:0.3s}
+@keyframes dotBounce {
+    0%,100%{opacity:0.15;transform:translateY(0)}
+    50%{opacity:1;transform:translateY(-5px)}
+}
+
+.translation-result { color: var(--text); }
+.translation-result p { margin: 7px 0; }
+
+.translation-error {
+    color: var(--text-secondary);
+    font-size: 12.5px;
+    padding: 10px 14px;
+    background: var(--oc-filtered-bg);
+    border-radius: var(--radius-sm);
+    border-left: 4px solid var(--oc-filtered-border);
+}
+
+.translation-badge {
+    display: inline-block;
+    font-size: 10.5px;
+    background: var(--primary-light);
+    color: var(--primary);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    margin-left: 6px;
+    letter-spacing: 0.2px;
+}
+
+/* Translation language selectors */
+.trans-lang-select {
+    padding: 3px 6px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 11.5px;
+    font-weight: 550;
+    cursor: pointer;
+    font-family: inherit;
+    outline: none;
+    transition: all var(--transition);
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%2394A3B8'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    padding-right: 20px;
+    max-width: 110px;
+    text-overflow: ellipsis;
+}
+.trans-lang-select:hover {
+    border-color: var(--primary);
+}
+.trans-lang-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--border-accent);
+}
+
+/* ========== Difficult Word Annotation ========== */
+.annotated-word {
+    position: relative;
+    cursor: help;
+    border-bottom: 2px dotted var(--primary);
+    color: var(--primary);
+    font-weight: 550;
+    transition: all var(--transition);
+}
+.annotated-word:hover {
+    background: var(--primary-light);
+    border-radius: 3px;
+    padding: 0 3px;
+    margin: 0 -3px;
+}
+.annotated-word .word-tooltip {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1A1F36;
+    color: #EDF0F7;
+    padding: 9px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 400;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 100;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+}
+.annotated-word .word-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #1A1F36;
+}
+.annotated-word:hover .word-tooltip { opacity: 1; }
+.annotated-word .word-tooltip .level-tag {
+    display: inline-block;
+    font-size: 10.5px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-left: 7px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+.level-tag.academic { background: #818CF8; color: #fff; }
+.level-tag.business { background: #34D399; color: #064E3B; }
+.level-tag.technical { background: #F59E0B; color: #78350F; }
+.level-tag.general { background: #94A3B8; color: #fff; }
+.level-tag.idiom { background: #F472B6; color: #831843; }
+
+/* Annotation legend */
+.annotation-legend {
+    display: none;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 8px 20px;
+    font-size: 11.5px;
+    color: var(--text-muted);
+    background: var(--panel-header-bg);
+    border-bottom: 1.5px solid var(--border);
+    transition: all var(--transition);
+}
+.annotation-legend.active { display: flex; }
+.annotation-legend .legend-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* Annotation toggle button */
+.btn-annotation-toggle {
+    padding: 5px 12px;
+    border-radius: 16px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 11.5px;
+    font-weight: 550;
+    transition: all var(--transition);
+    white-space: nowrap;
+    font-family: inherit;
+    letter-spacing: 0.2px;
+}
+.btn-annotation-toggle:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-soft);
+}
+.btn-annotation-toggle.active {
+    background: var(--primary-gradient);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: var(--shadow-primary);
+}
+
+/* ========== Summary Section ========== */
+.summary-section {
+    margin-bottom: 18px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, var(--primary-soft), rgba(124, 92, 240, 0.04));
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border-accent);
+    position: relative;
+    overflow: hidden;
+    transition: all var(--transition);
+}
+.summary-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 5px; height: 100%;
+    background: var(--primary-gradient);
+    border-radius: 5px 0 0 5px;
+}
+.summary-section .summary-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-weight: 700;
+    font-size: 14.5px;
+    color: var(--primary);
+    letter-spacing: 0.2px;
+}
+.summary-section .summary-header .icon { font-size: 20px; }
+.summary-section .summary-text {
+    font-size: 14.5px;
+    line-height: 1.85;
+    color: var(--text);
+    padding-left: 6px;
+}
+
+.summary-loading {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary);
+    font-size: 13.5px;
+    font-weight: 500;
+    padding: 10px 0;
+}
+.summary-loading.active { display: flex; }
+.summary-loading .s-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--primary);
+    animation: dotBounce 0.6s ease-in-out infinite;
+}
+.summary-loading .s-dot:nth-child(2){animation-delay:0.15s}.summary-loading .s-dot:nth-child(3){animation-delay:0.3s}
+
+.btn-summary {
+    position: relative;
+    overflow: visible;
+}
+.btn-summary.has-summary {
+    border-color: var(--primary);
+    color: #fff;
+    background: var(--primary-gradient);
+    box-shadow: var(--shadow-primary);
+    font-weight: 600;
+}
+
+/* ========== Typo Correction UI ========== */
+.typo-highlight {
+    background: rgba(245, 158, 11, 0.15);
+    border-bottom: 2px wavy var(--warning);
+    cursor: pointer;
+    padding: 0 3px;
+    border-radius: 3px;
+    transition: all var(--transition);
+    position: relative;
+}
+.typo-highlight:hover { background: rgba(245, 158, 11, 0.3); }
+.typo-highlight.fixed {
+    background: rgba(16, 185, 129, 0.12);
+    border-bottom-color: var(--success);
+    text-decoration: line-through;
+    text-decoration-color: var(--text-muted);
+    text-decoration-thickness: 1px;
+}
+.typo-suggestion {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1A1F36;
+    color: #EDF0F7;
+    padding: 9px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    white-space: nowrap;
+    pointer-events: auto;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 101;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: default;
+}
+.typo-highlight:hover .typo-suggestion { opacity: 1; }
+.typo-suggestion::after {
+    content: '';
+    position: absolute;
+    top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #1A1F36;
+}
+.typo-suggestion .correction {
+    color: var(--success);
+    font-weight: 650;
+}
+.typo-suggestion .btn-fix {
+    padding: 3px 10px;
+    border-radius: 6px;
+    border: 1.5px solid var(--success);
+    background: rgba(16, 185, 129, 0.08);
+    color: var(--success);
+    cursor: pointer;
+    font-size: 11.5px;
+    font-weight: 600;
+    transition: all var(--transition);
+    white-space: nowrap;
+    font-family: inherit;
+    letter-spacing: 0.1px;
+}
+.typo-suggestion .btn-fix:hover {
+    background: var(--success);
+    color: #fff;
+}
+.typo-suggestion .btn-ignore {
+    padding: 3px 10px;
+    border-radius: 6px;
+    border: 1.5px solid rgba(148,163,184,0.5);
+    background: transparent;
+    color: rgba(237,240,247,0.7);
+    cursor: pointer;
+    font-size: 11.5px;
+    font-weight: 500;
+    transition: all var(--transition);
+    white-space: nowrap;
+    font-family: inherit;
+}
+.typo-suggestion .btn-ignore:hover {
+    border-color: #fff;
+    color: #fff;
+}
+
+.btn-typo { position: relative; }
+.btn-typo .typo-count {
+    position: absolute;
+    top: -6px; right: -6px;
+    min-width: 18px; height: 18px;
+    border-radius: 10px;
+    background: var(--warning);
+    color: #fff;
+    font-size: 10.5px;
+    font-weight: 700;
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 0 5px;
+    border: 2px solid var(--surface);
+    line-height: 1;
+}
+.btn-typo .typo-count.active { display: flex; }
+.btn-typo.has-errors {
+    border-color: var(--warning);
+    color: var(--warning);
+    background: var(--warning-light);
+    font-weight: 600;
+}
+
+/* Typo fixes summary bar */
+.typo-fixes-bar {
+    display: none;
+    padding: 9px 16px;
+    margin-bottom: 14px;
+    background: var(--success-light);
+    border: 1.5px solid rgba(16, 185, 129, 0.25);
+    border-radius: var(--radius-sm);
+    font-size: 12.5px;
+    font-weight: 550;
+    color: #065F46;
+    gap: 8px;
+    align-items: center;
+}
+.typo-fixes-bar.active { display: flex; }
+.typo-fixes-bar .btn-undo-all {
+    margin-left: auto;
+    padding: 3px 12px;
+    border-radius: 6px;
+    border: 1.5px solid #065F46;
+    background: transparent;
+    color: #065F46;
+    cursor: pointer;
+    font-size: 11.5px;
+    font-weight: 600;
+    transition: all var(--transition);
+    font-family: inherit;
+    letter-spacing: 0.1px;
+}
+.typo-fixes-bar .btn-undo-all:hover {
+    background: #065F46;
+    color: #fff;
+}
+
+/* Dark mode overrides for some components */
+.dark .summary-section,
+[data-theme="dark"] .summary-section {
+    background: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(167,139,250,0.03));
+}
+.dark .typo-fixes-bar,
+[data-theme="dark"] .typo-fixes-bar {
+    background: rgba(16,185,129,0.08);
+    border-color: rgba(52,211,153,0.2);
+    color: #6EE7B7;
+}
+.dark .typo-fixes-bar .btn-undo-all,
+[data-theme="dark"] .typo-fixes-bar .btn-undo-all {
+    border-color: #6EE7B7; color: #6EE7B7;
+}
+.dark .typo-fixes-bar .btn-undo-all:hover,
+[data-theme="dark"] .typo-fixes-bar .btn-undo-all:hover {
+    background: #6EE7B7; color: #064E3B;
+}
+.dark .typo-highlight,
+[data-theme="dark"] .typo-highlight {
+    background: rgba(245,158,11,0.1);
+}
+.dark .typo-highlight:hover,
+[data-theme="dark"] .typo-highlight:hover {
+    background: rgba(245,158,11,0.25);
+}
+.dark .typo-highlight.fixed,
+[data-theme="dark"] .typo-highlight.fixed {
+    background: rgba(16,185,129,0.08);
+}
+
+/* ========== Microphone Permission Modal ========== */
+.mic-perm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:600;display:flex;align-items:flex-end;justify-content:center;opacity:0;visibility:hidden;transition:all .35s ease}
+.mic-perm-overlay.open{opacity:1;visibility:visible}
+.mic-perm-sheet{width:100%;max-width:500px;background:var(--surface);border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:24px 22px 32px;box-shadow:var(--shadow-xl);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);max-height:85vh;overflow-y:auto}
+.mic-perm-overlay.open .mic-perm-sheet{transform:translateY(0)}
+.mic-perm-sheet .perm-icon{font-size:48px;text-align:center;margin-bottom:12px}
+.mic-perm-sheet h3{text-align:center;font-size:18px;font-weight:750;color:var(--text);margin-bottom:6px;letter-spacing:.3px}
+.mic-perm-sheet .perm-desc{text-align:center;font-size:13px;color:var(--text-secondary);margin-bottom:20px;line-height:1.6}
+.mic-perm-step{display:flex;gap:12px;padding:12px 14px;margin-bottom:8px;background:var(--bg);border-radius:var(--radius-sm);align-items:center;transition:all var(--transition)}
+.mic-perm-step .step-num{width:30px;height:30px;border-radius:50%;background:var(--primary-gradient);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.mic-perm-step .step-content{font-size:13px;color:var(--text);line-height:1.5}
+.mic-perm-step .step-content strong{color:var(--primary)}
+.mic-perm-sheet .perm-actions{display:flex;gap:10px;margin-top:18px}
+.mic-perm-sheet .perm-actions button{flex:1;padding:12px;border-radius:var(--radius-sm);font-size:14px;font-weight:650;cursor:pointer;transition:all var(--transition);font-family:inherit;letter-spacing:.2px}
+.perm-btn-primary{background:var(--primary-gradient);color:#fff;border:none;box-shadow:var(--shadow-primary)}
+.perm-btn-primary:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 6px 24px rgba(91,108,240,.4)}
+.perm-btn-secondary{background:var(--surface);color:var(--text);border:1.5px solid var(--border)}
+.perm-btn-secondary:hover{background:var(--bg);border-color:var(--primary);color:var(--primary)}
+.perm-btn-danger{background:var(--danger);color:#fff;border:none;box-shadow:var(--shadow-danger)}
+.perm-btn-danger:hover{filter:brightness(1.08)}
+.mic-status-bar{display:none;align-items:center;gap:8px;padding:8px 14px;background:var(--warning-light);border:1.5px solid rgba(245,158,11,.3);border-radius:var(--radius-sm);margin-bottom:8px;font-size:12px;color:#92400E;font-weight:550}
+.mic-status-bar.active{display:flex}
+.mic-status-bar .mic-status-dot{width:8px;height:8px;border-radius:50%;background:var(--warning);animation:recordingPulse 2s ease-in-out infinite;flex-shrink:0}
+.mic-status-bar.granted{background:var(--success-light);border-color:rgba(16,185,129,.3);color:#065F46;display:flex}
+.mic-status-bar.granted .mic-status-dot{background:var(--success)}
+.mic-status-btn{padding:3px 10px;border-radius:6px;border:1.5px solid #92400E;background:transparent;color:#92400E;cursor:pointer;font-size:11px;font-weight:600;white-space:nowrap;font-family:inherit;transition:all var(--transition);margin-left:auto}
+.mic-status-btn:hover{background:#92400E;color:#fff}
+.mobile .mic-status-bar{display:flex}
+
+/* ========== Responsive - Mobile ========== */
+@media (max-width: 768px) {
+    #app { padding: 8px; gap: 6px; width: 100%; height: 100%; }
+    .header { padding: 10px 14px; gap: 8px; }
+    .header-logo { font-size: 17px; }
+    .header-logo .icon { font-size: 23px; }
+    .theme-toggle { width: 34px; height: 34px; font-size: 16px; }
+    .main-content { flex-direction: column; }
+    .panel-left, .panel-right {
+        width: 100%;
+        flex: 1;
+        border-radius: var(--radius);
+        min-height: 200px;
+        border-right: 1px solid var(--border);
+        border-left: 1px solid var(--border);
+    }
+    .panel-left {
+        border-bottom-left-radius: 0; border-bottom-right-radius: 0;
+        border-bottom: none;
+    }
+    .panel-right {
+        border-top-left-radius: 0; border-top-right-radius: 0;
+    }
+    .panel-right .panel-body { overflow: hidden; padding: 0; position: relative; display: flex; flex-direction: column; flex: 1; }
+    .raw-editor { position: absolute; inset: 0; padding: 14px 16px; font-size: 16px; -webkit-appearance: none; width: 100%; }
+    .divider {
+        width: 100%; height: 10px;
+        cursor: row-resize;
+        margin: -3px 0;
+    }
+    .divider::after { width: 40px; height: 4px; }
+    .btn { padding: 7px 12px; font-size: 12.5px; gap: 5px; }
+    .lang-toggle button { padding: 5px 12px; font-size: 12.5px; }
+    .waveform-container { height: 22px; gap: 3px; }
+    .waveform-bar { width: 2px; }
+    .history-bar { padding: 7px 12px; min-height: 40px; }
+    .panel-left .panel-body { padding: 14px 16px; font-size: 14px; overflow-y: auto; }
+    .translation-panel-body { max-height: 200px; font-size: 13px; }
+    .summary-section { padding: 14px 16px; }
+    .summary-section .summary-text { font-size: 13.5px; }
+    .typo-suggestion { font-size: 10.5px; padding: 7px 10px; }
+    .server-status { padding: 5px 10px; font-size: 10.5px; gap: 5px; min-height: 30px; }
+    .server-status .public-url { font-size: 9px; max-width: 100px; }
+    .server-status .status-label { font-size: 10.5px; }
+    .server-status .copy-url-btn { font-size: 9px; padding: 3px 7px; }
+}
+
+/* ========== Tablet ========== */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .btn { padding: 8px 14px; font-size: 13px; }
+    .panel-body { padding: 16px 18px; }
+}
+
+/* ================================================================
+   DATE/TIME FEATURES: Clock, Meeting Date, Timeline, History Grouping
+   ================================================================ */
+
+/* ========== Header Live Clock ========== */
+.live-clock {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 14px;
+    border-radius: 22px;
+    background: var(--primary-soft);
+    border: 1px solid var(--border-accent);
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    transition: all var(--transition);
+}
+.live-clock .clock-date {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary);
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+.live-clock .clock-time {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    position: relative;
+}
+.live-clock .clock-time .seconds {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    animation: blinkColon 1s step-end infinite;
+}
+.live-clock .clock-divider {
+    width: 1.5px;
+    height: 22px;
+    background: var(--border);
+    border-radius: 1px;
+}
+@keyframes blinkColon {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* ========== Meeting Date/Time Selectors ========== */
+.meeting-datetime {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    margin-right: auto;
+}
+.meeting-date-input,
+.meeting-time-input {
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 12px;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    outline: none;
+    transition: all var(--transition);
+}
+.meeting-date-input:hover,
+.meeting-time-input:hover { border-color: var(--primary); }
+.meeting-date-input:focus,
+.meeting-time-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--border-accent);
+}
+.meeting-date-input::-webkit-calendar-picker-indicator,
+.meeting-time-input::-webkit-calendar-picker-indicator {
+    cursor: pointer; opacity: 0.6; transition: opacity var(--transition);
+}
+.meeting-date-input:hover::-webkit-calendar-picker-indicator,
+.meeting-time-input:hover::-webkit-calendar-picker-indicator { opacity: 1; }
+.meeting-dt-label {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* ========== Timeline Component ========== */
+.timeline-section {
+    margin: 16px 0;
+    position: relative;
+    padding-left: 0;
+}
+.timeline-entry {
+    display: flex;
+    gap: 14px;
+    padding: 10px 0 10px 6px;
+    position: relative;
+    align-items: flex-start;
+}
+.timeline-entry::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--border) 0%, var(--border-accent) 100%);
+}
+.timeline-entry:last-child::before { bottom: 50%; }
+.timeline-dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2.5px solid var(--primary);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    margin-top: 3px;
+    box-shadow: 0 0 0 4px var(--primary-soft);
+    transition: all var(--transition);
+}
+.timeline-dot.bookmark-dot { border-color: var(--warning); box-shadow: 0 0 0 4px var(--warning-light); }
+.timeline-dot.photo-dot { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(124,92,240,0.1); }
+.timeline-dot.record-dot { border-color: var(--success); box-shadow: 0 0 0 4px var(--success-light); }
+.timeline-time {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--primary);
+    font-weight: 700;
+    white-space: nowrap;
+    min-width: 52px;
+    padding-top: 2px;
+}
+.timeline-content {
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.6;
+    flex: 1;
+    min-width: 0;
+}
+.timeline-content .tl-tag {
+    display: inline-block;
+    font-size: 10.5px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-right: 6px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    vertical-align: middle;
+}
+.tl-tag.bookmark { background: var(--warning-light); color: #92400E; }
+.tl-tag.photo { background: rgba(124,92,240,0.1); color: #6D28D9; }
+.tl-tag.record { background: var(--success-light); color: #065F46; }
+.tl-tag.summary { background: var(--primary-light); color: var(--primary); }
+.timeline-empty {
+    color: var(--text-muted);
+    font-size: 12.5px;
+    text-align: center;
+    padding: 16px 8px;
+    opacity: 0.7;
+}
+
+/* ========== History Date Groups ========== */
+.history-date-group {
+    margin-bottom: 10px;
+}
+.history-date-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--primary);
+    padding: 4px 12px;
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.history-date-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-accent);
+    margin-left: 4px;
+}
+.history-date-group .history-item {
+    margin-left: 0;
+}
+
+/* ========== Meeting Title Input ========== */
+.meeting-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.meeting-title-input {
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    font-size: 14px;
+    font-weight: 650;
+    color: var(--text);
+    padding: 5px 12px;
+    border-radius: 10px;
+    outline: none;
+    min-width: 140px;
+    max-width: 240px;
+    font-family: inherit;
+    transition: all var(--transition);
+    letter-spacing: 0.3px;
+}
+.meeting-title-input::placeholder { color: var(--text-muted); font-weight: 400; font-size: 13px; }
+.meeting-title-input:hover { border-color: var(--primary); }
+.meeting-title-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--border-accent);
+    background: var(--bg-subtle);
+}
+
+/* Meeting date/time compact segment */
+.meeting-datetime {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 3px 4px;
+    border: 1.5px solid var(--border);
+    transition: all var(--transition);
+}
+.meeting-datetime:hover { border-color: var(--primary); }
+.meeting-datetime:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--border-accent);
+}
+
+.meeting-dt-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    white-space: nowrap;
+    padding: 0 3px;
+    cursor: pointer;
+    user-select: none;
+    transition: color var(--transition);
+}
+.meeting-dt-label:hover { color: var(--primary); }
+.meeting-dt-label.active { color: var(--primary); }
+
+.meeting-date-input,
+.meeting-time-input {
+    padding: 4px 6px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text);
+    font-size: 12.5px;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    outline: none;
+    transition: all var(--transition);
+    min-width: 0;
+    text-align: center;
+    letter-spacing: 0.3px;
+}
+.meeting-date-input { min-width: 115px; }
+.meeting-time-input { min-width: 55px; }
+.meeting-date-input:hover,
+.meeting-time-input:hover { background: var(--surface); border-color: var(--border-accent); }
+.meeting-date-input:focus,
+.meeting-time-input:focus {
+    background: var(--surface);
+    border-color: var(--primary);
+}
+
+/* Scroll hint on date/time inputs */
+.meeting-date-input.scroll-active,
+.meeting-time-input.scroll-active {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--border-accent);
+}
+
+/* Quick date buttons */
+.quick-date-btns {
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0;
+}
+.quick-date-btn {
+    padding: 3px 9px;
+    border-radius: 16px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 550;
+    transition: all var(--transition);
+    white-space: nowrap;
+    font-family: inherit;
+    letter-spacing: 0.2px;
+}
+.quick-date-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-soft);
+}
+.quick-date-btn.preset-today {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+    font-weight: 650;
+}
+
+/* Meeting duration badge */
+.meeting-duration-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--success);
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: var(--success-light);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* ========== Mobile adjustments ========== */
+@media (max-width: 768px) {
+    .live-clock { padding: 3px 10px; gap: 6px; }
+    .live-clock .clock-date { font-size: 10.5px; }
+    .live-clock .clock-time { font-size: 14px; }
+    .meeting-datetime { gap: 3px; }
+    .meeting-date-input, .meeting-time-input { font-size: 10.5px; padding: 2px 5px; }
+    .meeting-title-input { width: 100px; font-size: 12px; }
+    .timeline-entry { gap: 8px; padding-left: 2px; }
+    .timeline-time { font-size: 10.5px; min-width: 42px; }
+    .timeline-content { font-size: 12.5px; }
+}
+
+/* ================================================================
+   NEW FEATURES: Export Dropdown, Floating Subtitles,
+   Bookmarks, Inspiration Notes, Photo Insert
+   ================================================================ */
+
+/* ========== Export Dropdown ========== */
+.export-dropdown-wrapper {
+    position: relative;
+    display: inline-block;
+}
+.export-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg);
+    min-width: 180px;
+    z-index: 50;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+.export-dropdown-menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+.export-dropdown-menu button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 16px;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition);
+    white-space: nowrap;
+    font-family: inherit;
+    text-align: left;
+    border-bottom: 1px solid var(--border-light);
+}
+.export-dropdown-menu button:last-child { border-bottom: none; }
+.export-dropdown-menu button:hover {
+    background: var(--primary-soft);
+    color: var(--primary);
+}
+.export-dropdown-menu button .icon { font-size: 16px; width: 20px; text-align: center; }
+.export-dropdown-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 49;
+    display: none;
+}
+.export-dropdown-backdrop.open { display: block; }
+
+/* ========== Floating Subtitles (Draggable) ========== */
+.floating-subtitles {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    max-width: 700px;
+    width: auto;
+    min-width: 280px;
+    background: rgba(26, 31, 54, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    color: #fff;
+    padding: 10px 24px 14px 24px;
+    border-radius: 18px;
+    font-size: 18px;
+    font-weight: 550;
+    text-align: center;
+    line-height: 1.5;
+    z-index: 200;
+    pointer-events: auto;
+    user-select: none;
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    letter-spacing: 0.5px;
+}
+.floating-subtitles.active {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+.floating-subtitles.dragging {
+    cursor: grabbing;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+/* Drag handle at the top */
+.subtitles-drag-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 18px;
+    margin: -2px -10px 4px -10px;
+    cursor: grab;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    border-radius: 18px 18px 0 0;
+}
+.floating-subtitles:hover .subtitles-drag-handle,
+.floating-subtitles.active .subtitles-drag-handle {
+    opacity: 0.7;
+}
+.subtitles-drag-handle:hover {
+    opacity: 1 !important;
+}
+.drag-handle-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+}
+.dark .drag-handle-dot,
+[data-theme="dark"] .drag-handle-dot {
+    background: rgba(0,0,0,0.4);
+}
+
+.floating-subtitles .subtitles-text {
+    max-height: 60px;
+    overflow: hidden;
+    cursor: text;
+    user-select: text;
+}
+.floating-subtitles .subtitles-lang {
+    font-size: 10px;
+    font-weight: 500;
+    opacity: 0.6;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+    cursor: grab;
+}
+
+/* Reset position hint */
+.subtitles-reset-hint {
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+}
+.floating-subtitles:hover .subtitles-reset-hint {
+    opacity: 1;
+}
+.dark .subtitles-reset-hint,
+[data-theme="dark"] .subtitles-reset-hint {
+    color: rgba(0,0,0,0.5);
+}
+
+.dark .floating-subtitles,
+[data-theme="dark"] .floating-subtitles {
+    background: rgba(237, 240, 247, 0.93);
+    color: #1A1F36;
+    box-shadow: 0 12px 40px rgba(255, 255, 255, 0.08);
+}
+
+/* ========== Bookmark / Highlight Marker ========== */
+.bookmark-btn {
+    position: relative;
+}
+.bookmark-btn .bookmark-indicator {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+    border: 2px solid var(--surface);
+}
+.bookmark-btn .bookmark-indicator.active { display: flex; }
+
+.bookmark-highlight {
+    background: linear-gradient(180deg, transparent 60%, rgba(245, 158, 11, 0.35) 60%);
+    padding: 0 3px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all var(--transition);
+    position: relative;
+}
+.bookmark-highlight:hover {
+    background: linear-gradient(180deg, transparent 55%, rgba(245, 158, 11, 0.55) 55%);
+}
+
+/* Bookmark list in organized content */
+.bookmark-list {
+    margin: 14px 0;
+}
+.bookmark-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 12px;
+    margin: 6px 0;
+    background: var(--warning-light);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--warning);
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: all var(--transition);
+    font-weight: 500;
+}
+.bookmark-item:hover {
+    background: var(--oc-filtered-bg);
+    transform: translateX(3px);
+}
+.bookmark-item .bm-time {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--warning);
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 50px;
+}
+.bookmark-item .bm-text {
+    color: var(--text);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.bookmark-item .bm-delete {
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 14px;
+    flex-shrink: 0;
+    padding: 0 4px;
+    transition: all var(--transition);
+}
+.bookmark-item .bm-delete:hover {
+    color: var(--danger);
+    transform: scale(1.2);
+}
+
+/* ========== Inspiration Notes Panel ========== */
+.inspiration-panel {
+    border-top: 1.5px solid var(--border);
+    flex-shrink: 0;
+    transition: all var(--transition);
+    background: var(--panel-header-bg);
+}
+.inspiration-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-weight: 650;
+    font-size: 13px;
+    color: var(--text-secondary);
+    user-select: none;
+    transition: all var(--transition);
+    border-bottom: 1.5px solid transparent;
+    letter-spacing: 0.2px;
+}
+.inspiration-panel-header:hover { background: var(--surface-hover); }
+.inspiration-panel-header .icon { font-size: 16px; color: var(--accent); }
+.inspiration-panel-header .collapse-arrow {
+    margin-left: auto;
+    transition: transform var(--transition);
+    font-size: 11px;
+    color: var(--text-muted);
+    opacity: 0.6;
+}
+.inspiration-panel.expanded .inspiration-panel-header {
+    border-bottom-color: var(--border);
+}
+.inspiration-panel.expanded .collapse-arrow {
+    transform: rotate(180deg);
+    opacity: 1;
+}
+.inspiration-panel-body {
+    display: none;
+    padding: 12px 16px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+.inspiration-panel.expanded .inspiration-panel-body { display: block; }
+
+.inspiration-panel-body textarea {
+    width: 100%;
+    min-height: 70px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    padding: 10px 14px;
+    font-size: 13.5px;
+    font-family: inherit;
+    line-height: 1.6;
+    resize: vertical;
+    outline: none;
+    transition: all var(--transition);
+}
+.inspiration-panel-body textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124, 92, 240, 0.1);
+}
+.inspiration-panel-body textarea::placeholder {
+    color: var(--text-placeholder);
+    font-size: 12.5px;
+}
+.inspiration-entry {
+    padding: 10px 12px;
+    margin: 6px 0;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    color: var(--text);
+    border-left: 3px solid var(--accent);
+    position: relative;
+    line-height: 1.6;
+}
+.inspiration-entry .insp-time {
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 600;
+    font-family: var(--font-mono);
+    margin-bottom: 4px;
+}
+.inspiration-entry .insp-delete {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 14px;
+    transition: all var(--transition);
+}
+.inspiration-entry .insp-delete:hover {
+    color: var(--danger);
+    transform: scale(1.2);
+}
+.inspiration-empty {
+    color: var(--text-muted);
+    text-align: center;
+    font-size: 12.5px;
+    padding: 16px 8px;
+    opacity: 0.7;
+}
+
+/* ========== Photo Insert ========== */
+.photo-thumbnails {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+.photo-thumb {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid var(--border);
+    transition: all var(--transition);
+}
+.photo-thumb:hover {
+    border-color: var(--primary);
+    transform: scale(1.05);
+    box-shadow: var(--shadow-sm);
+}
+.photo-fullscreen-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+.photo-fullscreen-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+.photo-fullscreen-overlay img {
+    max-width: 92vw;
+    max-height: 92vh;
+    border-radius: 10px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+.photo-fullscreen-overlay .photo-close {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    color: #fff;
+    font-size: 32px;
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    transition: all var(--transition);
+}
+.photo-fullscreen-overlay .photo-close:hover {
+    background: rgba(255,255,255,0.2);
+    transform: scale(1.1);
+}
+.btn-photo {
+    position: relative;
+    overflow: hidden;
+}
+.btn-photo input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* ========== Layout Fix: Translation inside left panel ========== */
+.panel-left-inner {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+.panel-left-inner > .panel-body {
+    flex: 1;
+    min-height: 0;
+}
+
+/* Mobile adjustments for new features */
+@media (max-width: 768px) {
+    .floating-subtitles {
+        bottom: 70px;
+        font-size: 15px;
+        padding: 8px 16px 12px 16px;
+        max-width: 95%;
+        min-width: 200px;
+    }
+    .subtitles-drag-handle { height: 14px; }
+    .export-dropdown-menu { min-width: 150px; right: -20px; }
+    .photo-thumb { width: 48px; height: 48px; }
+    .inspiration-panel-body textarea { min-height: 50px; font-size: 12px; }
+}
+
+    /* ═══════════════════════════════════════════════════════
+   LOGIN — SIDEBAR — DASHBOARD — SETTINGS — TEMPLATES —
+   HISTORY SEARCH — SHARE — RESPONSIVE
+   ═══════════════════════════════════════════════════════ */
+
+/* Login Overlay */
+.login-overlay{position:fixed;inset:0;background:var(--bg-app);z-index:500;display:flex;align-items:center;justify-content:center;transition:all .45s ease}
+.login-overlay.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.login-card{width:440px;max-width:96vw;background:var(--surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-xl);border:1.5px solid var(--border);overflow:hidden;animation:loginSlideIn .5s ease}
+@keyframes loginSlideIn{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+.login-card .login-top{padding:28px 32px 14px;text-align:center;background:var(--primary-gradient)}
+.login-card .login-top .login-avatar{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.25);display:inline-flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:8px;border:3px solid rgba(255,255,255,.3)}
+.login-card .login-top h2{color:#fff;font-size:20px;font-weight:700;margin:0;letter-spacing:.3px}
+.login-card .login-top p{color:rgba(255,255,255,.7);font-size:12px;margin:2px 0 0}
+/* Login Tabs */
+.login-tabs{display:flex;background:var(--bg);border-bottom:1.5px solid var(--border)}
+.login-tab{flex:1;padding:11px 8px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-muted);transition:all var(--transition);font-family:inherit;border-bottom:2.5px solid transparent;letter-spacing:.2px}
+.login-tab:hover{color:var(--text);background:var(--surface-hover)}
+.login-tab.active{color:var(--primary);border-bottom-color:var(--primary);background:var(--surface)}
+.login-card .login-body{padding:24px 28px 18px}
+.login-card .login-body .form-group{margin-bottom:14px}
+.login-card .login-body label{display:block;font-size:12px;font-weight:650;color:var(--text-secondary);margin-bottom:4px;letter-spacing:.2px}
+.login-card .login-body input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;color:var(--text);background:var(--bg);outline:none;transition:all var(--transition);font-family:inherit}
+.login-card .login-body input:focus{border-color:var(--primary);box-shadow:0 0 0 4px var(--border-accent)}
+.login-card .login-body .row{display:flex;gap:10px}
+.login-card .login-body .row input{flex:1}
+/* SMS send button */
+.btn-send-code{white-space:nowrap;padding:10px 16px;border:1.5px solid var(--primary);border-radius:var(--radius-sm);background:var(--primary-soft);color:var(--primary);cursor:pointer;font-size:13px;font-weight:650;transition:all var(--transition);font-family:inherit;min-width:100px}
+.btn-send-code:hover{background:var(--primary);color:#fff}
+.btn-send-code:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
+.login-card .login-body .btn-login{width:100%;padding:12px;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:650;cursor:pointer;background:var(--primary-gradient);color:#fff;transition:all var(--transition);letter-spacing:.3px;box-shadow:var(--shadow-primary);font-family:inherit;margin-top:4px}
+.login-card .login-body .btn-login:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 6px 24px rgba(91,108,240,.4)}
+.login-card .login-body .btn-login:disabled{opacity:.5;cursor:not-allowed;transform:none;filter:none}
+.login-card .login-body .login-error{color:var(--danger);font-size:12px;text-align:center;margin-top:8px;display:none}
+.login-card .login-body .login-error.show{display:block}
+.login-card .login-body .login-success{color:var(--success);font-size:12px;text-align:center;margin-top:8px;display:none}
+.login-card .login-body .login-success.show{display:block}
+.login-panel{display:none}
+.login-panel.active{display:block}
+.login-card .login-footer{padding:10px 28px 16px;text-align:center;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border-light)}
+.login-card .login-footer span{color:var(--primary);cursor:pointer;font-weight:600}
+.login-card .login-footer span:hover{text-decoration:underline}
+
+/* Sidebar Navigation */
+.app-layout{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1}
+.sidebar{width:240px;min-width:240px;background:var(--surface);border-right:1.5px solid var(--border);display:flex;flex-direction:column;transition:all .35s ease;overflow:hidden;z-index:20;box-shadow:var(--shadow-sm)}
+.sidebar.collapsed{width:60px;min-width:60px}
+.sidebar-header{padding:18px 16px;display:flex;align-items:center;gap:10px;border-bottom:1.5px solid var(--border);flex-shrink:0}
+.sidebar-header .sidebar-logo{font-weight:800;font-size:16px;background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap;letter-spacing:-.2px}
+.sidebar.collapsed .sidebar-logo{display:none}
+.sidebar-toggle{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text-secondary);flex-shrink:0;transition:all var(--transition);font-family:inherit}
+.sidebar-toggle:hover{background:var(--primary-soft);border-color:var(--primary);color:var(--primary)}
+.sidebar-nav{flex:1;overflow-y:auto;padding:10px 8px}
+.sidebar-nav .nav-section{margin-bottom:6px}
+.sidebar-nav .nav-section-title{font-size:10.5px;font-weight:700;text-transform:uppercase;color:var(--text-muted);padding:8px 12px 4px;letter-spacing:1px;white-space:nowrap}
+.sidebar.collapsed .nav-section-title{display:none}
+.sidebar-nav .nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);cursor:pointer;font-size:13.5px;font-weight:550;color:var(--text-secondary);transition:all var(--transition);margin-bottom:2px;white-space:nowrap;position:relative}
+.sidebar-nav .nav-item:hover{background:var(--bg);color:var(--text)}
+.sidebar-nav .nav-item.active{background:var(--primary-soft);color:var(--primary);font-weight:650}
+.sidebar-nav .nav-item .nav-icon{font-size:18px;width:22px;text-align:center;flex-shrink:0}
+.sidebar-nav .nav-item .nav-label{flex:1;overflow:hidden;text-overflow:ellipsis}
+.sidebar.collapsed .nav-label,.sidebar.collapsed .nav-badge{display:none}
+.sidebar-nav .nav-item .nav-badge{padding:2px 7px;border-radius:10px;font-size:10.5px;font-weight:700;background:var(--danger);color:#fff}
+.sidebar-user{padding:12px 16px;border-top:1.5px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sidebar-user .user-avatar{width:34px;height:34px;border-radius:50%;background:var(--primary-gradient);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
+.sidebar.collapsed .user-info{display:none}
+.sidebar-user .user-info{flex:1;min-width:0}
+.sidebar-user .user-name{font-size:13px;font-weight:650;color:var(--text);white-space:nowrap}
+.sidebar-user .user-role{font-size:11px;color:var(--text-muted)}
+.sidebar-user .btn-logout{padding:5px 10px;border-radius:6px;border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);cursor:pointer;font-size:11px;transition:all var(--transition);font-family:inherit}
+.sidebar-user .btn-logout:hover{background:var(--danger-light);border-color:var(--danger);color:var(--danger)}
+
+/* Main Content Area */
+.main-area{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.view-container{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 18px;display:none}
+.view-container.active{display:block}
+#viewRecorder.view-container.active{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden}
+.view-title{font-size:20px;font-weight:750;color:var(--text);margin-bottom:16px;letter-spacing:-.2px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.view-title .view-title-icon{font-size:24px;color:var(--primary)}
+
+/* ═══ DASHBOARD ═══ */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-xs);transition:all var(--transition);display:flex;align-items:flex-start;gap:14px;cursor:pointer;font-family:inherit}
+.stat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);border-color:var(--primary)}
+.stat-card .stat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.stat-icon.blue{background:var(--primary-soft);color:var(--primary)}
+.stat-icon.green{background:var(--success-light);color:var(--success)}
+.stat-icon.purple{background:rgba(124,92,240,.12);color:var(--accent)}
+.stat-icon.amber{background:var(--warning-light);color:var(--warning)}
+.stat-card .stat-info{flex:1;min-width:0}
+.stat-card .stat-value{font-size:26px;font-weight:750;color:var(--text);letter-spacing:-.5px}
+.stat-card .stat-label{font-size:12.5px;color:var(--text-muted);margin-top:2px}
+.stat-card .stat-change{font-size:11px;font-weight:600;margin-top:4px}
+.stat-change.positive{color:var(--success)}.stat-change.negative{color:var(--danger)}
+
+.quick-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.quick-action-btn{padding:10px 18px;border-radius:20px;background:var(--surface);border:1.5px solid var(--border);color:var(--text);font-size:13px;font-weight:550;cursor:pointer;transition:all var(--transition);display:flex;align-items:center;gap:7px;font-family:inherit;box-shadow:var(--shadow-xs)}
+.quick-action-btn:hover{background:var(--primary-soft);border-color:var(--primary);color:var(--primary);box-shadow:var(--shadow-sm);transform:translateY(-1px)}
+
+.dashboard-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+@media(max-width:900px){.dashboard-grid{grid-template-columns:1fr}}
+.dashboard-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-xs)}
+.dashboard-card .dash-card-header{padding:14px 18px;border-bottom:1.5px solid var(--border);font-weight:650;font-size:14px;color:var(--text);display:flex;align-items:center;gap:8px}
+.dashboard-card .dash-card-body{padding:14px 18px;max-height:320px;overflow-y:auto}
+
+/* Bar Chart */
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:140px;padding-top:8px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;max-width:50px;background:var(--primary-gradient);border-radius:6px 6px 0 0;min-height:4px;transition:height .5s ease;position:relative}
+.bar:hover{filter:brightness(1.12)}
+.bar .bar-tooltip{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:10.5px;font-weight:700;color:var(--primary);white-space:nowrap;opacity:0;transition:opacity .2s ease}
+.bar:hover .bar-tooltip{opacity:1}
+.bar-label{font-size:11px;color:var(--text-muted);text-align:center;margin-top:4px}
+
+/* ═══ SETTINGS ═══ */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+@media(max-width:900px){.settings-grid{grid-template-columns:1fr}}
+.settings-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-xs)}
+.settings-card .set-card-header{padding:14px 18px;border-bottom:1.5px solid var(--border);font-weight:650;font-size:14px;color:var(--text);display:flex;align-items:center;gap:8px}
+.settings-card .set-card-body{padding:10px 18px}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border-light)}
+.setting-row:last-child{border-bottom:none}
+.setting-row .set-label{font-size:13.5px;font-weight:550;color:var(--text)}
+.setting-row .set-desc{font-size:11.5px;color:var(--text-muted);margin-top:2px}
+
+.toggle-switch{position:relative;width:44px;height:26px;flex-shrink:0}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-switch .slider{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:13px;transition:all var(--transition)}
+.toggle-switch .slider::before{content:'';position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:all var(--transition);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.toggle-switch input:checked+.slider{background:var(--primary)}
+.toggle-switch input:checked+.slider::before{transform:translateX(18px)}
+
+/* ═══ TEMPLATES ═══ */
+.template-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.template-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-xs);cursor:pointer;transition:all var(--transition);position:relative;overflow:hidden;font-family:inherit}
+.template-card:hover{box-shadow:var(--shadow-md);transform:translateY(-3px);border-color:var(--primary)}
+.template-card .tmpl-icon{font-size:36px;margin-bottom:10px}
+.template-card .tmpl-name{font-weight:700;font-size:15px;color:var(--text);margin-bottom:6px}
+.template-card .tmpl-desc{font-size:12.5px;color:var(--text-muted);line-height:1.5}
+.template-card .tmpl-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}
+.template-card .tmpl-tag{padding:2px 8px;border-radius:10px;font-size:10.5px;font-weight:600;background:var(--primary-soft);color:var(--primary)}
+.template-card .tmpl-badge{position:absolute;top:12px;right:12px;padding:3px 9px;border-radius:12px;font-size:10px;font-weight:700;background:var(--success-light);color:var(--success)}
+
+/* ═══ HISTORY SEARCH ═══ */
+.history-search-bar{display:flex;gap:10px;margin-bottom:16px}
+.history-search-bar input{flex:1;padding:10px 16px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface);font-size:14px;color:var(--text);outline:none;transition:all var(--transition);font-family:inherit}
+.history-search-bar input:focus{border-color:var(--primary);box-shadow:0 0 0 4px var(--border-accent)}
+.history-search-bar input::placeholder{color:var(--text-muted)}
+.history-search-bar select{padding:6px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface);font-size:13px;color:var(--text);outline:none;font-family:inherit;cursor:pointer}
+.search-results-table{width:100%;border-collapse:collapse}
+.search-results-table th{padding:10px 14px;text-align:left;font-size:11.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--border)}
+.search-results-table td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border-light);color:var(--text)}
+.search-results-table tbody tr{cursor:pointer;transition:all var(--transition)}
+.search-results-table tbody tr:hover{background:var(--primary-soft)}
+.sr-empty{text-align:center;padding:40px;color:var(--text-muted);font-size:13px}
+
+/* ═══ SHARE ═══ */
+.share-methods{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:18px}
+.share-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:18px;text-align:center;cursor:pointer;transition:all var(--transition);box-shadow:var(--shadow-xs);font-family:inherit}
+.share-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);border-color:var(--primary)}
+.share-card .share-icon{font-size:30px;margin-bottom:8px;display:block}
+.share-card .share-name{font-weight:650;font-size:14px;color:var(--text)}
+.share-card .share-hint{font-size:11px;color:var(--text-muted);margin-top:4px}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:768px){
+  .sidebar{width:60px;min-width:60px}
+  .sidebar .sidebar-logo,.sidebar .nav-label,.sidebar .nav-badge,.sidebar .nav-section-title,.sidebar .user-info{display:none}
+  .stats-grid{grid-template-columns:1fr 1fr}.settings-grid{grid-template-columns:1fr}
+  .template-grid,.share-methods{grid-template-columns:1fr}
+  .search-results-table th,.search-results-table td{padding:6px 8px;font-size:11px}
+}
+
+    .meeting-date-display{padding:4px 8px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text);font-size:12.5px;font-family:var(--font-mono);cursor:pointer;transition:all var(--transition);min-width:105px;text-align:center;letter-spacing:.6px;white-space:nowrap}.meeting-date-display:hover{background:var(--surface);border-color:var(--border-accent)}.meeting-date-display.scroll-active{background:var(--primary-light);box-shadow:0 0 0 3px var(--border-accent)}
+    </style>
+</head>
+<body>
+    <!-- ====== LOGIN OVERLAY ====== -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-card">
+            <div class="login-top">
+                <div class="login-avatar">🎙️</div>
+                <h2>会议录音助手</h2>
+                <p>SmartMeeting · 专业版</p>
+            </div>
+            <div class="login-tabs">
+                <button class="login-tab active" data-tab="phone">📱 手机登录</button>
+                <button class="login-tab" data-tab="email">📧 邮箱登录</button>
+                <button class="login-tab" data-tab="password">🔑 密码登录</button>
+            </div>
+            <div class="login-body">
+                <!-- Phone SMS Panel -->
+                <div class="login-panel active" id="panelPhone">
+                    <div class="form-group">
+                        <label>手机号码</label>
+                        <input type="tel" id="phoneNumber" placeholder="请输入手机号码" maxlength="11" autocomplete="tel">
+                    </div>
+                    <div class="form-group">
+                        <label>验证码</label>
+                        <div class="row">
+                            <input type="text" id="phoneCode" placeholder="6位验证码" maxlength="6" autocomplete="one-time-code">
+                            <button class="btn-send-code" id="btnSendPhoneCode">获取验证码</button>
+                        </div>
+                    </div>
+                    <button class="btn-login" id="btnPhoneLogin">📱 验证并登录</button>
+                    <div class="login-error" id="phoneError"></div>
+                    <div class="login-success" id="phoneSuccess"></div>
+                </div>
+                <!-- Email Panel -->
+                <div class="login-panel" id="panelEmail">
+                    <div class="form-group">
+                        <label>邮箱地址</label>
+                        <input type="email" id="emailAddress" placeholder="name@example.com" autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label>邮箱验证码</label>
+                        <div class="row">
+                            <input type="text" id="emailCode" placeholder="6位验证码" maxlength="6" autocomplete="one-time-code">
+                            <button class="btn-send-code" id="btnSendEmailCode">发送验证码</button>
+                        </div>
+                    </div>
+                    <button class="btn-login" id="btnEmailLogin">📧 验证并登录</button>
+                    <div class="login-error" id="emailError"></div>
+                    <div class="login-success" id="emailSuccess"></div>
+                </div>
+                <!-- Password Panel -->
+                <div class="login-panel" id="panelPassword">
+                    <div class="form-group">
+                        <label>用户名</label>
+                        <input type="text" id="loginUsername" placeholder="请输入用户名" value="admin" autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label>密码</label>
+                        <input type="password" id="loginPassword" placeholder="请输入密码" value="admin" autocomplete="current-password">
+                    </div>
+                    <button class="btn-login" id="btnLogin">🔑 登 录</button>
+                    <div class="login-error" id="loginError"></div>
+                </div>
+            </div>
+            <div class="login-footer">
+                演示账号 · 用户名 <span id="loginHintUser">admin</span> · 密码 <span id="loginHintPass">admin</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== APP LAYOUT ====== -->
+    <div class="app-layout" id="appLayout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <button class="sidebar-toggle" id="sidebarToggle" title="折叠/展开">☰</button>
+                <span class="sidebar-logo">🎙️ SmartMeeting</span>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">主菜单</div>
+                    <div class="nav-item active" data-view="dashboard"><span class="nav-icon">📊</span><span class="nav-label">控制台总览</span></div>
+                    <div class="nav-item" data-view="recorder"><span class="nav-icon">🎤</span><span class="nav-label">录音转写</span></div>
+                    <div class="nav-item" data-view="templates"><span class="nav-icon">📋</span><span class="nav-label">会议模板</span></div>
+                    <div class="nav-item" data-view="history-search"><span class="nav-icon">🔍</span><span class="nav-label">全文检索</span><span class="nav-badge" id="historyBadge" style="display:none">0</span></div>
+                    <div class="nav-item" data-view="share"><span class="nav-icon">🔗</span><span class="nav-label">分享导出</span></div>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">系统</div>
+                    <div class="nav-item" data-view="settings"><span class="nav-icon">⚙️</span><span class="nav-label">系统配置</span></div>
+                </div>
+            </nav>
+            <div class="sidebar-user">
+                <div class="user-avatar" id="sidebarAvatar">A</div>
+                <div class="user-info">
+                    <div class="user-name" id="sidebarUsername">Admin</div>
+                    <div class="user-role">管理员</div>
+                </div>
+                <button class="btn-logout" id="btnLogout" title="退出登录">🚪</button>
+            </div>
+        </aside>
+
+        <div class="main-area" id="mainArea">
+            <!-- Dashboard -->
+            <div class="view-container active" id="viewDashboard">
+                <div class="view-title"><span class="view-title-icon">📊</span> 控制台总览</div>
+                <div class="stats-grid" id="dashboardStats"></div>
+                <div class="quick-actions" id="dashboardActions"></div>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card"><div class="dash-card-header">📈 本周记录趋势</div><div class="dash-card-body"><div class="bar-chart" id="weeklyChart"></div></div></div>
+                    <div class="dashboard-card"><div class="dash-card-header">🕐 最近活动</div><div class="dash-card-body"><div class="activity-list" id="recentActivity"></div></div></div>
+                </div>
+            </div>
+
+            <!-- Recorder = existing #app -->
+            <div class="view-container" id="viewRecorder">
+                <div id="app">
+<div class="header">
+    <div class="header-logo"><span class="icon">🎙️</span><span>会议录音助手</span></div>
+    <div class="lang-toggle" id="langToggle"><button data-lang="zh-CN" class="active">🇨🇳 中文</button><button data-lang="en-US">🇺🇸 English</button></div>
+    <div class="header-spacer"></div>
+    <div class="live-clock" id="liveClock"><span class="clock-date" id="clockDate">2026/06/27</span><span class="clock-divider"></span><span class="clock-time" id="clockTime">00:00<span class="seconds">:00</span></span><span style="font-size:10px;color:var(--text-muted);" id="clockWeekday" class="clock-weekday">周几</span></div>
+    <span style="width:8px;flex-shrink:0;"></span>
+    <div class="waveform-container" id="waveformContainer"><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div></div>
+    <div class="recording-dot" id="recordingDot" title="录音状态"></div>
+    <span class="recording-timer" id="recordingTimer">00:00</span>
+    <button class="btn btn-primary" id="btnStart" title="开始录音 (Ctrl+Shift+R)">🎤 开始录音</button>
+    <button class="btn btn-danger" id="btnStop" title="停止录音 (Ctrl+Shift+R)" disabled>⏹ 停止录音</button>
+    <button class="btn" id="btnClear" title="清空内容">🗑 清空</button>
+    <button class="theme-toggle" id="themeToggle" title="切换深色/浅色模式">🌙</button>
+</div>
+<div class="main-content" id="mainContent">
+    <div class="panel panel-left" id="panelLeft">
+        <div class="panel-left-inner">
+            <div class="panel-header" style="display:flex;flex-direction:column;align-items:stretch;gap:6px;padding-bottom:8px;">
+                <div class="meeting-title-row">
+                    <span class="icon" style="font-size:20px;">📝</span>
+                    <input class="meeting-title-input" id="meetingTitle" placeholder="输入会议标题…" maxlength="80" title="输入会议标题，方便归纳和检索">
+                    <div class="quick-date-btns"><button class="quick-date-btn preset-today" id="btnQuickToday" title="设为今天">今天</button><button class="quick-date-btn" id="btnQuickYesterday" title="设为昨天">昨天</button><button class="quick-date-btn" id="btnQuickNow" title="设为当前时间">🕐 此刻</button></div>
+                    <div style="flex:1;min-width:4px;"></div>
+                    <div class="meeting-datetime" id="meetingDatetimeGroup"><span class="meeting-dt-label" id="dtDateLabel" title="滚轮调节日期">📅</span><span class="meeting-date-display" id="meetingDateDisplay" title="点击选择日期 · 滚轮调节">2026/06/27</span><input type="date" class="meeting-date-input" id="meetingDate" title="点击选择或滚轮调节日期" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;"><span class="meeting-dt-label" id="dtTimeLabel" title="滚轮调节时间">🕐</span><input type="time" class="meeting-time-input" id="meetingTime" title="点击选择或滚轮调节时间"></div>
+                    <span class="meeting-duration-badge" id="meetingDuration" style="display:none;">⏱ <span id="meetingDurationText">--</span></span>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;"></div><div class="panel-header-actions">
+                    <button class="btn btn-sm btn-summary" id="btnSummary" title="AI 智能总结">🤖 总结</button>
+                    <button class="btn btn-sm btn-typo" id="btnTypo" title="修正错别字">✏️ 纠错<span class="typo-count" id="typoCount"></span></button>
+                    <button class="btn btn-sm bookmark-btn" id="btnBookmark" title="标记重点 (录音时可用)">🔖 标记<span class="bookmark-indicator" id="bookmarkIndicator"></span></button>
+                    <button class="btn btn-sm" id="btnCopy" title="复制整理结果">📋 复制</button>
+                    <div class="export-dropdown-wrapper" id="exportDropdownWrapper"><button class="btn btn-sm" id="btnExport" title="导出">📥 导出 ▾</button><div class="export-dropdown-menu" id="exportDropdownMenu"><button data-export="link"><span class="icon">🔗</span> 复制分享链接</button><button data-export="word"><span class="icon">📄</span> 导出 Word (.doc)</button><button data-export="txt"><span class="icon">📝</span> 导出 TXT</button><button data-export="md"><span class="icon">📑</span> 导出 Markdown</button></div></div>
+                    <div class="export-dropdown-backdrop" id="exportDropdownBackdrop"></div>
+                </div></div></div>
+            <div class="panel-body">
+                <div class="mic-status-bar" id="micStatusBar"><span class="mic-status-dot"></span><span id="micStatusText">点击"开始录音"获取麦克风权限</span><button class="mic-status-btn" id="btnMicSettings">🔔 设置</button></div>
+                <div class="organizing-shimmer" id="organizingShimmer"><span>🧠 正在整理中</span><span class="shimmer-dot"></span><span class="shimmer-dot"></span><span class="shimmer-dot"></span></div>
+                <div class="typo-fixes-bar" id="typoFixesBar"><span>✏️</span> <span id="typoFixesCount"></span> <span>处已修正</span><button class="btn-undo-all" id="btnUndoAllTypo">↩ 全部撤销</button></div>
+                <div class="summary-loading" id="summaryLoading"><span>🤖 正在生成总结</span><span class="s-dot"></span><span class="s-dot"></span><span class="s-dot"></span></div>
+                <div class="organized-content" id="organizedContent"><div class="placeholder"><span class="icon">📋</span>左侧显示智能整理后的内容<br><small>开始录音或粘贴文本到右侧 →</small></div></div>
+            </div>
+            <div class="translation-panel" id="translationPanel">
+                <div class="translation-panel-header" id="translationPanelHeader" title="点击展开/收起">
+                    <span class="icon">🌐</span> 实时翻译
+                    <span class="translation-badge" id="translationBadge" style="display:none;">翻译中</span>
+                    <select class="trans-lang-select" id="transSourceLang" title="源语言" style="margin-left:6px;"><option value="auto">🔍 自动检测</option><option value="zh-CN">🇨🇳 中文</option><option value="en-US">🇺🇸 English</option><option value="ja">🇯🇵 日本語</option><option value="ko">🇰🇷 한국어</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option><option value="es">🇪🇸 Español</option></select>
+                    <span style="font-size:10px;color:var(--text-muted);">→</span>
+                    <select class="trans-lang-select" id="transTargetLang" title="目标语言"><option value="zh-CN">🇨🇳 中文</option><option value="en-US">🇺🇸 English</option><option value="ja">🇯🇵 日本語</option><option value="ko">🇰🇷 한국어</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option><option value="es">🇪🇸 Español</option></select>
+                    <span style="flex:1;"></span>
+                    <button class="btn-annotation-toggle" id="btnAnnotationToggle" title="标注难词和复杂词汇" style="margin-right:6px;">🏷 难词标注</button>
+                    <span class="collapse-arrow">▼</span>
+                </div>
+                <div class="annotation-legend" id="annotationLegend"><span style="font-weight:600;">标注图例：</span><span><span class="legend-dot" style="background:#818CF8;"></span> 学术</span><span><span class="legend-dot" style="background:#34D399;"></span> 商业</span><span><span class="legend-dot" style="background:#F59E0B;"></span> 技术</span><span><span class="legend-dot" style="background:#F472B6;"></span> 习语</span><span><span class="legend-dot" style="background:#94A3B8;"></span> 通用</span></div>
+                <div class="translation-panel-body" id="translationPanelBody"><div class="translation-placeholder" id="translationPlaceholder">🇬🇧 英文录音时自动显示中文翻译<br><small>点击上方标题栏展开/收起</small></div><div class="translation-loading" id="translationLoading" style="display:none;"><span>🌐 翻译中</span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div><div class="translation-result" id="translationResult" style="display:none;"></div><div class="translation-error" id="translationError" style="display:none;"></div></div>
+            </div>
+            <div class="inspiration-panel" id="inspirationPanel">
+                <div class="inspiration-panel-header" id="inspirationPanelHeader" title="点击展开/收起"><span class="icon">💡</span> 灵感随记<span style="font-size:11px;color:var(--text-muted);margin-left:4px;">（随时记录想法）</span><span style="flex:1;"></span><span class="collapse-arrow">▼</span></div>
+                <div class="inspiration-panel-body" id="inspirationPanelBody"><textarea id="inspirationInput" placeholder="💭 记录灵光一闪的想法…按 Enter 保存"></textarea><div id="inspirationList"><div class="inspiration-empty">暂无随记，在上方输入框中记录灵感</div></div></div>
+            </div>
+        </div>
+    </div>
+    <div class="divider" id="divider"></div>
+    <div class="panel panel-right" id="panelRight">
+        <div class="panel-header"><span class="icon">📋</span> 原始记录<span style="font-size:11px;color:var(--text-muted);margin-left:4px;">（粘贴或录音）</span><span class="word-count-badge" id="wordCountBadge" style="margin-left:auto;">0 字</span><button class="btn btn-sm btn-photo" id="btnPhoto" title="插入照片（录音时可用）">📷 拍照<input type="file" id="photoFileInput" accept="image/*" capture="environment" multiple></button></div>
+        <div class="panel-body" style="position:relative;"><textarea class="raw-editor" id="rawEditor" placeholder="在这里粘贴录音转文字内容，或点击「开始录音」按钮直接录音..."></textarea><div class="recording-overlay" id="recordingOverlay"><span class="mini-dot"></span> 录音中...</div></div>
+    </div>
+</div>
+<div class="server-status" id="serverStatus" style="display:none;"><span class="status-indicator offline" id="statusIndicator"></span><span class="status-label" id="statusLabel">⚡ 服务器状态</span><span style="color:var(--text-muted);font-size:11px;">🏠 局域网</span><span class="public-url" id="lanUrlDisplay" title="点击复制局域网地址" style="color:var(--success);">--</span><span style="color:var(--text-muted);font-size:11px;margin-left:8px;">🌐 公网</span><span class="public-url" id="publicUrlDisplay" title="点击复制公网地址">--</span><button class="copy-url-btn" id="copyUrlBtn" style="display:none;">📋 复制</button><span style="color:var(--text-muted);font-size:10px;margin-left:auto;" id="statusUptime"></span></div>
+<div class="history-bar"><span class="history-label">📚 历史记录</span><div class="history-list" id="historyList"><span class="history-empty">暂无历史记录</span></div><button class="btn btn-sm" id="btnClearHistory" style="flex-shrink:0;">清空历史</button></div>
+</div>
+
+            </div>
+
+            <!-- Templates -->
+            <div class="view-container" id="viewTemplates">
+                <div class="view-title"><span class="view-title-icon">📋</span> 会议模板库</div>
+                <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;">选择行业模板快速开始记录 — 模板将自动填写会议标题和提示语</p>
+                <div class="template-grid" id="templateGrid"></div>
+            </div>
+
+            <!-- History Search -->
+            <div class="view-container" id="viewHistorySearch">
+                <div class="view-title"><span class="view-title-icon">🔍</span> 全文检索</div>
+                <div class="history-search-bar">
+                    <input type="text" id="historySearchInput" placeholder="输入关键词搜索全部会议记录...">
+                    <select id="historySearchFilter"><option value="all">全部语言</option><option value="zh-CN">中文</option><option value="en-US">英文</option></select>
+                </div>
+                <table class="search-results-table"><thead><tr><th>日期</th><th>标题</th><th>字数</th><th>语言</th><th>操作</th></tr></thead><tbody id="searchResultsBody"><tr><td colspan="5" class="sr-empty">🔍 在上方输入关键词开始搜索</td></tr></tbody></table>
+            </div>
+
+            <!-- Share -->
+            <div class="view-container" id="viewShare">
+                <div class="view-title"><span class="view-title-icon">🔗</span> 分享与导出</div>
+                <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;">一键生成分享链接、二维码或导出多种格式</p>
+                <div class="share-methods" id="shareMethods"></div>
+                <div class="dashboard-card"><div class="dash-card-header">📱 二维码分享</div><div class="dash-card-body"><div class="qr-display" id="qrDisplay"><p style="color:var(--text-muted);">先保存当前会议记录，然后点击分享方式生成链接</p></div></div></div>
+            </div>
+
+            <!-- Settings -->
+            <div class="view-container" id="viewSettings">
+                <div class="view-title"><span class="view-title-icon">⚙️</span> 系统配置</div>
+                <div class="settings-grid" id="settingsGrid"></div>
+                <button class="btn btn-primary" id="btnSaveSettings" style="margin-top:12px;">💾 保存配置</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Subtitles -->
+    <div class="floating-subtitles" id="floatingSubtitles">
+        <div class="subtitles-reset-hint">双击重置位置</div>
+        <div class="subtitles-drag-handle" id="subtitlesDragHandle"><span class="drag-handle-dot"></span><span class="drag-handle-dot"></span><span class="drag-handle-dot"></span></div>
+        <div class="subtitles-lang" id="subtitlesLang">🎤 聆听中</div>
+        <div class="subtitles-text" id="subtitlesText"></div>
+    </div>
+    <div class="photo-fullscreen-overlay" id="photoFullscreenOverlay"><span class="photo-close" id="photoClose">✕</span><img id="photoFullscreenImg" src="" alt="照片预览"></div>
+
+    <!-- ====== Microphone Permission Modal ====== -->
+    <div class="mic-perm-overlay" id="micPermOverlay">
+        <div class="mic-perm-sheet" id="micPermSheet">
+            <div class="perm-icon">🎤</div>
+            <h3 id="micPermTitle">需要麦克风权限</h3>
+            <p class="perm-desc" id="micPermDesc">录音转文字需要访问您的麦克风。请按以下步骤启用：</p>
+            <div class="mic-perm-step"><span class="step-num">1</span><span class="step-content">点击下方 <strong>"启用麦克风"</strong> 按钮</span></div>
+            <div class="mic-perm-step"><span class="step-num">2</span><span class="step-content">浏览器弹出权限对话框时，选择 <strong>"允许"</strong></span></div>
+            <div class="mic-perm-step"><span class="step-num">3</span><span class="step-content">如果之前拒绝了，请打开 <strong>手机设置 → Safari/Chrome → 麦克风 → 允许</strong></span></div>
+            <div class="perm-actions">
+                <button class="perm-btn-secondary" id="btnMicSkip">跳过</button>
+                <button class="perm-btn-primary" id="btnMicEnable">🎤 启用麦克风</button>
+            </div>
+        </div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    
+    
+<script>
+// ═════════════════════════════════════════════════════
+//  SmartMeeting Pro — Unified App Script
+//  Auth, Nav, Dashboard, Settings, Templates,
+//  Search, Share + Core Recorder + Locale-aware Dates
+// ═════════════════════════════════════════════════════
+'use strict';
+const $ = (s, p) => (p || document).querySelector(s);
+
+// ═══ LOCALE-AWARE DATE UTILS ═══
+const ZH_WD = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+const EN_WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const EN_MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+function _lang() { return (typeof currentLang !== 'undefined' ? currentLang : null) || 'zh-CN'; }
+function _isEN() { return _lang() === 'en-US'; }
+function _wd(d) { return (_isEN() ? EN_WD : ZH_WD)[d.getDay()]; }
+function _dd(d) { return String(d.getDate()).padStart(2, '0'); }
+function _mm(d) { return String(d.getMonth() + 1).padStart(2, '0'); }
+function fmtDateFull(d) {
+    const hh = String(d.getHours()).padStart(2, '0'), mm = String(d.getMinutes()).padStart(2, '0');
+    if (_isEN()) return EN_MON[d.getMonth()] + ' ' + _dd(d) + ', ' + d.getFullYear() + ' ' + _wd(d) + ' ' + hh + ':' + mm;
+    return d.getFullYear() + '年' + _mm(d) + '月' + _dd(d) + '日 ' + _wd(d) + ' ' + hh + ':' + mm;
+}
+function fmtDateLabel(d) {
+    const now = new Date(), yest = new Date(now); yest.setDate(yest.getDate() - 1);
+    const dS = d.toISOString().slice(0, 10), nS = now.toISOString().slice(0, 10), yS = yest.toISOString().slice(0, 10);
+    if (dS === nS) return _isEN() ? '📌 Today' : '📌 今天';
+    if (dS === yS) return _isEN() ? '📌 Yesterday' : '📌 昨天';
+    return _isEN() ? EN_MON[d.getMonth()] + ' ' + _dd(d) + ' ' + _wd(d) : _mm(d) + '月' + _dd(d) + '日 ' + _wd(d);
+}
+function fmtDateCompact(d) {
+    if (_isEN()) return EN_MON[d.getMonth()].slice(0, 3) + ' ' + _dd(d) + ', ' + d.getFullYear();
+    return d.getFullYear() + '/' + _mm(d) + '/' + _dd(d);
+}
+function updateLiveClock() {
+    const cd = document.getElementById('clockDate'); if (!cd) return;
+    const now = new Date();
+    cd.textContent = fmtDateCompact(now);
+    const ct = document.getElementById('clockTime'); if (ct) { const hh = String(now.getHours()).padStart(2, '0'), mm = String(now.getMinutes()).padStart(2, '0'), ss = String(now.getSeconds()).padStart(2, '0'); ct.innerHTML = hh + ':' + mm + '<span class=\"seconds\">:' + ss + '</span>'; }
+    const wd = document.getElementById('clockWeekday'); if (wd) wd.textContent = _wd(now);
+}
+
+// ═══ TOAST ═══
+let _ttmr;
+function showToast(msg, dur = 2000) {
+    const t = $('#toast'); if (!t) return; clearTimeout(_ttmr); t.textContent = msg; t.classList.add('show'); _ttmr = setTimeout(() => t.classList.remove('show'), dur);
+}
+
+// ═══ MULTI-TAB AUTH ═══
+let currentUser = null, currentLoginTab = 'phone';
+let phoneTimer = null, phoneTimerSec = 0;
+let emailTimer = null, emailTimerSec = 0;
+const VALID_USERS = { admin: { pass: 'admin', role: '管理员', phone: '13800000000', email: 'admin@smartmeet.com' },
+    user: { pass: '123456', role: '用户', phone: '13900000001', email: 'user@smartmeet.com' } };
+
+// ── Login Tab Switching ──
+document.querySelectorAll('.login-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.login-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        currentLoginTab = tab.dataset.tab;
+        $('#panel' + currentLoginTab.charAt(0).toUpperCase() + currentLoginTab.slice(1)).classList.add('active');
+    });
+});
+
+// ── SMS Timer ──
+function startPhoneTimer() { phoneTimerSec = 60; updatePhoneBtn(); phoneTimer = setInterval(() => { phoneTimerSec--; if (phoneTimerSec <= 0) { clearInterval(phoneTimer); updatePhoneBtn(); } else updatePhoneBtn(); }, 1000); }
+function updatePhoneBtn() { const b = $('#btnSendPhoneCode'); if (!b) return; if (phoneTimerSec > 0) { b.disabled = true; b.textContent = phoneTimerSec + 's后重发'; } else { b.disabled = false; b.textContent = '获取验证码'; } }
+function startEmailTimer() { emailTimerSec = 60; updateEmailBtn(); emailTimer = setInterval(() => { emailTimerSec--; if (emailTimerSec <= 0) { clearInterval(emailTimer); updateEmailBtn(); } else updateEmailBtn(); }, 1000); }
+function updateEmailBtn() { const b = $('#btnSendEmailCode'); if (!b) return; if (emailTimerSec > 0) { b.disabled = true; b.textContent = emailTimerSec + 's后重发'; } else { b.disabled = false; b.textContent = '发送验证码'; } }
+
+// ── Phone Code Generator (demo: "123456", real app uses SMS API) ──
+function generateCode() { return '123456'; }
+let currentPhoneCode = '', currentEmailCode = '';
+
+// ── Send Phone Code ──
+$('#btnSendPhoneCode').addEventListener('click', () => {
+    const phone = $('#phoneNumber').value.trim();
+    if (phone.length < 11 || !/^\d{11}$/.test(phone)) { $('#phoneError').textContent = '请输入11位有效手机号'; $('#phoneError').classList.add('show'); return; }
+    $('#phoneError').classList.remove('show');
+    currentPhoneCode = generateCode();
+    // In production: call SMS API here
+    console.log('📱 手机验证码:', currentPhoneCode, '→', phone);
+    $('#phoneSuccess').textContent = '验证码已发送至 ' + phone + '（演示码: ' + currentPhoneCode + '）';
+    $('#phoneSuccess').classList.add('show');
+    startPhoneTimer();
+});
+
+// ── Send Email Code ──
+$('#btnSendEmailCode').addEventListener('click', () => {
+    const email = $('#emailAddress').value.trim();
+    if (!email.includes('@') || !email.includes('.')) { $('#emailError').textContent = '请输入有效的邮箱地址'; $('#emailError').classList.add('show'); return; }
+    $('#emailError').classList.remove('show');
+    currentEmailCode = generateCode();
+    console.log('📧 邮箱验证码:', currentEmailCode, '→', email);
+    $('#emailSuccess').textContent = '验证码已发送至 ' + email + '（演示码: ' + currentEmailCode + '）';
+    $('#emailSuccess').classList.add('show');
+    startEmailTimer();
+});
+
+// ── Phone Login ──
+$('#btnPhoneLogin').addEventListener('click', () => {
+    const phone = $('#phoneNumber').value.trim();
+    const code = $('#phoneCode').value.trim();
+    if (!phone || phone.length < 11) { $('#phoneError').textContent = '请输入手机号码'; $('#phoneError').classList.add('show'); return; }
+    if (!code) { $('#phoneError').textContent = '请输入验证码'; $('#phoneError').classList.add('show'); return; }
+    if (code !== currentPhoneCode && code !== '123456') { $('#phoneError').textContent = '验证码错误'; $('#phoneError').classList.add('show'); return; }
+    $('#phoneError').classList.remove('show');
+    // Find user by phone or create guest
+    let uname = null;
+    for (const [k, v] of Object.entries(VALID_USERS)) { if (v.phone === phone) { uname = k; break; } }
+    if (!uname) uname = 'phone_' + phone.slice(-4);
+    doLoginSuccess(uname);
+});
+
+// ── Email Login ──
+$('#btnEmailLogin').addEventListener('click', () => {
+    const email = $('#emailAddress').value.trim();
+    const code = $('#emailCode').value.trim();
+    if (!email || !email.includes('@')) { $('#emailError').textContent = '请输入有效邮箱'; $('#emailError').classList.add('show'); return; }
+    if (!code) { $('#emailError').textContent = '请输入验证码'; $('#emailError').classList.add('show'); return; }
+    if (code !== currentEmailCode && code !== '123456') { $('#emailError').textContent = '验证码错误'; $('#emailError').classList.add('show'); return; }
+    $('#emailError').classList.remove('show');
+    let uname = null;
+    for (const [k, v] of Object.entries(VALID_USERS)) { if (v.email === email) { uname = k; break; } }
+    if (!uname) uname = email.split('@')[0];
+    doLoginSuccess(uname);
+});
+
+// ── Password Login (existing) ──
+function doLogin() {
+    const un = $('#loginUsername').value.trim(), pw = $('#loginPassword').value;
+    const u = VALID_USERS[un];
+    if (u && u.pass === pw) { $('#loginError').classList.remove('show'); doLoginSuccess(un); }
+    else { $('#loginError').textContent = '用户名或密码错误'; $('#loginError').classList.add('show'); }
+}
+
+// ── Unified Login Success ──
+function doLoginSuccess(uname) {
+    const role = VALID_USERS[uname] ? VALID_USERS[uname].role : '访客';
+    currentUser = { username: uname, role: role, loginAt: new Date().toISOString(), method: currentLoginTab };
+    localStorage.setItem('sm_user', JSON.stringify(currentUser));
+    $('#loginOverlay').classList.add('hidden');
+    applyUser();
+    showToast(_isEN() ? '✅ Welcome, ' + uname + '!' : '✅ 欢迎回来, ' + uname + '!');
+    refreshDashboard();
+}
+
+// ── Auth check (unified) ──
+function checkAuth() {
+    const u = localStorage.getItem('sm_user');
+    if (u) { try { currentUser = JSON.parse(u); } catch (_) { currentUser = null; } }
+    if (currentUser) { $('#loginOverlay').classList.add('hidden'); applyUser(); return true; }
+    $('#loginOverlay').classList.remove('hidden'); return false;
+}
+function doLogout() { localStorage.removeItem('sm_user'); currentUser = null; $('#loginOverlay').classList.remove('hidden'); clearInterval(phoneTimer); clearInterval(emailTimer); }
+function applyUser() { if (!currentUser) return; $('#sidebarUsername').textContent = currentUser.username; $('#sidebarAvatar').textContent = (currentUser.username || 'A')[0].toUpperCase(); }
+
+// ═══ NAVIGATION ═══
+let currentView = 'dashboard';
+function switchView(vn) {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
+    const nav = document.querySelector('.nav-item[data-view=\"' + vn + '\"]'); if (nav) nav.classList.add('active');
+    const vwId = 'view' + vn.charAt(0).toUpperCase() + vn.slice(1).replace(/-./g, x => x[1].toUpperCase());
+    const vw = $('#' + vwId); if (vw) vw.classList.add('active');
+    currentView = vn;
+    if (vn === 'dashboard') refreshDashboard(); if (vn === 'templates') renderTemplates();
+    if (vn === 'settings') renderSettings(); if (vn === 'share') renderShare();
+    if (vn === 'history-search') renderHistorySearch(); if (vn === 'recorder') { if (typeof triggerOrganize === 'function') setTimeout(triggerOrganize, 200); }
+    localStorage.setItem('sm_last_view', vn);
+}
+document.querySelectorAll('.nav-item[data-view]').forEach(n => { n.addEventListener('click', () => switchView(n.dataset.view)); });
+$('#sidebarToggle').addEventListener('click', () => { $('#sidebar').classList.toggle('collapsed'); localStorage.setItem('sm_sidebar_collapsed', $('#sidebar').classList.contains('collapsed')); });
+$('#btnLogin').addEventListener('click', doLogin); $('#btnLogout').addEventListener('click', doLogout);
+$('#loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+$('#loginUsername').addEventListener('keydown', e => { if (e.key === 'Enter') $('#loginPassword').focus(); });
+$('#loginHintUser').addEventListener('click', () => { $('#loginUsername').value = 'admin'; $('#loginPassword').value = 'admin'; });
+$('#loginHintPass').addEventListener('click', () => { $('#loginUsername').value = 'admin'; $('#loginPassword').value = 'admin'; });
+
+// ═══ DASHBOARD ═══
+function refreshDashboard() {
+    const hist = typeof loadHistory === 'function' ? loadHistory() : [];
+    const total = hist.length, words = hist.reduce((s, e) => s + (e.wordCount || 0), 0), bms = hist.reduce((s, e) => s + ((e.bookmarks || []).length), 0);
+    const now = new Date(), sow = new Date(now); sow.setDate(sow.getDate() - sow.getDay()); sow.setHours(0, 0, 0, 0);
+    const thisWeek = hist.filter(e => new Date(e.date) >= sow).length;
+    $('#dashboardStats').innerHTML = [
+        { icon: '📝', cls: 'blue', val: total, label: _isEN() ? 'Meetings' : '会议记录', chg: '+' + thisWeek + (_isEN() ? ' this week' : ' 本周'), up: true },
+        { icon: '📊', cls: 'green', val: (words / 1000).toFixed(1) + 'K', label: _isEN() ? 'Total Words' : '总字数', chg: _isEN() ? 'Growing' : '持续积累', up: true },
+        { icon: '🔖', cls: 'amber', val: bms, label: _isEN() ? 'Bookmarks' : '重点标记', chg: _isEN() ? 'Total' : '累计', up: true },
+        { icon: '🌐', cls: 'purple', val: hist.filter(e => e.lang === 'en-US').length, label: _isEN() ? 'EN Meetings' : '英文会议', chg: _isEN() ? 'Global' : '国际化', up: true }
+    ].map(s => '<div class=\"stat-card\"><div class=\"stat-icon ' + s.cls + '\">' + s.icon + '</div><div class=\"stat-info\"><div class=\"stat-value\">' + s.val + '</div><div class=\"stat-label\">' + s.label + '</div><div class=\"stat-change ' + (s.up ? 'positive' : 'negative') + '\">' + s.chg + '</div></div></div>').join('');
+    $('#dashboardActions').innerHTML = [
+        { icon: '🎤', label: _isEN() ? 'Record' : '开始录音', view: 'recorder' },
+        { icon: '📋', label: _isEN() ? 'Templates' : '使用模板', view: 'templates' },
+        { icon: '🔍', label: _isEN() ? 'Search' : '搜索记录', view: 'history-search' },
+        { icon: '🔗', label: _isEN() ? 'Share' : '分享导出', view: 'share' }
+    ].map(a => '<button class=\"quick-action-btn\" data-nav=\"' + a.view + '\">' + a.icon + ' ' + a.label + '</button>').join('');
+    $('#dashboardActions').querySelectorAll('.quick-action-btn').forEach(b => { b.addEventListener('click', () => switchView(b.dataset.nav)); });
+    const counts = new Array(7).fill(0);
+    for (const e of hist) { const d = new Date(e.date); if (d >= sow) counts[d.getDay()]++; }
+    const maxC = Math.max(1, ...counts);
+    const wdays = _isEN() ? ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'] : ZH_WD.map(w => w[1]);
+    let ch = '';
+    for (let i = 0; i < 7; i++) { const h = Math.max(8, (counts[i] / maxC) * 120); const td = now.getDay() === i; ch += '<div class=\"bar-col\"><div class=\"bar\" style=\"height:' + h + 'px;' + (td ? 'background:var(--danger);' : '') + '\"><span class=\"bar-tooltip\">' + counts[i] + '</span></div><span class=\"bar-label\"' + (td ? ' style=\"color:var(--danger);font-weight:700\"' : '') + '>' + wdays[i] + '</span></div>'; }
+    $('#weeklyChart').innerHTML = ch;
+    const recent = hist.slice(0, 10);
+    if (recent.length === 0) { $('#recentActivity').innerHTML = '<div style=\"text-align:center;color:var(--text-muted);padding:20px;\">' + (_isEN() ? 'No recent activity' : '暂无活动记录') + '</div>'; }
+    else { $('#recentActivity').innerHTML = recent.map(e => { const d = new Date(e.date), time = d.toLocaleTimeString(_lang(), { hour: '2-digit', minute: '2-digit' }), date = fmtDateLabel(d); return '<div class=\"activity-item\" data-hid=\"' + e.id + '\"><span class=\"act-dot record\"></span><span class=\"act-text\">' + (e.title || 'Untitled').slice(0, 40) + '</span><span class=\"act-time\">' + date + ' ' + time + '</span></div>'; }).join(''); }
+    $('#recentActivity').querySelectorAll('.activity-item').forEach(item => { item.addEventListener('click', () => { if (typeof loadHistoryEntry === 'function') loadHistoryEntry(item.dataset.hid); switchView('recorder'); }); });
+}
+
+// ═══ TEMPLATES ═══
+const MT = [
+    { icon: '💼', name: _isEN() ? 'Weekly Sync' : '项目周会', desc: _isEN() ? 'Progress, risks, next steps' : '项目进度汇报、风险识别、下一步计划', tags: [_isEN() ? 'PM' : '项目管理'], badge: _isEN() ? 'Hot' : '热门', title: _isEN() ? 'Weekly Sync' : '项目周会' },
+    { icon: '🧠', name: _isEN() ? 'Brainstorm' : '头脑风暴', desc: _isEN() ? 'Ideas, creativity, inspiration' : '创意发散、思维碰撞、点子收集', tags: [_isEN() ? 'Creative' : '创意'], badge: '', title: _isEN() ? 'Brainstorm Session' : '头脑风暴会议' },
+    { icon: '📈', name: _isEN() ? 'QBR Review' : '季度复盘', desc: _isEN() ? 'Performance review, lessons learned' : '业绩回顾、经验总结、改进措施', tags: [_isEN() ? 'Mgmt' : '管理'], badge: _isEN() ? 'Rec' : '推荐', title: _isEN() ? 'Quarterly Review' : '季度复盘会' },
+    { icon: '🎓', name: _isEN() ? 'Lecture' : '学术讲座', desc: _isEN() ? 'Academic reports, research' : '学术报告、论文研讨', tags: [_isEN() ? 'Academic' : '学术'], badge: '', title: _isEN() ? 'Lecture Notes' : '学术讲座记录' },
+    { icon: '🤝', name: _isEN() ? 'Client Meet' : '客户会议', desc: _isEN() ? 'Requirements, demos, negotiation' : '需求沟通、方案演示', tags: [_isEN() ? 'Sales' : '商务'], badge: '', title: _isEN() ? 'Client Meeting' : '客户沟通会议' },
+    { icon: '⚖️', name: _isEN() ? 'Legal' : '法律咨询', desc: _isEN() ? 'Legal review, compliance' : '法务沟通、合规讨论', tags: [_isEN() ? 'Legal' : '法律'], badge: '', title: _isEN() ? 'Legal Consultation' : '法律咨询记录' },
+    { icon: '🏥', name: _isEN() ? 'Medical' : '医疗会诊', desc: _isEN() ? 'Case discussion, treatment plan' : '病例讨论、诊疗方案', tags: [_isEN() ? 'Clinical' : '医疗'], badge: '', title: _isEN() ? 'Medical Consultation' : '医疗会诊记录' },
+    { icon: '🏗️', name: _isEN() ? 'Engineering' : '工程评审', desc: _isEN() ? 'Design review, tech decisions' : '方案评审、技术选型', tags: [_isEN() ? 'Eng' : '工程'], badge: '', title: _isEN() ? 'Engineering Review' : '工程技术评审' }
+];
+function renderTemplates() {
+    $('#templateGrid').innerHTML = MT.map(t => '<div class=\"template-card\" data-tmpl=\"' + t.name + '\">' + (t.badge ? '<span class=\"tmpl-badge\">' + t.badge + '</span>' : '') + '<div class=\"tmpl-icon\">' + t.icon + '</div><div class=\"tmpl-name\">' + t.name + '</div><div class=\"tmpl-desc\">' + t.desc + '</div><div class=\"tmpl-tags\">' + t.tags.map(g => '<span class=\"tmpl-tag\">' + g + '</span>').join('') + '</div></div>').join('');
+    $('#templateGrid').querySelectorAll('.template-card').forEach(card => { card.addEventListener('click', () => { const t = MT.find(t => t.name === card.dataset.tmpl); if (!t || typeof dom === 'undefined' || !dom.meetingTitle || !dom.rawEditor) return; dom.meetingTitle.value = t.title; if (typeof meetingTitle !== 'undefined') { meetingTitle = t.title; try { localStorage.setItem('meeting_recorder_meeting_title', meetingTitle); } catch (_) { } } dom.rawEditor.value = ''; dom.organizedContent.innerHTML = '<div class=\"placeholder\"><span class=\"icon\">📋</span>' + (_isEN() ? 'Template loaded: ' : '已加载模板: ') + t.name + '<br><small>' + (_isEN() ? 'Start recording or paste text...' : '开始录音或输入内容…') + '</small></div>'; switchView('recorder'); showToast((_isEN() ? '📋 Applied: ' : '📋 已应用: ') + t.name); }); });
+}
+
+// ═══ HISTORY SEARCH ═══
+function renderHistorySearch() {
+    const q = ($('#historySearchInput').value || '').toLowerCase(), filter = $('#historySearchFilter').value;
+    const hist = typeof loadHistory === 'function' ? loadHistory() : [];
+    let results = hist; if (filter !== 'all') results = results.filter(e => e.lang === filter);
+    if (q) results = results.filter(e => (e.title || '').toLowerCase().includes(q) || (e.rawText || '').toLowerCase().includes(q));
+    if (results.length === 0) { $('#searchResultsBody').innerHTML = '<tr><td colspan=\"5\" class=\"sr-empty\">' + (q ? (_isEN() ? '🔍 No results for \"' : '🔍 未找到 \"') + q + '\"' : (_isEN() ? '🔍 Type a keyword to search' : '🔍 输入关键词搜索')) + '</td></tr>'; }
+    else { $('#searchResultsBody').innerHTML = results.map(e => { const d = new Date(e.date), ds = fmtDateCompact(d); let t = (e.title || 'Untitled').slice(0, 40), th = t; if (q) { const idx = t.toLowerCase().indexOf(q); if (idx >= 0) th = t.slice(0, idx) + '<span class=\"sr-title\">' + t.slice(idx, idx + q.length) + '</span>' + t.slice(idx + q.length); } return '<tr data-hid=\"' + e.id + '\"><td>' + ds + '</td><td>' + th + '</td><td>' + (e.wordCount || 0) + 'w</td><td>' + (e.lang === 'en-US' ? '🇺🇸 EN' : '🇨🇳 CN') + '</td><td><button class=\"btn btn-xs\" data-load=\"' + e.id + '\">' + (_isEN() ? 'Load' : '📖 加载') + '</button></td></tr>'; }).join(''); }
+    $('#searchResultsBody').querySelectorAll('tr[data-hid]').forEach(row => { row.addEventListener('click', () => { if (typeof loadHistoryEntry === 'function') loadHistoryEntry(row.dataset.hid); switchView('recorder'); }); });
+    $('#searchResultsBody').querySelectorAll('button[data-load]').forEach(btn => { btn.addEventListener('click', e => { e.stopPropagation(); if (typeof loadHistoryEntry === 'function') loadHistoryEntry(btn.dataset.load); switchView('recorder'); }); });
+    const hlen = hist.length; $('#historyBadge').textContent = hlen; $('#historyBadge').style.display = hlen > 0 ? 'inline' : 'none';
+}
+$('#historySearchInput').addEventListener('input', renderHistorySearch);
+$('#historySearchFilter').addEventListener('change', renderHistorySearch);
+
+// ═══ SHARE ═══
+function renderShare() {
+    $('#shareMethods').innerHTML = [
+        { icon: '📋', name: _isEN() ? 'Copy Link' : '复制链接', hint: _isEN() ? 'Copy public URL' : '复制公网分享链接', action: 'link' },
+        { icon: '📱', name: _isEN() ? 'QR Code' : '二维码', hint: _isEN() ? 'Generate QR' : '生成可扫描二维码', action: 'qrcode' },
+        { icon: '📄', name: _isEN() ? 'Word (.doc)' : '导出 Word', hint: '.doc', action: 'word' },
+        { icon: '📝', name: _isEN() ? 'TXT' : '导出 TXT', hint: _isEN() ? 'Plain text' : '纯文本', action: 'txt' },
+        { icon: '📑', name: _isEN() ? 'Markdown' : '导出 MD', hint: '.md', action: 'md' },
+        { icon: '📧', name: _isEN() ? 'Email' : '邮件发送', hint: _isEN() ? 'Copy to clipboard' : '复制到剪贴板', action: 'email' }
+    ].map(s => '<button class=\"share-card\" data-action=\"' + s.action + '\"><span class=\"share-icon\">' + s.icon + '</span><span class=\"share-name\">' + s.name + '</span><span class=\"share-hint\">' + s.hint + '</span></button>').join('');
+    $('#shareMethods').querySelectorAll('.share-card').forEach(card => { card.addEventListener('click', async () => { const a = card.dataset.action, res = typeof getCurrentOrganizedResult === 'function' ? getCurrentOrganizedResult() : null; if (a === 'qrcode') { let url = window.location.href; try { const r = await fetch('/api/status'); url = (await r.json()).publicUrl || url; } catch (_) { } $('#qrDisplay').innerHTML = '<img src=\"https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(url) + '\" alt=\"QR\"><div class=\"qr-url\">' + url + '</div>'; showToast(_isEN() ? '📱 QR generated' : '📱 二维码已生成'); } else if (a === 'link') { let url = window.location.href; try { const r = await fetch('/api/status'); url = (await r.json()).publicUrl || url; } catch (_) { } navigator.clipboard.writeText(url).then(() => showToast(_isEN() ? '✅ Link copied!' : '✅ 链接已复制')).catch(() => showToast(_isEN() ? 'Copy failed' : '复制失败')); } else if (a === 'word' && res && typeof exportWord === 'function') exportWord(); else if (a === 'txt' && res && typeof exportTXT === 'function') exportTXT(); else if (a === 'md' && res && typeof exportMarkdown === 'function') exportMarkdown(); else if (a === 'email') { const txt = res && typeof generatePlainText === 'function' ? generatePlainText(res) : ''; navigator.clipboard.writeText(txt).then(() => showToast(_isEN() ? '✅ Copied to clipboard' : '✅ 已复制到剪贴板')).catch(() => showToast(_isEN() ? 'Copy failed' : '复制失败')); } else showToast(_isEN() ? '⚠️ Save content first' : '⚠️ 请先保存会议内容'); }); });
+}
+
+// ═══ SETTINGS ═══
+const DEFAULT_S = { autoSave: true, autoSaveInterval: 30, voiceLang: 'zh-CN', voiceContinuous: true, translationEnabled: true, translationSource: 'auto', translationTarget: 'zh-CN', annotationEnabled: false, summaryEnabled: true, typoEnabled: false, subtitleEnabled: true, darkMode: 'auto' };
+function loadSettings() { try { return { ...DEFAULT_S, ...JSON.parse(localStorage.getItem('sm_settings') || '{}') }; } catch (_) { return { ...DEFAULT_S }; } }
+function saveSettings(s) { try { localStorage.setItem('sm_settings', JSON.stringify(s)); } catch (_) { } }
+function renderSettings() {
+    const s = loadSettings();
+    $('#settingsGrid').innerHTML = [
+        { title: '🎤 ' + (_isEN() ? 'Voice' : '语音识别'), rows: [{ label: _isEN() ? 'Default Language' : '默认语言', desc: _isEN() ? 'Recognition language' : '录音识别语言', type: 'select', key: 'voiceLang', val: s.voiceLang, opts: [{ v: 'zh-CN', l: '中文' }, { v: 'en-US', l: 'English' }] }, { label: _isEN() ? 'Continuous' : '连续识别', desc: _isEN() ? 'Keep listening until stopped' : '持续监听直到手动停止', type: 'toggle', key: 'voiceContinuous', val: s.voiceContinuous }, { label: _isEN() ? 'Subtitles' : '浮动字幕', desc: _isEN() ? 'Show live captions' : '屏幕实时字幕', type: 'toggle', key: 'subtitleEnabled', val: s.subtitleEnabled }] },
+        { title: '🌐 ' + (_isEN() ? 'Translation' : '翻译'), rows: [{ label: _isEN() ? 'Enable' : '启用翻译', desc: _isEN() ? 'Auto-translate' : '自动翻译', type: 'toggle', key: 'translationEnabled', val: s.translationEnabled }, { label: _isEN() ? 'Word Annotation' : '难词标注', desc: _isEN() ? 'Highlight difficult words' : '高亮复杂词汇', type: 'toggle', key: 'annotationEnabled', val: s.annotationEnabled }] },
+        { title: '🧠 AI', rows: [{ label: _isEN() ? 'Summary' : '智能总结', desc: _isEN() ? 'Auto-summarize' : '自动提取摘要', type: 'toggle', key: 'summaryEnabled', val: s.summaryEnabled }, { label: _isEN() ? 'Spell Check' : '错别字检测', desc: _isEN() ? 'Detect typos' : '标出疑似错别字', type: 'toggle', key: 'typoEnabled', val: s.typoEnabled }] },
+        { title: '💾 ' + (_isEN() ? 'Storage' : '存储'), rows: [{ label: _isEN() ? 'Auto Save' : '自动保存', desc: _isEN() ? 'Save on stop' : '停止时保存', type: 'toggle', key: 'autoSave', val: s.autoSave }] },
+        { title: '🎨 ' + (_isEN() ? 'Appearance' : '外观'), rows: [{ label: _isEN() ? 'Theme' : '深色模式', desc: _isEN() ? 'Choose theme' : '界面颜色主题', type: 'select', key: 'darkMode', val: s.darkMode, opts: [{ v: 'auto', l: _isEN() ? 'Auto' : '跟随系统' }, { v: 'light', l: _isEN() ? 'Light' : '浅色' }, { v: 'dark', l: _isEN() ? 'Dark' : '深色' }] }] }
+    ].map(sec => '<div class=\"settings-card\"><div class=\"set-card-header\">' + sec.title + '</div><div class=\"set-card-body\">' + sec.rows.map(row => { let ctrl; if (row.type === 'toggle') ctrl = '<label class=\"toggle-switch\"><input type=\"checkbox\" data-setting=\"' + row.key + '\"' + (row.val ? ' checked' : '') + '><span class=\"slider\"></span></label>'; else ctrl = '<select data-setting=\"' + row.key + '\">' + (row.opts || []).map(o => '<option value=\"' + o.v + '\"' + (row.val == o.v ? ' selected' : '') + '>' + o.l + '</option>').join('') + '</select>'; return '<div class=\"setting-row\"><div><div class=\"set-label\">' + row.label + '</div><div class=\"set-desc\">' + row.desc + '</div></div>' + ctrl + '</div>'; }).join('') + '</div></div>').join('');
+}
+$('#btnSaveSettings').addEventListener('click', () => {
+    const s = {}; document.querySelectorAll('[data-setting]').forEach(el => { const k = el.dataset.setting; if (el.type === 'checkbox') s[k] = el.checked; else s[k] = el.value; }); saveSettings(s); applySettings(s); showToast(_isEN() ? '✅ Settings saved' : '✅ 配置已保存');
+});
+function applySettings(s) {
+    if (typeof translationEnabled !== 'undefined') translationEnabled = s.translationEnabled; if (typeof annotationEnabled !== 'undefined') annotationEnabled = s.annotationEnabled;
+    if (typeof summaryEnabled !== 'undefined') summaryEnabled = s.summaryEnabled; if (typeof typoEnabled !== 'undefined') typoEnabled = s.typoEnabled;
+    if (typeof transSourceLang !== 'undefined' && s.translationSource) transSourceLang = s.translationSource;
+    if (typeof transTargetLang !== 'undefined' && s.translationTarget) transTargetLang = s.translationTarget;
+    if (s.darkMode === 'dark') applyTheme(true); else if (s.darkMode === 'light') applyTheme(false); else { applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches); }
+}
+
+// ═══ CORE RECORDER ENGINE ═══
+window.currentLang = 'zh-CN';
+let isRecording = false, recognition = null, recordingSeconds = 0, timerId = null, interimTranscript = '', pendingFinal = '', rafPending = false, isDarkMode = false;
+let bookmarks = [], inspirations = [], photos = [], typoFixes = [];
+let meetingTitle = '', meetingDateTime = new Date();
+let translationEnabled = true, annotationEnabled = false, summaryEnabled = true, typoEnabled = false;
+let transSourceLang = 'auto', transTargetLang = 'zh-CN';
+
+// ── Meeting Date Picker Helpers ──
+function syncDateInputs() {
+    const dt = meetingDateTime || new Date();
+    const yyyy = dt.getFullYear();
+    const mm = String(dt.getMonth() + 1).padStart(2, '0');
+    const dd = String(dt.getDate()).padStart(2, '0');
+    const hh = String(dt.getHours()).padStart(2, '0');
+    const min = String(dt.getMinutes()).padStart(2, '0');
+    const md = document.getElementById('meetingDate');
+    const mt = document.getElementById('meetingTime');
+    const ddEl = document.getElementById('meetingDateDisplay');
+    if (md) md.value = yyyy + '-' + mm + '-' + dd;
+    if (mt) mt.value = hh + ':' + min;
+    if (ddEl) ddEl.textContent = yyyy + '/' + mm + '/' + dd;
+}
+function persistDt() {
+    try {
+        localStorage.setItem('meeting_recorder_meeting_dt', JSON.stringify({
+            date: new Date(meetingDateTime).toISOString().slice(0, 10),
+            time: String(meetingDateTime.getHours()).padStart(2, '0') + ':' + String(meetingDateTime.getMinutes()).padStart(2, '0')
+        }));
+    } catch (_) { }
+}
+function shiftDateTime(days, hours, minutes) {
+    const dt = meetingDateTime || new Date();
+    dt.setDate(dt.getDate() + days);
+    dt.setHours(dt.getHours() + hours);
+    dt.setMinutes(dt.getMinutes() + minutes);
+    meetingDateTime = dt;
+    syncDateInputs();
+    persistDt();
+}
+function initMeetingDateTime() {
+    try {
+        const saved = JSON.parse(localStorage.getItem('meeting_recorder_meeting_dt') || '{}');
+        if (saved.date) meetingDateTime = new Date(saved.date + 'T' + (saved.time || '09:00'));
+    } catch (_) { }
+    syncDateInputs();
+}
+
+// ── Wire Date Picker After DOM Ready ──
+document.addEventListener('DOMContentLoaded', () => { setTimeout(() => {
+    initMeetingDateTime();
+
+    // Display span click → open native picker
+    const ddEl = document.getElementById('meetingDateDisplay');
+    const md = document.getElementById('meetingDate');
+    if (ddEl && md) {
+        ddEl.addEventListener('click', () => md.showPicker ? md.showPicker() : md.click());
+        // Wheel on display
+        ddEl.addEventListener('wheel', e => {
+            e.preventDefault();
+            shiftDateTime(e.deltaY > 0 ? -1 : 1, 0, 0);
+            ddEl.classList.add('scroll-active');
+            clearTimeout(ddEl._st); ddEl._st = setTimeout(() => ddEl.classList.remove('scroll-active'), 400);
+        }, { passive: false });
+    }
+    // Native date change
+    if (md) md.addEventListener('change', () => {
+        meetingDateTime = new Date(md.value + 'T' + (document.getElementById('meetingTime')?.value || '09:00'));
+        syncDateInputs(); persistDt();
+    });
+
+    // Time input
+    const mt = document.getElementById('meetingTime');
+    if (mt) {
+        mt.addEventListener('change', () => {
+            meetingDateTime = new Date((document.getElementById('meetingDate')?.value || new Date().toISOString().slice(0, 10)) + 'T' + mt.value);
+            persistDt();
+        });
+        mt.addEventListener('wheel', e => {
+            e.preventDefault();
+            shiftDateTime(0, 0, e.deltaY > 0 ? -5 : 5);
+            mt.classList.add('scroll-active');
+            clearTimeout(mt._st); mt._st = setTimeout(() => mt.classList.remove('scroll-active'), 400);
+        }, { passive: false });
+    }
+
+    // Quick date buttons
+    ['btnQuickToday', 'btnQuickYesterday', 'btnQuickNow'].forEach(id => {
+        const btn = document.getElementById(id); if (!btn) return;
+        btn.addEventListener('click', () => {
+            const now = new Date();
+            if (id === 'btnQuickToday') meetingDateTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes());
+            else if (id === 'btnQuickYesterday') { const d = new Date(now); d.setDate(d.getDate() - 1); meetingDateTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes()); }
+            else if (id === 'btnQuickNow') { const dt = meetingDateTime || new Date(); dt.setHours(now.getHours(), now.getMinutes(), 0, 0); meetingDateTime = dt; }
+            syncDateInputs(); persistDt();
+        });
+    });
+}, 150); });
+const HISTORY_KEY = 'meeting_recorder_history', MAX_HISTORY = 50;
+
+function fmtTime(s) { return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }
+function startTimer() { recordingSeconds = 0; const rt = $('#recordingTimer'); if (rt) rt.classList.add('active'); timerId = setInterval(() => { recordingSeconds++; const r = $('#recordingTimer'); if (r) r.textContent = fmtTime(recordingSeconds); }, 1000); }
+function stopTimer() { clearInterval(timerId); const rt = $('#recordingTimer'); if (rt) { rt.classList.remove('active'); rt.textContent = '00:00'; } }
+
+// Speech recognition
+// ═══ Mobile & Mic Permission ═══
+const isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || (window.innerWidth <= 768 && 'ontouchstart' in window);
+if (isMobile) document.body.classList.add('mobile');
+let micPermGranted = false;
+
+// ═══ Speech Capability Detection ═══
+function testSpeechSupport() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return { ok: false, reason: 'no-api' };
+    try { const t = new SR(); t.abort(); return { ok: true }; }
+    catch (e) { return { ok: false, reason: 'instantiate-fail', error: e.message }; }
+}
+
+function showSpeechUnsupported() {
+    const ra = document.getElementById('rawEditor');
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    const msg = isIOS
+        ? (_isEN() ? '<b>iOS: Audio Recording Mode</b><br><small>Safari cannot transcribe in real-time.<br>Tap <b>Start Recording</b> — audio will be saved.<br>Or <b>paste text</b> in the right panel.</small>' : '<b>iOS：音频录制模式</b><br><small>Safari 无法实时转写。<br>点击 <b>开始录音</b> 录制音频后保存。<br>也可在右侧面板<b>粘贴文字</b>。</small>')
+        : (_isEN() ? '<b>Speech not supported</b><br><small>Use Chrome/Edge or paste text.</small>' : '<b>当前浏览器不支持语音识别</b><br><small>请用 Chrome/Edge 或手动粘贴文字。</small>');
+    const oc = document.getElementById('organizedContent'); if (oc) oc.innerHTML = '<div class="placeholder"><span class="icon">🎤</span>' + msg + '</div>';
+    if (ra) { setTimeout(() => ra.focus(), 300); ra.placeholder = _isEN() ? 'Paste meeting notes...' : '请在此粘贴会议记录文字...'; }
+    showToast(isIOS ? (_isEN() ? 'iOS: Recording mode' : 'iOS：音频录制模式') : (_isEN() ? 'Speech not supported' : '不支持语音识别'));
+}
+
+function showMicPermModal() {
+    const ov = document.getElementById('micPermOverlay'); if (!ov) return;
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    document.getElementById('micPermTitle').textContent = isIOS ? (_isEN() ? 'Audio Recording' : '音频录制转文字') : (_isEN() ? 'Microphone Access' : '麦克风权限');
+    document.getElementById('micPermDesc').textContent = isIOS ? (_isEN() ? 'Record audio then auto-transcribe.' : '录制音频后自动上传转写。') : (_isEN() ? 'Recording needs mic access:' : '录音需要麦克风权限：');
+    document.getElementById('btnMicSkip').textContent = _isEN() ? 'Got it' : '知道了';
+    document.getElementById('btnMicEnable').textContent = isIOS ? (_isEN() ? 'Start Recording' : '开始录制') : (_isEN() ? 'Try Again' : '重试录音');
+    ov.querySelectorAll('.mic-perm-step').forEach(s => s.style.display = '');
+    ov.classList.add('open');
+}
+function hideMicPermModal() { const ov = document.getElementById('micPermOverlay'); if (ov) ov.classList.remove('open'); }
+
+function updateMicStatusBar(granted) {
+    const msBar = document.getElementById('micStatusBar'), msText = document.getElementById('micStatusText'), msBtn = document.getElementById('btnMicSettings');
+    if (!msBar) return;
+    if (granted) { msBar.classList.add('granted'); msBar.classList.remove('active'); if (msText) msText.textContent = _isEN() ? 'Mic ready' : '麦克风就绪'; if (msBtn) msBtn.textContent = ''; setTimeout(() => msBar.classList.remove('granted'), 3000); }
+    else { msBar.classList.add('active'); msBar.classList.remove('granted'); if (msText) msText.textContent = _isEN() ? 'Tap Start Recording' : '点击开始录音'; if (msBtn) msBtn.textContent = _isEN() ? 'Settings' : '设置'; }
+}
+
+// Modal buttons
+document.getElementById('btnMicEnable').addEventListener('click', () => { hideMicPermModal(); _actuallyStartRecording(); });
+document.getElementById('btnMicSkip').addEventListener('click', hideMicPermModal);
+document.getElementById('micPermOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) hideMicPermModal(); });
+document.getElementById('btnMicSettings').addEventListener('click', e => { e.stopPropagation(); showMicPermModal(); });
+
+async function prewarmMic() { try { const s = await navigator.mediaDevices.getUserMedia({ audio: true }); s.getTracks().forEach(t => t.stop()); return true; } catch (_) { return false; } }
+
+// ═══ RECORDING ENGINE ═══
+let useMediaRecorder = false, mediaRecorder = null, mediaStream = null, audioChunks = [];
+
+function startRec() {
+    const fmt = testSpeechSupport();
+    if (fmt.ok) { useMediaRecorder = false; return startSpeechRec(); }
+    useMediaRecorder = true; showSpeechUnsupported(); return startMediaRecorder();
+}
+
+function startSpeechRec() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SR(); recognition.continuous = true; recognition.interimResults = true; recognition.lang = currentLang; recognition.maxAlternatives = 1;
+    pendingFinal = ''; rafPending = false;
+    recognition.onresult = (e) => { let ft = '', it = ''; interimTranscript = ''; for (let i = e.resultIndex; i < e.results.length; i++) { const t = e.results[i][0].transcript; if (e.results[i].isFinal) ft += t; else it += t; } if (ft) pendingFinal += ft; if (it && isRecording && !subDrag.active) { const st = document.getElementById('subtitlesText'), fs = document.getElementById('floatingSubtitles'); if (st && fs) { st.textContent = it.trim(); fs.classList.add('active'); applySubPos(); clearTimeout(fs._h); fs._h = setTimeout(() => { if (!subDrag.active) fs.classList.remove('active'); }, 5000); } } if (!rafPending) { rafPending = true; requestAnimationFrame(() => { rafPending = false; const a = pendingFinal; pendingFinal = ''; if (a) { const re = document.getElementById('rawEditor'); if (re) { const p = re.selectionStart; re.value = re.value.substring(0, p) + a + re.value.substring(p); re.selectionStart = re.selectionEnd = p + a.length; re.scrollTop = re.scrollHeight; re.dispatchEvent(new Event('input', { bubbles: true })); } } }); } };
+    recognition.onerror = (e) => { if (e.error === 'no-speech') return; if (e.error === 'not-allowed') { micPermGranted = false; stopRecording(); updateMicStatusBar(false); setTimeout(() => showMicPermModal(), 500); return; } if (e.error === 'audio-capture') { micPermGranted = false; stopRecording(); showToast(_isEN() ? 'No mic' : '未检测到麦克风'); return; } if (e.error === 'network' && isRecording) { setTimeout(() => { if (isRecording && recognition) recognition.start(); }, 500); } };
+    recognition.onend = () => { if (isRecording && recognition) { try { recognition.start(); } catch (_) { stopRecording(); } } };
+    try { recognition.start(); micPermGranted = true; return true; }
+    catch (err) { micPermGranted = false; showToast(_isEN() ? 'Failed' : '启动失败'); return false; }
+}
+
+async function startMediaRecorder() {
+    try { mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true }); micPermGranted = true; updateMicStatusBar(true); }
+    catch (err) { micPermGranted = false; updateMicStatusBar(false); if (err.name === 'NotAllowedError') showMicPermModal(); else showToast(_isEN() ? 'Mic denied' : '麦克风被拒绝'); return false; }
+    const mime = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
+    audioChunks = []; mediaRecorder = new MediaRecorder(mediaStream, { mimeType: mime });
+    mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
+    mediaRecorder.onstop = async () => {
+        if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
+        if (audioChunks.length === 0) { showToast(_isEN() ? 'No audio' : '未录制到音频'); return; }
+        const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+        const re = document.getElementById('rawEditor'); if (re) re.placeholder = _isEN() ? 'Transcribing...' : '转写中...';
+        showToast(_isEN() ? 'Uploading audio...' : '正在上传转写...');
+        try {
+            const fd = new FormData(); fd.append('audio', blob, 'recording.webm');
+            const resp = await fetch('/api/transcribe', { method: 'POST', body: fd }); const data = await resp.json();
+            if (data.text) { if (re) { re.value += (re.value ? '\n' : '') + data.text; re.scrollTop = re.scrollHeight; re.dispatchEvent(new Event('input', { bubbles: true })); } showToast(_isEN() ? 'Transcribed!' : '转写完成！'); }
+            else { if (re) { re.value += '\n[Audio: ' + fmtTime(recordingSeconds) + ']'; re.scrollTop = re.scrollHeight; re.dispatchEvent(new Event('input', { bubbles: true })); } showToast(_isEN() ? 'Audio saved. Install whisper.' : '音频已保存。安装 whisper 可自动转写。'); }
+        } catch (_) { showToast(_isEN() ? 'Upload failed' : '上传失败'); if (re) { re.value += '\n[Audio: ' + fmtTime(recordingSeconds) + ']'; re.scrollTop = re.scrollHeight; re.dispatchEvent(new Event('input', { bubbles: true })); } }
+        if (re) re.placeholder = _isEN() ? 'Paste or record...' : '粘贴或录音...';
+    };
+    mediaRecorder.start(1000);
+    const st = document.getElementById('subtitlesText'), fs = document.getElementById('floatingSubtitles');
+    if (st && fs) { st.textContent = _isEN() ? 'Recording audio...' : '正在录制音频...'; applySubPos(); fs.classList.add('active'); }
+    return true;
+}
+
+function stopRec() {
+    if (useMediaRecorder && mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); const fs = document.getElementById('floatingSubtitles'); if (fs) fs.classList.remove('active'); mediaRecorder = null; }
+    else if (recognition) { recognition.onend = null; try { recognition.stop(); } catch (_) {} recognition = null; }
+}
+
+function setRecUI(a) { if (a) { const rd = document.getElementById('recordingDot'); if (rd) rd.classList.add('active'); const ro = document.getElementById('recordingOverlay'); if (ro) ro.classList.add('active'); const bs = document.getElementById('btnStart'); if (bs) { bs.disabled = true; bs.innerHTML = (useMediaRecorder ? '🔴 Recording' : '🔴 Recording'); bs.classList.add('btn-danger'); bs.classList.remove('btn-primary'); } const bp = document.getElementById('btnStop'); if (bp) bp.disabled = false; const wf = document.getElementById('waveformContainer'); if (wf) wf.classList.add('active'); } else { const rd = document.getElementById('recordingDot'); if (rd) rd.classList.remove('active'); const ro = document.getElementById('recordingOverlay'); if (ro) ro.classList.remove('active'); const bs = document.getElementById('btnStart'); if (bs) { bs.disabled = false; bs.innerHTML = '🎤 ' + (_isEN() ? 'Start' : '开始录音'); bs.classList.remove('btn-danger'); bs.classList.add('btn-primary'); } const bp = document.getElementById('btnStop'); if (bp) bp.disabled = true; const wf = document.getElementById('waveformContainer'); if (wf) wf.classList.remove('active'); } }
+
+async function startRecording() { if (isRecording) return; if (isMobile && !micPermGranted) { const ok = await prewarmMic(); if (!ok) { updateMicStatusBar(false); showMicPermModal(); return; } micPermGranted = true; updateMicStatusBar(true); } _actuallyStartRecording(); }
+function _actuallyStartRecording() { const ok = startRec(); if (ok) { isRecording = true; setRecUI(true); startTimer(); micPermGranted = true; updateMicStatusBar(true); } else { setRecUI(false); } }
+function stopRecording() { if (!isRecording) return; if (pendingFinal) { const re = document.getElementById('rawEditor'); if (re) { re.value += pendingFinal; pendingFinal = ''; } } stopRec(); stopTimer(); isRecording = false; setRecUI(false); if (interimTranscript) { const re = document.getElementById('rawEditor'); if (re) { re.value += interimTranscript; interimTranscript = ''; } } const fs = document.getElementById('floatingSubtitles'); if (fs) fs.classList.remove('active'); const re = document.getElementById('rawEditor'); const wc = re ? re.value.trim().length : 0; if (wc > 0) { showToast((_isEN() ? 'Done: ' : '录音完成: ') + wc + (_isEN() ? ' chars ' : ' 字符 ') + fmtTime(recordingSeconds)); addHistoryEntry(); } }
+// ═══ BIND RECORDER BUTTONS ═══
+document.addEventListener('DOMContentLoaded', () => {
+    // Start/Stop/Bookmark — immediate binding for SpeechRecognition gesture context
+    ['click'].forEach(evt => {
+        const s = document.getElementById('btnStart'); if (s) s.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); startRecording(); });
+        const p = document.getElementById('btnStop'); if (p) p.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); stopRecording(); });
+        const bm = document.getElementById('btnBookmark'); if (bm) bm.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); const re = document.getElementById('rawEditor'); if (!re || !re.value.trim()) return; const sents = re.value.split(/[。！？.!?]+/); const last = sents.filter(s => s.trim().length > 2).pop() || ''; bookmarks.push({ id: Date.now().toString(36), time: fmtTime(recordingSeconds), seconds: recordingSeconds, text: last.trim().slice(0, 80) }); const ind = document.getElementById('bookmarkIndicator'); if (ind) { ind.textContent = bookmarks.length; ind.classList.add('active'); } showToast(_isEN() ? '🔖 Bookmarked' : '🔖 已标记'); });
+    });
+    // Touch events separately
+    ['touchend'].forEach(evt => {
+        const s = document.getElementById('btnStart'); if (s) s.addEventListener(evt, e => { e.preventDefault(); startRecording(); });
+        const p = document.getElementById('btnStop'); if (p) p.addEventListener(evt, e => { e.preventDefault(); stopRecording(); });
+    });
+
+    // All other bindings
+    const cl = document.getElementById('btnClear'); if (cl) cl.addEventListener('click', () => { const re = document.getElementById('rawEditor'); if (re) re.value = ''; const oc = document.getElementById('organizedContent'); if (oc) oc.innerHTML = '<div class=\"placeholder\"><span class=\"icon\">📋</span>' + (_isEN() ? 'Cleared' : '已清空') + '</div>'; showToast(_isEN() ? '🗑 Cleared' : '🗑 已清空'); });
+    const re = document.getElementById('rawEditor'); if (re) re.addEventListener('input', () => { clearTimeout(re._dt); re._dt = setTimeout(triggerOrganize, 600); const wc = re.value.replace(/\s/g, '').length; const wcb = document.getElementById('wordCountBadge'); if (wcb) wcb.textContent = currentLang === 'zh-CN' ? wc + ' 字' : wc + ' words'; });
+    const be = document.getElementById('btnExport'); if (be) be.addEventListener('click', ev => { ev.stopPropagation(); const m = document.getElementById('exportDropdownMenu'), bd = document.getElementById('exportDropdownBackdrop'); if (m) m.classList.toggle('open'); if (bd) bd.classList.toggle('open'); });
+    const bd = document.getElementById('exportDropdownBackdrop'); if (bd) bd.addEventListener('click', () => { const m = document.getElementById('exportDropdownMenu'); if (m) m.classList.remove('open'); bd.classList.remove('open'); });
+    document.querySelectorAll('#exportDropdownMenu button[data-export]').forEach(btn => { btn.addEventListener('click', ev => { ev.stopPropagation(); const m = document.getElementById('exportDropdownMenu'), bd = document.getElementById('exportDropdownBackdrop'); if (m) m.classList.remove('open'); if (bd) bd.classList.remove('open'); const t = btn.dataset.export; if (t === 'link') navigator.clipboard.writeText(window.location.href).then(() => showToast(_isEN() ? '✅ Link copied' : '✅ 已复制链接')); else if (t === 'word') exportWord(); else if (t === 'txt') exportTXT(); else if (t === 'md') exportMarkdown(); }); });
+    const tt = document.getElementById('themeToggle'); if (tt) tt.addEventListener('click', () => { applyTheme(!isDarkMode); localStorage.setItem('meeting_recorder_theme', isDarkMode ? 'dark' : 'light'); });
+    const pf = document.getElementById('photoFileInput'); if (pf) pf.addEventListener('change', ev => { for (const f of ev.target.files) { const r = new FileReader(); r.onload = e => { photos.push({ id: Date.now().toString(36), dataUrl: e.target.result, time: fmtTime(recordingSeconds) }); showToast(_isEN() ? '📷 Photo added' : '📷 照片已插入'); }; r.readAsDataURL(f); } pf.value = ''; });
+    const ii = document.getElementById('inspirationInput'); if (ii) ii.addEventListener('keydown', ev => { if (ev.key === 'Enter' && !ev.shiftKey) { ev.preventDefault(); const t = ii.value.trim(); if (t) { inspirations.push({ id: Date.now().toString(36), text: t, time: fmtTime(recordingSeconds) }); ii.value = ''; const il = document.getElementById('inspirationList'); if (il) il.innerHTML = inspirations.map(i => '<div class=\"inspiration-entry\"><div class=\"insp-time\">💡 ' + i.time + '</div><div>' + escapeHTML(i.text) + '</div></div>').join(''); showToast(_isEN() ? '💡 Saved' : '💡 已记录'); } } });
+    const tph = document.getElementById('translationPanelHeader'); if (tph) tph.addEventListener('click', e => { if (!e.target.closest('button') && !e.target.closest('select')) { const tp = document.getElementById('translationPanel'); if (tp) tp.classList.toggle('expanded'); } });
+    const iph = document.getElementById('inspirationPanelHeader'); if (iph) iph.addEventListener('click', () => { const ip = document.getElementById('inspirationPanel'); if (ip) ip.classList.toggle('expanded'); });
+    // Mic status bar bindings
+    const msBar = document.getElementById('micStatusBar'), msBtn = document.getElementById('btnMicSettings');
+    if (isMobile && msBar) msBar.classList.add('active');
+    if (msBtn) msBtn.addEventListener('click', e => { e.stopPropagation(); showMicPermModal(); });
+});
+// Toggle mic bar on permission grant/loss
+function updateMicStatusBar(granted) {
+    const msBar = document.getElementById('micStatusBar'), msText = document.getElementById('micStatusText'), msBtn = document.getElementById('btnMicSettings');
+    if (!msBar) return;
+    if (granted) { msBar.classList.remove('active'); msBar.classList.add('granted'); if (msText) msText.textContent = _isEN() ? '✅ Microphone ready' : '✅ 麦克风已就绪'; if (msBtn) msBtn.textContent = ''; setTimeout(() => { msBar.classList.remove('granted'); }, 3000); }
+    else { msBar.classList.add('active'); msBar.classList.remove('granted'); if (msText) msText.textContent = _isEN() ? 'Tap "Start Recording" to enable mic' : '点击"开始录音"获取麦克风权限'; if (msBtn) msBtn.textContent = _isEN() ? '⚙️ Settings' : '🔔 设置'; }
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+    if (e.ctrlKey && e.shiftKey && e.key === 'R') { e.preventDefault(); isRecording ? stopRecording() : startRecording(); }
+    if (e.key === 'Escape' && isRecording) { e.preventDefault(); stopRecording(); }
+    if (e.ctrlKey && !e.shiftKey && !e.altKey) { const vs = ['dashboard', 'recorder', 'templates', 'history-search', 'share', 'settings']; const n = parseInt(e.key); if (n >= 1 && n <= 6) { e.preventDefault(); switchView(vs[n - 1]); } }
+});
+
+// ═══ INIT ═══
+function initApp() {
+    if (localStorage.getItem('sm_sidebar_collapsed') === 'true') { const sb = $('#sidebar'); if (sb) sb.classList.add('collapsed'); }
+    loadTheme();
+    updateLiveClock();
+    setInterval(updateLiveClock, 1000);
+    renderHistoryList();
+    if (checkAuth()) { const lv = localStorage.getItem('sm_last_view') || 'dashboard'; switchView(lv); }
+    const s = loadSettings(); applySettings(s);
+    console.log('✅ SmartMeeting Pro ready — all locale-aware');
+}
+document.addEventListener('DOMContentLoaded', initApp);
+
+// ═══ EXPOSE GLOBALS ═══
+window.loadHistory = loadHistory;
+window.loadHistoryEntry = loadHistoryEntry;
+window.deleteHistoryEntry = deleteHistoryEntry;
+window.getCurrentOrganizedResult = getCurrentOrganizedResult;
+window.generatePlainText = generatePlainText;
+window.generateMarkdown = generateMarkdown;
+window.exportWord = exportWord;
+window.exportTXT = exportTXT;
+window.exportMarkdown = exportMarkdown;
+window.renderOrganized = renderOrganized;
+window.triggerOrganize = triggerOrganize;
+window.organizeText = organizeText;
+window.showToast = showToast;
+window.applyTheme = applyTheme;
+window.currentLang = currentLang;
+window.meetingTitle = meetingTitle;
+window.translationEnabled = translationEnabled;
+window.annotationEnabled = annotationEnabled;
+window.summaryEnabled = summaryEnabled;
+window.typoEnabled = typoEnabled;
+window.transSourceLang = transSourceLang;
+window.transTargetLang = transTargetLang;
+window._lang = _lang;
+window._isEN = _isEN;
+window.fmtDateFull = fmtDateFull;
+window.fmtDateLabel = fmtDateLabel;
+window.fmtDateCompact = fmtDateCompact;
+
+</script>
+</body>
+</html>
+
