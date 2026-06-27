@@ -2578,7 +2578,7 @@ body::before {
             <div class="login-top">
                 <div class="login-avatar">🎙️</div>
                 <h2>会议录音助手</h2>
-                <p>SmartMeeting · 专业版</p>
+                <p>SmartMeeting · 专业版</p><div id="loginPubUrl" style="margin-top:8px;font-size:11px;color:rgba(255,255,255,.8);display:none;background:rgba(255,255,255,.15);padding:5px 12px;border-radius:8px;word-break:break-all;cursor:pointer;" onclick="navigator.clipboard.writeText(this.querySelector('span').textContent)">🌐 <span id="loginPubUrlText"></span> <span style="font-size:9px;opacity:.6">点击复制</span></div>
             </div>
             <div class="login-tabs">
                 <button class="login-tab active" data-tab="phone">📱 手机登录</button>
@@ -3362,6 +3362,7 @@ document.addEventListener('keydown', e => {
 });
 
 // ═══ INIT ═══
+async function fetchAndShowPublicUrl(){try{const r=await fetch("/api/status");const d=await r.json();if(d.publicUrl){const el=document.getElementById("loginPubUrl");const tx=document.getElementById("loginPubUrlText");if(el&&tx){tx.textContent=d.publicUrl;el.style.display="block"}}}catch(_){}setTimeout(fetchAndShowPublicUrl,30000)}fetchAndShowPublicUrl();
 function initApp() {
     if (localStorage.getItem('sm_sidebar_collapsed') === 'true') { const sb = $('#sidebar'); if (sb) sb.classList.add('collapsed'); }
     loadTheme();

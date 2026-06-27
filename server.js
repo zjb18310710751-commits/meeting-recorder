@@ -269,8 +269,9 @@ function startServeoTunnel() {
 
 // ── 打印成功横幅 ────────────────────────────────
 function printSuccessBanner() {
-    const qrApi = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='
-        + encodeURIComponent(publicUrl);
+    // 同时写入可访问的 HTML 片段供前端展示
+    const infoHtml = `<!DOCTYPE html><meta charset="UTF-8"><h1>🎙️ 会议录音助手</h1><p>🌐 公网地址：<a href="${publicUrl}">${publicUrl}</a></p><p>🏠 局域网：<a href="http://${LAN_IP}:${PORT}">http://${LAN_IP}:${PORT}</a></p><p>📅 启动时间：${new Date().toLocaleString('zh-CN')}</p><script>location.href="${publicUrl}"</script>`;
+    fs.writeFileSync(path.join(__dirname, 'public-url.html'), infoHtml);
 
     console.log('');
     console.log('══════════════════════════════════════════════');
@@ -279,21 +280,55 @@ function printSuccessBanner() {
     console.log(`  🌐 ${publicUrl}`);
     console.log('──────────────────────────────────────────────');
     console.log('  📱 任何设备、任何网络均可直接访问');
-    console.log('  手机 / 平板 / 其他电脑，输入上方地址即可');
-    console.log('  📷 二维码:');
-    console.log(`  ${qrApi}`);
-    console.log('══════════════════════════════════════════════');
-    console.log('');
+    console.log('  ⚠️  此地址在服务器重启或SSH重连后可能变化');
+    console.log('──────────────────────────────────────────────');
     console.log('  💡 同 WiFi 用局域网更快:');
     console.log(`      http://${LAN_IP}:${PORT}`);
-    console.log('  Ctrl+C 安全退出 | 断线自动重连');
+    console.log('  🔄 断线自动重连 | Ctrl+C 安全退出');
+    console.log('══════════════════════════════════════════════');
     console.log('');
 }
 
-// ── 主入口 ──────────────────────────────────────
+// ── localhost.run 备用隧道 ─────────────────────
+let lhrProcess = null;
+function startLHRTunnel() {
+    return new Promise((resolve) => {
+        console.log('🌐 尝试备用隧道 (localhost.run)...');
+        const ssh = spawn('ssh', [
+            '-o', 'StrictHostKeyChecking=no',
+            '-o', 'UserKnownHostsFile=/dev/null',
+            '-o', 'ServerAliveInterval=30',
+            '-o', 'ConnectTimeout=10',
+            '-i', path.join(os.homedir(), '.ssh', 'id_rsa'),
+            '-R', `80:localhost:${PORT}`,
+            'nokey@localhost.run',
+        ], { stdio: ['ignore', 'pipe', 'pipe'] });
+
+        let resolved = false;
+        const extractLHR = (data) => {
+            const m = data.toString().match(/([a-z0-9]+\.lhr\.life)/);
+            return m ? 'https://' + m[1] : null;
+        };
+
+        ssh.stdout.on('data', d => { process.stdout.write(d); if (!resolved) { const u = extractLHR(d); if (u) { resolved = true; publicUrl = u; savePublicUrl(u); printSuccessBanner(); resolve(true); } } });
+        ssh.stderr.on('data', d => { process.stdout.write(d); if (!resolved) { const u = extractLHR(d); if (u) { resolved = true; publicUrl = u; savePublicUrl(u); printSuccessBanner(); resolve(true); } } });
+        ssh.on('close', () => { if (!resolved) resolve(false); });
+        setTimeout(() => { if (!resolved) { ssh.kill(); resolve(false); } }, 15000);
+    });
+}
+
+// ── 主入口（双隧道竞速） ──────────────────────
 async function main() {
     await startServer();
-    await startServeoTunnel();
+    // 两个隧道同时启动，哪个先获得URL就用哪个
+    const [srv, lhr] = await Promise.all([
+        startServeoTunnel(),
+        startLHRTunnel()
+    ]);
+    if (!srv && !lhr) {
+        console.log('⚠️  公网隧道未连接，仅局域网可用');
+        console.log(`  🏠 局域网: http://${LAN_IP}:${PORT}`);
+    }
 }
 
 main().catch(err => {
