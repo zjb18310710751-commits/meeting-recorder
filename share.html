@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>会议录音助手 - 分享链接</title>
+<style>
+:root {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --border: #334155;
+  --text: #f1f5f9;
+  --text2: #94a3b8;
+  --primary: #818cf8;
+  --primary2: #6366f1;
+  --green: #34d399;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 40px 32px;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 25px 50px rgba(0,0,0,.4);
+  border: 1px solid var(--border);
+}
+.icon { font-size: 56px; margin-bottom: 12px; }
+h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; letter-spacing: .5px; }
+.sub { color: var(--text2); font-size: 14px; margin-bottom: 28px; }
+
+.url-box {
+  background: #0f172a;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px;
+  transition: border-color .2s;
+}
+.url-box:hover { border-color: var(--primary); }
+.url-text {
+  flex:1;
+  font-family: 'SF Mono','Cascadia Code','Consolas',monospace;
+  font-size: 13px;
+  color: var(--primary);
+  word-break: break-all;
+  text-align: left;
+  line-height: 1.5;
+}
+.copy-btn {
+  flex-shrink:0;
+  padding: 8px 18px;
+  border-radius: 10px;
+  border: none;
+  background: var(--primary2);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: inherit;
+}
+.copy-btn:hover { background: var(--primary); transform: scale(1.03); }
+.copy-btn.copied { background: var(--green); }
+
+.qr-section {
+  margin: 24px 0;
+  display: flex; flex-direction: column; align-items: center;
+}
+.qr-img {
+  width: 180px; height: 180px;
+  border-radius: 14px;
+  background: #fff;
+  padding: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.3);
+}
+.qr-hint { color: var(--text2); font-size: 12px; margin-top: 10px; }
+
+.lan-box {
+  background: rgba(129,140,248,.08);
+  border: 1px solid rgba(129,140,248,.2);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-top: 20px;
+  font-size: 12px;
+  color: var(--text2);
+}
+.lan-box .lan-url {
+  color: var(--primary);
+  font-family: monospace;
+  font-size: 12px;
+  word-break: break-all;
+  margin-top: 4px;
+}
+
+.open-btn {
+  display: block;
+  width: 100%;
+  margin-top: 20px;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, #6366f1, #818cf8);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: inherit;
+  text-decoration: none;
+}
+.open-btn:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(99,102,241,.4); }
+
+.loading { color: var(--text2); font-size: 14px; padding: 40px; }
+.error { color: #f87171; font-size: 14px; padding: 20px; }
+</style>
+</head>
+<body>
+<div class="card" id="card">
+  <div class="loading" id="loading">🔄 正在获取分享链接...</div>
+  <div style="display:none" id="content">
+    <div class="icon">🎙️</div>
+    <h1>会议录音助手</h1>
+    <p class="sub">SmartMeeting Pro · 随时随地加入会议</p>
+
+    <div class="url-box">
+      <span class="url-text" id="pubUrl">--</span>
+      <button class="copy-btn" id="copyBtn" onclick="copyUrl()">📋 复制</button>
+    </div>
+
+    <div class="qr-section">
+      <img class="qr-img" id="qrImg" src="" alt="QR Code">
+      <p class="qr-hint">📱 扫描二维码即可访问</p>
+    </div>
+
+    <div class="lan-box" id="lanBox" style="display:none">
+      💡 同WiFi下更快：<br>
+      <span class="lan-url" id="lanUrl">--</span>
+    </div>
+
+    <a class="open-btn" id="openBtn" href="#" target="_blank">🚀 打开会议助手 →</a>
+  </div>
+  <div class="error" id="error" style="display:none"></div>
+</div>
+
+<script>
+function init() {
+  // GitHub Pages permanent URL — no server needed
+  const pub = window.location.href.replace(/\/share\.html$/, '') || window.location.origin;
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('content').style.display = '';
+
+  document.getElementById('pubUrl').textContent = pub;
+  document.getElementById('openBtn').href = pub;
+  document.getElementById('qrImg').src =
+    'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(pub);
+
+  document.getElementById('copyBtn').textContent = '📋 复制';
+}
+
+function copyUrl() {
+  const url = document.getElementById('pubUrl').textContent;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✅ 已复制';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 复制'; btn.classList.remove('copied'); }, 2000);
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✅ 已复制';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 复制'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+init();
+</script>
+</body>
+</html>

@@ -2515,6 +2515,14 @@ body::before {
 .settings-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-xs)}
 .settings-card .set-card-header{padding:14px 18px;border-bottom:1.5px solid var(--border);font-weight:650;font-size:14px;color:var(--text);display:flex;align-items:center;gap:8px}
 .settings-card .set-card-body{padding:10px 18px}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border-light)}
+.setting-row:last-child{border-bottom:none}
+.set-label{font-size:13.5px;font-weight:550;color:var(--text)}
+.set-desc{font-size:11.5px;color:var(--text-muted);margin-top:2px}
+.setting-row input[type="number"]{width:100px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-size:13px;font-family:var(--font-mono);outline:none;text-align:center;transition:all var(--transition)}
+.setting-row input[type="number"]:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--border-accent)}
+.setting-row .info-val{font-family:var(--font-mono);font-size:12px;color:var(--primary);word-break:break-all;max-width:220px;text-align:right;cursor:pointer;transition:all var(--transition);padding:4px 8px;border-radius:6px}
+.setting-row .info-val:hover{background:var(--primary-soft)}
 .setting-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border-light)}
 .setting-row:last-child{border-bottom:none}
 .setting-row .set-label{font-size:13.5px;font-weight:550;color:var(--text)}
@@ -2578,7 +2586,7 @@ body::before {
             <div class="login-top">
                 <div class="login-avatar">🎙️</div>
                 <h2>会议录音助手</h2>
-                <p>SmartMeeting · 专业版</p><div id="loginPubUrl" style="margin-top:8px;font-size:11px;color:rgba(255,255,255,.8);display:none;background:rgba(255,255,255,.15);padding:5px 12px;border-radius:8px;word-break:break-all;cursor:pointer;" onclick="navigator.clipboard.writeText(this.querySelector('span').textContent)">🌐 <span id="loginPubUrlText"></span> <span style="font-size:9px;opacity:.6">点击复制</span></div>
+                <p>SmartMeeting · 专业版</p>
             </div>
             <div class="login-tabs">
                 <button class="login-tab active" data-tab="phone">📱 手机登录</button>
@@ -3048,7 +3056,7 @@ const MT = [
 ];
 function renderTemplates() {
     $('#templateGrid').innerHTML = MT.map(t => '<div class=\"template-card\" data-tmpl=\"' + t.name + '\">' + (t.badge ? '<span class=\"tmpl-badge\">' + t.badge + '</span>' : '') + '<div class=\"tmpl-icon\">' + t.icon + '</div><div class=\"tmpl-name\">' + t.name + '</div><div class=\"tmpl-desc\">' + t.desc + '</div><div class=\"tmpl-tags\">' + t.tags.map(g => '<span class=\"tmpl-tag\">' + g + '</span>').join('') + '</div></div>').join('');
-    $('#templateGrid').querySelectorAll('.template-card').forEach(card => { card.addEventListener('click', () => { const t = MT.find(t => t.name === card.dataset.tmpl); if (!t || typeof dom === 'undefined' || !dom.meetingTitle || !dom.rawEditor) return; dom.meetingTitle.value = t.title; if (typeof meetingTitle !== 'undefined') { meetingTitle = t.title; try { localStorage.setItem('meeting_recorder_meeting_title', meetingTitle); } catch (_) { } } dom.rawEditor.value = ''; dom.organizedContent.innerHTML = '<div class=\"placeholder\"><span class=\"icon\">📋</span>' + (_isEN() ? 'Template loaded: ' : '已加载模板: ') + t.name + '<br><small>' + (_isEN() ? 'Start recording or paste text...' : '开始录音或输入内容…') + '</small></div>'; switchView('recorder'); showToast((_isEN() ? '📋 Applied: ' : '📋 已应用: ') + t.name); }); });
+    $('#templateGrid').querySelectorAll('.template-card').forEach(card => { card.addEventListener('click', () => { const t = MT.find(t => t.name === card.dataset.tmpl); if (!t || false) return; const mtEl = document.getElementById('meetingTitle'); const re = document.getElementById('rawEditor'); const oc = document.getElementById('organizedContent'); if (!re || !oc) return; if (mtEl) mtEl.value = t.title; if (typeof meetingTitle !== 'undefined') { meetingTitle = t.title; try { localStorage.setItem('meeting_recorder_meeting_title', meetingTitle); } catch (_) { } } re.value = ''; renderOrganized({ type: 'empty' }); triggerOrganize(); switchView('recorder'); showToast((_isEN() ? '📋 Applied: ' : '📋 已应用: ') + t.name); }); });
 }
 
 // ═══ HISTORY SEARCH ═══
@@ -3076,7 +3084,7 @@ function renderShare() {
         { icon: '📑', name: _isEN() ? 'Markdown' : '导出 MD', hint: '.md', action: 'md' },
         { icon: '📧', name: _isEN() ? 'Email' : '邮件发送', hint: _isEN() ? 'Copy to clipboard' : '复制到剪贴板', action: 'email' }
     ].map(s => '<button class=\"share-card\" data-action=\"' + s.action + '\"><span class=\"share-icon\">' + s.icon + '</span><span class=\"share-name\">' + s.name + '</span><span class=\"share-hint\">' + s.hint + '</span></button>').join('');
-    $('#shareMethods').querySelectorAll('.share-card').forEach(card => { card.addEventListener('click', async () => { const a = card.dataset.action, res = typeof getCurrentOrganizedResult === 'function' ? getCurrentOrganizedResult() : null; if (a === 'qrcode') { let url = window.location.href; try { const r = await fetch('/api/status'); url = (await r.json()).publicUrl || url; } catch (_) { } $('#qrDisplay').innerHTML = '<img src=\"https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(url) + '\" alt=\"QR\"><div class=\"qr-url\">' + url + '</div>'; showToast(_isEN() ? '📱 QR generated' : '📱 二维码已生成'); } else if (a === 'link') { let url = window.location.href; try { const r = await fetch('/api/status'); url = (await r.json()).publicUrl || url; } catch (_) { } navigator.clipboard.writeText(url).then(() => showToast(_isEN() ? '✅ Link copied!' : '✅ 链接已复制')).catch(() => showToast(_isEN() ? 'Copy failed' : '复制失败')); } else if (a === 'word' && res && typeof exportWord === 'function') exportWord(); else if (a === 'txt' && res && typeof exportTXT === 'function') exportTXT(); else if (a === 'md' && res && typeof exportMarkdown === 'function') exportMarkdown(); else if (a === 'email') { const txt = res && typeof generatePlainText === 'function' ? generatePlainText(res) : ''; navigator.clipboard.writeText(txt).then(() => showToast(_isEN() ? '✅ Copied to clipboard' : '✅ 已复制到剪贴板')).catch(() => showToast(_isEN() ? 'Copy failed' : '复制失败')); } else showToast(_isEN() ? '⚠️ Save content first' : '⚠️ 请先保存会议内容'); }); });
+    $('#shareMethods').querySelectorAll('.share-card').forEach(card => { card.addEventListener('click', async () => { const a = card.dataset.action, res = typeof getCurrentOrganizedResult === 'function' ? getCurrentOrganizedResult() : null; if (a === 'qrcode') { const url = window.location.href; $('#qrDisplay').innerHTML = '<img src=\"https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(url) + '\" alt=\"QR\"><div class=\"qr-url\">' + url + '</div>'; showToast(_isEN() ? '📱 QR generated' : '📱 二维码已生成'); } else if (a === 'link') { const url = window.location.href; navigator.clipboard.writeText(url).then(() => showToast(_isEN() ? '✅ Link copied!' : '✅ 链接已复制')).catch(() => showToast(_isEN() ? 'Copy failed' : '复制失败')); } else if (a === 'word' && res && typeof exportWord === 'function') exportWord(); else if (a === 'txt' && res && typeof exportTXT === 'function') exportTXT(); else if (a === 'md' && res && typeof exportMarkdown === 'function') exportMarkdown(); else if (a === 'email') { const txt = res && typeof generatePlainText === 'function' ? generatePlainText(res) : ''; navigator.clipboard.writeText(txt).then(() => showToast(_isEN() ? '✅ Copied to clipboard' : '✅ 已复制到剪贴板')).catch(() => showToast(_isEN() ? 'Copy failed' : '复制失败')); } else showToast(_isEN() ? '⚠️ Save content first' : '⚠️ 请先保存会议内容'); }); });
 }
 
 // ═══ SETTINGS ═══
@@ -3090,11 +3098,16 @@ function renderSettings() {
         { title: '🌐 ' + (_isEN() ? 'Translation' : '翻译'), rows: [{ label: _isEN() ? 'Enable' : '启用翻译', desc: _isEN() ? 'Auto-translate' : '自动翻译', type: 'toggle', key: 'translationEnabled', val: s.translationEnabled }, { label: _isEN() ? 'Word Annotation' : '难词标注', desc: _isEN() ? 'Highlight difficult words' : '高亮复杂词汇', type: 'toggle', key: 'annotationEnabled', val: s.annotationEnabled }] },
         { title: '🧠 AI', rows: [{ label: _isEN() ? 'Summary' : '智能总结', desc: _isEN() ? 'Auto-summarize' : '自动提取摘要', type: 'toggle', key: 'summaryEnabled', val: s.summaryEnabled }, { label: _isEN() ? 'Spell Check' : '错别字检测', desc: _isEN() ? 'Detect typos' : '标出疑似错别字', type: 'toggle', key: 'typoEnabled', val: s.typoEnabled }] },
         { title: '💾 ' + (_isEN() ? 'Storage' : '存储'), rows: [{ label: _isEN() ? 'Auto Save' : '自动保存', desc: _isEN() ? 'Save on stop' : '停止时保存', type: 'toggle', key: 'autoSave', val: s.autoSave }] },
-        { title: '🎨 ' + (_isEN() ? 'Appearance' : '外观'), rows: [{ label: _isEN() ? 'Theme' : '深色模式', desc: _isEN() ? 'Choose theme' : '界面颜色主题', type: 'select', key: 'darkMode', val: s.darkMode, opts: [{ v: 'auto', l: _isEN() ? 'Auto' : '跟随系统' }, { v: 'light', l: _isEN() ? 'Light' : '浅色' }, { v: 'dark', l: _isEN() ? 'Dark' : '深色' }] }] }
-    ].map(sec => '<div class=\"settings-card\"><div class=\"set-card-header\">' + sec.title + '</div><div class=\"set-card-body\">' + sec.rows.map(row => { let ctrl; if (row.type === 'toggle') ctrl = '<label class=\"toggle-switch\"><input type=\"checkbox\" data-setting=\"' + row.key + '\"' + (row.val ? ' checked' : '') + '><span class=\"slider\"></span></label>'; else ctrl = '<select data-setting=\"' + row.key + '\">' + (row.opts || []).map(o => '<option value=\"' + o.v + '\"' + (row.val == o.v ? ' selected' : '') + '>' + o.l + '</option>').join('') + '</select>'; return '<div class=\"setting-row\"><div><div class=\"set-label\">' + row.label + '</div><div class=\"set-desc\">' + row.desc + '</div></div>' + ctrl + '</div>'; }).join('') + '</div></div>').join('');
+        { title: '🎨 ' + (_isEN() ? 'Appearance' : '外观'), rows: [{ label: _isEN() ? 'Theme' : '深色模式', desc: _isEN() ? 'Choose theme' : '界面颜色主题', type: 'select', key: 'darkMode', val: s.darkMode, opts: [{ v: 'auto', l: _isEN() ? 'Auto' : '跟随系统' }, { v: 'light', l: _isEN() ? 'Light' : '浅色' }, { v: 'dark', l: _isEN() ? 'Dark' : '深色' }] }] },
+    ].map(sec => '<div class=\"settings-card\"><div class=\"set-card-header\">' + sec.title + '</div><div class=\"set-card-body\">' + sec.rows.map(row => { let ctrl; if (row.type === 'toggle') ctrl = '<label class=\"toggle-switch\"><input type=\"checkbox\" data-setting=\"' + row.key + '\"' + (row.val ? ' checked' : '') + '><span class=\"slider\"></span></label>'; else if (row.type === 'number') ctrl = '<input type=\"number\" data-setting=\"' + row.key + '\" value=\"' + row.val + '\" min=\"' + (row._min||1024) + '\" max=\"' + (row._max||65535) + '\" placeholder=\"' + (row._placeholder||'') + '\" style=\"width:100px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-size:13px;font-family:var(--font-mono);outline:none;text-align:center;\">'; else if (row.type === 'info') ctrl = '<span style=\"font-family:var(--font-mono);font-size:12px;color:var(--primary);word-break:break-all;\" id=\"info_' + row.key + '\">' + row.val + '</span>'; else ctrl = '<select data-setting=\"' + row.key + '\">' + (row.opts || []).map(o => '<option value=\"' + o.v + '\"' + (row.val == o.v ? ' selected' : '') + '>' + o.l + '</option>').join('') + '</select>'; return '<div class=\"setting-row\"><div><div class=\"set-label\">' + row.label + '</div><div class=\"set-desc\">' + row.desc + '</div></div>' + ctrl + '</div>'; }).join('') + '</div></div>').join('');
 }
-$('#btnSaveSettings').addEventListener('click', () => {
-    const s = {}; document.querySelectorAll('[data-setting]').forEach(el => { const k = el.dataset.setting; if (el.type === 'checkbox') s[k] = el.checked; else s[k] = el.value; }); saveSettings(s); applySettings(s); showToast(_isEN() ? '✅ Settings saved' : '✅ 配置已保存');
+$('#btnSaveSettings').addEventListener('click', async () => {
+    const s = {}; document.querySelectorAll('[data-setting]').forEach(el => { const k = el.dataset.setting; if (el.type === 'checkbox') s[k] = el.checked; else s[k] = el.value; });
+    // 跳过服务器信息字段
+    delete s.serverPubUrl; delete s.serverLanUrl;
+    saveSettings(s); applySettings(s);
+
+    showToast(_isEN() ? '✅ Settings saved' : '✅ 配置已保存');
 });
 function applySettings(s) {
     if (typeof translationEnabled !== 'undefined') translationEnabled = s.translationEnabled; if (typeof annotationEnabled !== 'undefined') annotationEnabled = s.annotationEnabled;
@@ -3286,18 +3299,18 @@ async function startMediaRecorder() {
     const mime = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
     audioChunks = []; mediaRecorder = new MediaRecorder(mediaStream, { mimeType: mime });
     mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
-    mediaRecorder.onstop = async () => {
+    mediaRecorder.onstop = () => {
         if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
         if (audioChunks.length === 0) { showToast(_isEN() ? 'No audio' : '未录制到音频'); return; }
         const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
-        const re = document.getElementById('rawEditor'); if (re) re.placeholder = _isEN() ? 'Transcribing...' : '转写中...';
-        showToast(_isEN() ? 'Uploading audio...' : '正在上传转写...');
-        try {
-            const fd = new FormData(); fd.append('audio', blob, 'recording.webm');
-            const resp = await fetch('/api/transcribe', { method: 'POST', body: fd }); const data = await resp.json();
-            if (data.text) { if (re) { re.value += (re.value ? '\n' : '') + data.text; re.scrollTop = re.scrollHeight; re.dispatchEvent(new Event('input', { bubbles: true })); } showToast(_isEN() ? 'Transcribed!' : '转写完成！'); }
-            else { if (re) { re.value += '\n[Audio: ' + fmtTime(recordingSeconds) + ']'; re.scrollTop = re.scrollHeight; re.dispatchEvent(new Event('input', { bubbles: true })); } showToast(_isEN() ? 'Audio saved. Install whisper.' : '音频已保存。安装 whisper 可自动转写。'); }
-        } catch (_) { showToast(_isEN() ? 'Upload failed' : '上传失败'); if (re) { re.value += '\n[Audio: ' + fmtTime(recordingSeconds) + ']'; re.scrollTop = re.scrollHeight; re.dispatchEvent(new Event('input', { bubbles: true })); } }
+        const re = document.getElementById('rawEditor');
+        // Download audio file locally — no server needed
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url;
+        a.download = 'recording_' + new Date().toISOString().slice(0,19).replace(/:/g,'-') + '.webm';
+        a.click(); URL.revokeObjectURL(url);
+        if (re) { re.value += '\n[🎙 Audio: ' + fmtTime(recordingSeconds) + ']'; re.scrollTop = re.scrollHeight; re.dispatchEvent(new Event('input', { bubbles: true })); }
+        showToast(_isEN() ? '✅ Audio downloaded' : '✅ 音频已下载');
         if (re) re.placeholder = _isEN() ? 'Paste or record...' : '粘贴或录音...';
     };
     mediaRecorder.start(1000);
@@ -3336,24 +3349,88 @@ document.addEventListener('DOMContentLoaded', () => {
     const be = document.getElementById('btnExport'); if (be) be.addEventListener('click', ev => { ev.stopPropagation(); const m = document.getElementById('exportDropdownMenu'), bd = document.getElementById('exportDropdownBackdrop'); if (m) m.classList.toggle('open'); if (bd) bd.classList.toggle('open'); });
     const bd = document.getElementById('exportDropdownBackdrop'); if (bd) bd.addEventListener('click', () => { const m = document.getElementById('exportDropdownMenu'); if (m) m.classList.remove('open'); bd.classList.remove('open'); });
     document.querySelectorAll('#exportDropdownMenu button[data-export]').forEach(btn => { btn.addEventListener('click', ev => { ev.stopPropagation(); const m = document.getElementById('exportDropdownMenu'), bd = document.getElementById('exportDropdownBackdrop'); if (m) m.classList.remove('open'); if (bd) bd.classList.remove('open'); const t = btn.dataset.export; if (t === 'link') navigator.clipboard.writeText(window.location.href).then(() => showToast(_isEN() ? '✅ Link copied' : '✅ 已复制链接')); else if (t === 'word') exportWord(); else if (t === 'txt') exportTXT(); else if (t === 'md') exportMarkdown(); }); });
-    const tt = document.getElementById('themeToggle'); if (tt) tt.addEventListener('click', () => { applyTheme(!isDarkMode); localStorage.setItem('meeting_recorder_theme', isDarkMode ? 'dark' : 'light'); });
+    const tt = document.getElementById('themeToggle'); if (tt) tt.addEventListener('click', () => { const next = !isDarkMode; applyTheme(next); try { const s = JSON.parse(localStorage.getItem('sm_settings') || '{}'); s.darkMode = next ? 'dark' : 'light'; localStorage.setItem('sm_settings', JSON.stringify(s)); } catch (_) {} localStorage.setItem('meeting_recorder_theme', next ? 'dark' : 'light'); });
     const pf = document.getElementById('photoFileInput'); if (pf) pf.addEventListener('change', ev => { for (const f of ev.target.files) { const r = new FileReader(); r.onload = e => { photos.push({ id: Date.now().toString(36), dataUrl: e.target.result, time: fmtTime(recordingSeconds) }); showToast(_isEN() ? '📷 Photo added' : '📷 照片已插入'); }; r.readAsDataURL(f); } pf.value = ''; });
     const ii = document.getElementById('inspirationInput'); if (ii) ii.addEventListener('keydown', ev => { if (ev.key === 'Enter' && !ev.shiftKey) { ev.preventDefault(); const t = ii.value.trim(); if (t) { inspirations.push({ id: Date.now().toString(36), text: t, time: fmtTime(recordingSeconds) }); ii.value = ''; const il = document.getElementById('inspirationList'); if (il) il.innerHTML = inspirations.map(i => '<div class=\"inspiration-entry\"><div class=\"insp-time\">💡 ' + i.time + '</div><div>' + escapeHTML(i.text) + '</div></div>').join(''); showToast(_isEN() ? '💡 Saved' : '💡 已记录'); } } });
     const tph = document.getElementById('translationPanelHeader'); if (tph) tph.addEventListener('click', e => { if (!e.target.closest('button') && !e.target.closest('select')) { const tp = document.getElementById('translationPanel'); if (tp) tp.classList.toggle('expanded'); } });
+    // Translation language selector change → re-translate
+    const tsl = document.getElementById('transSourceLang'); if (tsl) tsl.addEventListener('change', () => { transSourceLang = tsl.value; triggerTranslation(); });
+    const ttl = document.getElementById('transTargetLang'); if (ttl) ttl.addEventListener('change', () => { transTargetLang = ttl.value; triggerTranslation(); });
+    // Annotation toggle button
+    const btnAnno = document.getElementById('btnAnnotationToggle');
+    if (btnAnno) btnAnno.addEventListener('click', e => {
+        e.stopPropagation();
+        annotationEnabled = !annotationEnabled;
+        btnAnno.classList.toggle('active', annotationEnabled);
+        const legend = document.getElementById('annotationLegend');
+        if (legend) legend.classList.toggle('active', annotationEnabled);
+        showToast(annotationEnabled ? (_isEN() ? '🏷 Annotations ON' : '🏷 难词标注已开启') : (_isEN() ? '🏷 Annotations OFF' : '🏷 难词标注已关闭'));
+    });
     const iph = document.getElementById('inspirationPanelHeader'); if (iph) iph.addEventListener('click', () => { const ip = document.getElementById('inspirationPanel'); if (ip) ip.classList.toggle('expanded'); });
+    // Language toggle buttons
+    document.querySelectorAll('#langToggle button[data-lang]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const lang = btn.dataset.lang;
+            if (!lang || lang === currentLang) return;
+            currentLang = lang;
+            window.currentLang = lang;
+            // Toggle active class
+            document.querySelectorAll('#langToggle button[data-lang]').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+            // Update word count badge
+            const re = document.getElementById('rawEditor');
+            const wcb = document.getElementById('wordCountBadge');
+            if (re && wcb) {
+                const wc = re.value.replace(/\s/g, '').length;
+                wcb.textContent = currentLang === 'zh-CN' ? wc + ' 字' : wc + ' words';
+            }
+            // Update placeholder text
+            if (re) {
+                re.placeholder = lang === 'en-US'
+                    ? 'Paste transcript here, or click "Start Recording" to begin...'
+                    : '在这里粘贴录音转文字内容，或点击「开始录音」按钮直接录音...';
+            }
+            // Re-trigger organize to update locale-aware labels
+            if (re && re.value.trim()) triggerOrganize();
+            // Refresh other UI elements
+            renderHistoryList();
+            showToast(lang === 'en-US' ? '🌐 Switched to English' : '🌐 已切换到中文');
+        });
+    });
     // Mic status bar bindings
     const msBar = document.getElementById('micStatusBar'), msBtn = document.getElementById('btnMicSettings');
     if (isMobile && msBar) msBar.classList.add('active');
     if (msBtn) msBtn.addEventListener('click', e => { e.stopPropagation(); showMicPermModal(); });
+    // Copy organized content button
+    const btnCopy = document.getElementById('btnCopy');
+    if (btnCopy) btnCopy.addEventListener('click', () => {
+        const result = getCurrentOrganizedResult();
+        const txt = generatePlainText(result) || (document.getElementById('rawEditor')?.value || '');
+        navigator.clipboard.writeText(txt).then(() => showToast(_isEN() ? '✅ Copied' : '✅ 已复制')).catch(() => showToast(_isEN() ? 'Copy failed' : '复制失败'));
+    });
+    // Summary button
+    const btnSummary = document.getElementById('btnSummary');
+    if (btnSummary) btnSummary.addEventListener('click', () => {
+        triggerOrganize();
+        if (lastOrganizedResult && lastOrganizedResult.summary) {
+            showToast(_isEN() ? '🤖 Summary generated' : '🤖 总结已生成');
+        } else {
+            showToast(_isEN() ? '🤖 Enter text first to summarize' : '🤖 请先输入会议内容');
+        }
+    });
+    // Typo check button (basic)
+    const btnTypo = document.getElementById('btnTypo');
+    if (btnTypo) btnTypo.addEventListener('click', () => {
+        showToast(_isEN() ? '✏️ Typo check: manually review (basic mode)' : '✏️ 错别字检测：请手动检查（基础模式）');
+    });
+    // Undo typo fixes
+    const btnUndo = document.getElementById('btnUndoAllTypo');
+    if (btnUndo) btnUndo.addEventListener('click', () => {
+        typoFixes = [];
+        const bar = document.getElementById('typoFixesBar');
+        if (bar) bar.classList.remove('active');
+        showToast(_isEN() ? '↩ All typo fixes undone' : '↩ 已撤销所有修正');
+    });
 });
-// Toggle mic bar on permission grant/loss
-function updateMicStatusBar(granted) {
-    const msBar = document.getElementById('micStatusBar'), msText = document.getElementById('micStatusText'), msBtn = document.getElementById('btnMicSettings');
-    if (!msBar) return;
-    if (granted) { msBar.classList.remove('active'); msBar.classList.add('granted'); if (msText) msText.textContent = _isEN() ? '✅ Microphone ready' : '✅ 麦克风已就绪'; if (msBtn) msBtn.textContent = ''; setTimeout(() => { msBar.classList.remove('granted'); }, 3000); }
-    else { msBar.classList.add('active'); msBar.classList.remove('granted'); if (msText) msText.textContent = _isEN() ? 'Tap "Start Recording" to enable mic' : '点击"开始录音"获取麦克风权限'; if (msBtn) msBtn.textContent = _isEN() ? '⚙️ Settings' : '🔔 设置'; }
-}
-
 // Keyboard shortcuts
 document.addEventListener('keydown', e => {
     if (e.ctrlKey && e.shiftKey && e.key === 'R') { e.preventDefault(); isRecording ? stopRecording() : startRecording(); }
@@ -3361,16 +3438,439 @@ document.addEventListener('keydown', e => {
     if (e.ctrlKey && !e.shiftKey && !e.altKey) { const vs = ['dashboard', 'recorder', 'templates', 'history-search', 'share', 'settings']; const n = parseInt(e.key); if (n >= 1 && n <= 6) { e.preventDefault(); switchView(vs[n - 1]); } }
 });
 
+// ═══ UTILITY ═══
+function escapeHTML(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+// ═══ SUBTITLE DRAG ═══
+const subDrag = { active: false, x: 0, y: 0, startX: 0, startY: 0 };
+function applySubPos() {
+	const fs = document.getElementById('floatingSubtitles');
+	if (!fs || !fs.dataset._x) return;
+	fs.style.left = fs.dataset._x + 'px';
+	fs.style.top = fs.dataset._y + 'px';
+	fs.style.transform = 'none';
+}
+// Subtitle drag deferred
+document.addEventListener('DOMContentLoaded', () => {
+	const fs = document.getElementById('floatingSubtitles');
+	const handle = document.getElementById('subtitlesDragHandle');
+	if (!fs || !handle) return;
+	fs.addEventListener('dblclick', () => {
+		delete fs.dataset._x; delete fs.dataset._y;
+		fs.style.left = ''; fs.style.top = ''; fs.style.transform = '';
+	});
+	handle.addEventListener('pointerdown', e => {
+		subDrag.active = true; fs.classList.add('dragging');
+		const rect = fs.getBoundingClientRect();
+		subDrag.startX = e.clientX - rect.left; subDrag.startY = e.clientY - rect.top;
+		e.preventDefault();
+	});
+	document.addEventListener('pointermove', e => {
+		if (!subDrag.active) return;
+		subDrag.x = e.clientX - subDrag.startX; subDrag.y = e.clientY - subDrag.startY;
+		fs.style.left = subDrag.x + 'px'; fs.style.top = subDrag.y + 'px'; fs.style.transform = 'none';
+	});
+	document.addEventListener('pointerup', () => {
+		if (!subDrag.active) return;
+		subDrag.active = false; fs.classList.remove('dragging');
+		fs.dataset._x = subDrag.x; fs.dataset._y = subDrag.y;
+	});
+});
+
+// ═══ HISTORY STORAGE ═══
+let lastOrganizedResult = null;
+function getCurrentOrganizedResult() { return lastOrganizedResult; }
+function loadHistory() { try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch (_) { return []; } }
+function saveHistory(hist) { try { localStorage.setItem(HISTORY_KEY, JSON.stringify(hist)); } catch (_) { } }
+function addHistoryEntry() {
+	const re = document.getElementById('rawEditor'); if (!re || !re.value.trim()) return;
+	const hist = loadHistory();
+	const ts = meetingDateTime || new Date();
+	const entry = {
+		id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+		title: meetingTitle || (re.value.trim().slice(0, 30) + (re.value.trim().length > 30 ? '...' : '')),
+		rawText: re.value,
+		organizedHtml: (typeof lastOrganizedResult === 'object' && lastOrganizedResult ? JSON.stringify(lastOrganizedResult) : ''),
+		bookmarks: bookmarks.slice(),
+		inspirations: inspirations.slice(),
+		photos: photos.slice(),
+		date: ts.toISOString(),
+		wordCount: re.value.replace(/\s/g, '').length,
+		lang: currentLang || 'zh-CN',
+		title2: meetingTitle || ''
+	};
+	hist.unshift(entry);
+	if (hist.length > MAX_HISTORY) hist.length = MAX_HISTORY;
+	saveHistory(hist);
+	renderHistoryList();
+	try { localStorage.setItem('meeting_recorder_meeting_title', meetingTitle || ''); } catch (_) { }
+}
+function loadHistoryEntry(id) {
+	const hist = loadHistory();
+	const e = hist.find(h => h.id === id); if (!e) return;
+	const re = document.getElementById('rawEditor'); if (re) { re.value = e.rawText || ''; re.dispatchEvent(new Event('input', { bubbles: true })); }
+	if (e.title2) meetingTitle = e.title2;
+	if (e.date) meetingDateTime = new Date(e.date);
+	syncDateInputs();
+	if (e.bookmarks) bookmarks = e.bookmarks.slice();
+	if (e.inspirations) inspirations = e.inspirations.slice();
+	if (e.photos) photos = e.photos.slice();
+	if (e.organizedHtml && e.organizedHtml !== '') {
+		try { lastOrganizedResult = JSON.parse(e.organizedHtml); renderOrganized(lastOrganizedResult); } catch (_) { triggerOrganize(); }
+	}
+	const mt = document.getElementById('meetingTitle'); if (mt && meetingTitle) mt.value = meetingTitle;
+	const il = document.getElementById('inspirationList'); if (il) il.innerHTML = inspirations.map(i => '<div class="inspiration-entry"><div class="insp-time">💡 ' + i.time + '</div><div>' + escapeHTML(i.text) + '</div></div>').join('') || '<div class="inspiration-empty">' + (_isEN() ? 'No inspirations' : '暂无随记') + '</div>';
+}
+function deleteHistoryEntry(id) {
+	let hist = loadHistory(); hist = hist.filter(h => h.id !== id); saveHistory(hist); renderHistoryList();
+	showToast(_isEN() ? '🗑 Deleted' : '🗑 已删除');
+}
+function renderHistoryList() {
+	const hl = document.getElementById('historyList'); if (!hl) return;
+	const hist = loadHistory();
+	if (hist.length === 0) { hl.innerHTML = '<span class="history-empty">' + (_isEN() ? 'No history yet' : '暂无历史记录') + '</span>'; return; }
+	hl.innerHTML = hist.slice(0, 15).map(e => {
+		const d = new Date(e.date), label = fmtDateLabel(d);
+		const title = (e.title || 'Untitled').slice(0, 18);
+		return '<div class="history-item" data-hid="' + e.id + '">' + label + ' ' + escapeHTML(title) + '<button class="delete-btn" data-del="' + e.id + '">×</button></div>';
+	}).join('');
+	hl.querySelectorAll('.history-item').forEach(item => {
+		item.addEventListener('click', ev => { if (ev.target.classList.contains('delete-btn')) return; loadHistoryEntry(item.dataset.hid); switchView('recorder'); });
+	});
+	hl.querySelectorAll('.delete-btn').forEach(btn => {
+		btn.addEventListener('click', ev => { ev.stopPropagation(); deleteHistoryEntry(btn.dataset.del); });
+	});
+}
+
+// ═══ CONTENT ORGANIZER ═══
+function organizeText(raw) {
+	if (!raw || !raw.trim()) return { type: 'empty' };
+	const lines = raw.split(/\n+/).filter(l => l.trim());
+	const keywords = new Set();
+	const keyPoints = [];
+	const keywordRegex = /(?:项目|产品|需求|设计|开发|测试|部署|上线|风险|预算|进度|里程碑|周报|KPI|OKR|客户端|服务端|数据库|API|接口|架构|性能|安全|数据|用户|体验|优化|迭代|review|MVP|scrum|sprint|release|meeting|plan|report|status|update|issue|task|deadline|timeline|milestone|client|server|data|api|key|action|goal|priority|quality|team|launch|demo|slide|deck|note)/gi;
+	let wordCount = 0;
+	for (const line of lines) {
+		wordCount += line.replace(/\s/g, '').length;
+		const kws = line.match(keywordRegex) || [];
+		kws.forEach(k => keywords.add(k.toLowerCase()));
+		if (/^[-•*#]\s|^(关键|重点|结论|决定|行动|问题|风险|注意|结论|任务|目标|事项)/.test(line.trim())
+			|| /(关键是|重点是|决定|需要做|必须|务必|注意|结论|总结|下一步|行动计划)/.test(line)) {
+			keyPoints.push({ text: line.trim(), ts: [] });
+		}
+	}
+	const first3 = lines.slice(0, Math.min(3, lines.length)).map(l => l.trim().slice(0, 60));
+	const summary = first3.join('；') + (lines.length > 3 ? '...' : '');
+	return {
+		type: 'result',
+		summary,
+		wordCount,
+		keyPoints: keyPoints.slice(0, 8),
+		keywords: [...new Set([...keywords])].slice(0, 15),
+		totalLines: lines.length
+	};
+}
+function renderOrganized(result) {
+	const oc = document.getElementById('organizedContent'); if (!oc) return;
+	oc.classList.remove('fade-in');
+	void oc.offsetWidth;
+	if (!result || result.type === 'empty') {
+		oc.innerHTML = '<div class="placeholder"><span class="icon">📋</span>' + (_isEN() ? 'Start recording or paste meeting notes...' : '开始录音或在此粘贴会议内容…') + '<br><small>' + (_isEN() ? 'Smart analysis will appear here' : '智能分析结果将显示在此区域') + '</small></div>';
+		lastOrganizedResult = null;
+		return;
+	}
+	lastOrganizedResult = result;
+	let html = '';
+	if (result.summary) {
+		html += '<div class="summary-section"><div class="summary-header"><span class="icon">🧠</span>' + (_isEN() ? 'Smart Summary' : '智能总结') + '</div><div class="summary-text">' + escapeHTML(result.summary) + '</div></div>';
+	}
+	if (result.keyPoints && result.keyPoints.length > 0) {
+		html += '<h3>📌 ' + (_isEN() ? 'Key Points' : '关键要点') + ' (' + result.keyPoints.length + ')</h3>';
+		for (const kp of result.keyPoints) {
+			let txt = escapeHTML(kp.text);
+			if (kp.ts && kp.ts.length > 0) txt = '<span class="timestamp">' + kp.ts.join(', ') + '</span> ' + txt;
+			html += '<div class="key-point">' + txt + '</div>';
+		}
+	}
+	if (result.keywords && result.keywords.length > 0) {
+		html += '<h3>🏷 ' + (_isEN() ? 'Keywords' : '关键词') + '</h3><div style="line-height:2.2;">';
+		for (const kw of result.keywords) html += '<span class="keyword-tag">' + escapeHTML(kw) + '</span>';
+		html += '</div>';
+	}
+	if (result.wordCount) {
+		html += '<div class="filtered-note">📊 ' + (_isEN() ? 'Total: ' : '共 ') + result.wordCount + (_isEN() ? ' chars, ' : ' 字符，') + result.totalLines + (_isEN() ? ' paragraphs' : ' 段落') + '</div>';
+	}
+	oc.innerHTML = html || '<div class="placeholder"><span class="icon">📋</span>' + (_isEN() ? 'Content analyzed' : '内容已分析') + '</div>';
+	oc.classList.add('fade-in');
+}
+// ═══ TRANSLATION ENGINE ═══
+let _transDebounceTimer = null;
+function getLangPair() {
+	// Determine effective source/target
+	const srcEl = document.getElementById('transSourceLang');
+	const tgtEl = document.getElementById('transTargetLang');
+	const src = (srcEl ? srcEl.value : transSourceLang) || 'auto';
+	const tgt = (tgtEl ? tgtEl.value : transTargetLang) || 'zh-CN';
+	// If source is 'auto', detect based on content
+	return { src, tgt };
+}
+function shouldTranslate() {
+	if (!translationEnabled) return false;
+	const { src, tgt } = getLangPair();
+	return src !== tgt;
+}
+async function translateText(text) {
+	if (!text || !text.trim() || !shouldTranslate()) {
+		document.getElementById('translationResult').style.display = 'none';
+		document.getElementById('translationPlaceholder').style.display = 'block';
+		return;
+	}
+	const { src, tgt } = getLangPair();
+	const loading = document.getElementById('translationLoading');
+	const resultEl = document.getElementById('translationResult');
+	const errorEl = document.getElementById('translationError');
+	const placeholder = document.getElementById('translationPlaceholder');
+	const badge = document.getElementById('translationBadge');
+
+	// Show loading
+	if (placeholder) placeholder.style.display = 'none';
+	if (resultEl) resultEl.style.display = 'none';
+	if (errorEl) errorEl.style.display = 'none';
+	if (loading) loading.style.display = 'flex';
+	if (badge) badge.style.display = 'inline';
+
+	// Use MyMemory API (free, no key)
+	const langPair = (src === 'auto' ? 'Autodetect' : src) + '|' + tgt;
+	try {
+		const chunks = splitTextForTranslation(text);
+		let translated = '';
+		for (const chunk of chunks) {
+			const resp = await fetch(
+				'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(chunk) + '&langpair=' + encodeURIComponent(langPair) + '&mt=1'
+			);
+			const data = await resp.json();
+			if (data.responseStatus === 200 && data.responseData) {
+				translated += (translated ? ' ' : '') + data.responseData.translatedText;
+			} else {
+				// Fallback: try google translate endpoint
+				translated += (translated ? ' ' : '') + await googleTranslateFallback(chunk, src, tgt);
+			}
+		}
+		if (loading) loading.style.display = 'none';
+		if (badge) badge.style.display = 'none';
+		if (translated.trim()) {
+			if (resultEl) {
+				resultEl.innerHTML = translated.split('\n').map(l => '<p>' + escapeHTML(l) + '</p>').join('');
+				resultEl.style.display = 'block';
+			}
+		} else {
+			if (placeholder) { placeholder.innerHTML = '（翻译结果为空）'; placeholder.style.display = 'block'; }
+		}
+	} catch (e) {
+		if (loading) loading.style.display = 'none';
+		if (badge) badge.style.display = 'none';
+		// Try Google fallback for all chunks
+		try {
+			let translated = '';
+			const chunks = splitTextForTranslation(text);
+			for (const chunk of chunks) {
+				translated += (translated ? ' ' : '') + await googleTranslateFallback(chunk, src, tgt);
+			}
+			if (translated.trim() && resultEl) {
+				resultEl.innerHTML = translated.split('\n').map(l => '<p>' + escapeHTML(l) + '</p>').join('');
+				resultEl.style.display = 'block';
+				return;
+			}
+		} catch (_) {}
+		if (errorEl) {
+			errorEl.innerHTML = '<span>⚠️ ' + (_isEN() ? 'Translation unavailable (network error)' : '翻译服务暂时不可用（网络错误）') + '</span>';
+			errorEl.style.display = 'block';
+		}
+	}
+}
+async function googleTranslateFallback(text, src, tgt) {
+	// Google translate unofficial API (free)
+	const sl = src === 'auto' ? 'auto' : src;
+	const tl = tgt;
+	const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=' + sl + '&tl=' + tl + '&dt=t&q=' + encodeURIComponent(text);
+	const resp = await fetch(url);
+	const data = await resp.json();
+	// Google returns an array of arrays
+	if (data && data[0]) {
+		return data[0].map(item => item[0]).join('');
+	}
+	throw new Error('Google translate failed');
+}
+function splitTextForTranslation(text) {
+	// Split into chunks of ~500 chars to avoid API limits
+	const maxLen = 500;
+	if (text.length <= maxLen) return [text];
+	const chunks = [];
+	const sentences = text.split(/(?<=[。！？.!?\n])/);
+	let current = '';
+	for (const s of sentences) {
+		if (current.length + s.length > maxLen && current.length > 0) {
+			chunks.push(current.trim());
+			current = s;
+		} else {
+			current += s;
+		}
+	}
+	if (current.trim()) chunks.push(current.trim());
+	return chunks.length > 0 ? chunks : [text];
+}
+function triggerTranslation() {
+	if (!translationEnabled) return;
+	const re = document.getElementById('rawEditor'); if (!re) return;
+	const raw = re.value.trim();
+	if (!raw) {
+		document.getElementById('translationResult').style.display = 'none';
+		document.getElementById('translationPlaceholder').style.display = 'block';
+		return;
+	}
+	clearTimeout(_transDebounceTimer);
+	_transDebounceTimer = setTimeout(() => translateText(raw), 800);
+}
+
+function triggerOrganize() {
+	const re = document.getElementById('rawEditor'); if (!re) return;
+	const raw = re.value;
+	if (!raw.trim()) {
+		renderOrganized({ type: 'empty' });
+		document.getElementById('translationResult').style.display = 'none';
+		document.getElementById('translationPlaceholder').style.display = 'block';
+		return;
+	}
+	const result = organizeText(raw);
+	renderOrganized(result);
+	triggerTranslation();
+}
+
+// ═══ EXPORT FUNCTIONS ═══
+function generatePlainText(result) {
+	if (!result || result.type === 'empty') return '';
+	let txt = '';
+	if (result.summary) txt += (_isEN() ? '=== Summary ===\n' : '=== 总结 ===\n') + result.summary + '\n\n';
+	if (result.keyPoints && result.keyPoints.length > 0) {
+		txt += (_isEN() ? '=== Key Points ===\n' : '=== 关键要点 ===\n');
+		for (const kp of result.keyPoints) txt += '• ' + kp.text + '\n';
+		txt += '\n';
+	}
+	const re = document.getElementById('rawEditor'); if (re && re.value) txt += (_isEN() ? '=== Raw Transcript ===\n' : '=== 原始记录 ===\n') + re.value;
+	return txt;
+}
+function generateMarkdown(result) {
+	if (!result || result.type === 'empty') return '';
+	let md = '# ' + (meetingTitle || (_isEN() ? 'Meeting Notes' : '会议记录')) + '\n\n';
+	if (result.summary) md += '## ' + (_isEN() ? 'Summary' : '总结') + '\n\n' + result.summary + '\n\n';
+	if (result.keyPoints && result.keyPoints.length > 0) {
+		md += '## ' + (_isEN() ? 'Key Points' : '关键要点') + '\n\n';
+		for (const kp of result.keyPoints) md += '- ' + kp.text + '\n';
+		md += '\n';
+	}
+	if (result.keywords && result.keywords.length > 0) {
+		md += '## ' + (_isEN() ? 'Keywords' : '关键词') + '\n\n';
+		md += result.keywords.map(k => '`' + k + '`').join(' ') + '\n\n';
+	}
+	const re = document.getElementById('rawEditor'); if (re && re.value) md += '## ' + (_isEN() ? 'Raw Transcript' : '原始记录') + '\n\n' + re.value + '\n';
+	return md;
+}
+function exportTXT() {
+	const result = getCurrentOrganizedResult();
+	const txt = generatePlainText(result);
+	if (!txt) { showToast(_isEN() ? '⚠️ No content' : '⚠️ 无内容可导出'); return; }
+	const blob = new Blob(['﻿' + txt], { type: 'text/plain;charset=utf-8' });
+	const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+	a.download = (meetingTitle || (_isEN() ? 'meeting_notes' : '会议记录')) + '.txt';
+	a.click(); URL.revokeObjectURL(a.href);
+	showToast(_isEN() ? '✅ TXT exported' : '✅ TXT 已导出');
+}
+function exportMarkdown() {
+	const result = getCurrentOrganizedResult();
+	const md = generateMarkdown(result);
+	if (!md) { showToast(_isEN() ? '⚠️ No content' : '⚠️ 无内容可导出'); return; }
+	const blob = new Blob(['﻿' + md], { type: 'text/markdown;charset=utf-8' });
+	const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+	a.download = (meetingTitle || (_isEN() ? 'meeting_notes' : '会议记录')) + '.md';
+	a.click(); URL.revokeObjectURL(a.href);
+	showToast(_isEN() ? '✅ MD exported' : '✅ Markdown 已导出');
+}
+function exportWord() {
+	const result = getCurrentOrganizedResult();
+	const re = document.getElementById('rawEditor');
+	if (!result && (!re || !re.value.trim())) { showToast(_isEN() ? '⚠️ No content' : '⚠️ 无内容可导出'); return; }
+	let html = '<html><head><meta charset="UTF-8"><style>body{font-family:sans-serif;line-height:1.8;max-width:800px;margin:40px auto;color:#333}h1{color:#5B6CF0;border-bottom:3px solid #5B6CF0;padding-bottom:8px}h2{color:#333;margin-top:24px}ul{list-style:disc;padding-left:20px}li{margin:8px 0}.kw{display:inline-block;background:#EEF0FF;color:#5B6CF0;padding:2px 10px;border-radius:12px;margin:3px;font-size:13px}</style></head><body>';
+	html += '<h1>' + escapeHTML(meetingTitle || (_isEN() ? 'Meeting Notes' : '会议记录')) + '</h1>';
+	if (result && result.summary) { html += '<h2>' + (_isEN() ? 'Summary' : '总结') + '</h2><p>' + escapeHTML(result.summary) + '</p>'; }
+	if (result && result.keyPoints && result.keyPoints.length > 0) {
+		html += '<h2>' + (_isEN() ? 'Key Points' : '关键要点') + '</h2><ul>';
+		for (const kp of result.keyPoints) html += '<li>' + escapeHTML(kp.text) + '</li>';
+		html += '</ul>';
+	}
+	if (result && result.keywords && result.keywords.length > 0) {
+		html += '<h2>' + (_isEN() ? 'Keywords' : '关键词') + '</h2><p>';
+		html += result.keywords.map(k => '<span class="kw">' + escapeHTML(k) + '</span>').join(' ');
+		html += '</p>';
+	}
+	if (re && re.value.trim()) { html += '<h2>' + (_isEN() ? 'Raw Transcript' : '原始记录') + '</h2><pre style="white-space:pre-wrap;font-family:inherit;line-height:1.8;">' + escapeHTML(re.value) + '</pre>'; }
+	html += '</body></html>';
+	const blob = new Blob(['﻿' + html], { type: 'application/msword' });
+	const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+	a.download = (meetingTitle || (_isEN() ? 'meeting_notes' : '会议记录')) + '.doc';
+	a.click(); URL.revokeObjectURL(a.href);
+	showToast(_isEN() ? '✅ Word exported' : '✅ Word 已导出');
+}
+
+// ═══ THEME ═══
+function applyTheme(dark) {
+    isDarkMode = dark;
+    if (dark) {
+        document.documentElement.classList.add('dark');
+        document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.removeAttribute('data-theme');
+    }
+    // Update toggle icon
+    const tt = document.getElementById('themeToggle');
+    if (tt) tt.textContent = dark ? '☀️' : '🌙';
+}
+function loadTheme() {
+    // Check settings first, fallback to legacy key
+    let dark;
+    try {
+        const s = JSON.parse(localStorage.getItem('sm_settings') || '{}');
+        if (s.darkMode === 'dark') dark = true;
+        else if (s.darkMode === 'light') dark = false;
+        else dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    } catch (_) {
+        const legacy = localStorage.getItem('meeting_recorder_theme');
+        dark = legacy === 'dark' ? true : legacy === 'light' ? false : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    applyTheme(dark);
+}
+
 // ═══ INIT ═══
-async function fetchAndShowPublicUrl(){try{const r=await fetch("/api/status");const d=await r.json();if(d.publicUrl){const el=document.getElementById("loginPubUrl");const tx=document.getElementById("loginPubUrlText");if(el&&tx){tx.textContent=d.publicUrl;el.style.display="block"}}}catch(_){}setTimeout(fetchAndShowPublicUrl,30000)}fetchAndShowPublicUrl();
+
 function initApp() {
     if (localStorage.getItem('sm_sidebar_collapsed') === 'true') { const sb = $('#sidebar'); if (sb) sb.classList.add('collapsed'); }
     loadTheme();
     updateLiveClock();
     setInterval(updateLiveClock, 1000);
+    // Restore meeting title from localStorage
+    const savedTitle = localStorage.getItem('meeting_recorder_meeting_title');
+    if (savedTitle) meetingTitle = savedTitle;
+    const mtInput = document.getElementById('meetingTitle');
+    if (mtInput && meetingTitle) mtInput.value = meetingTitle;
+    initMeetingDateTime();
     renderHistoryList();
     if (checkAuth()) { const lv = localStorage.getItem('sm_last_view') || 'dashboard'; switchView(lv); }
     const s = loadSettings(); applySettings(s);
+    // Bind clear history button
+    const btnCH = document.getElementById('btnClearHistory');
+    if (btnCH) btnCH.addEventListener('click', () => { saveHistory([]); renderHistoryList(); showToast(_isEN() ? '🗑 History cleared' : '🗑 历史已清空'); });
+    // Bind meeting title input
+    if (mtInput) mtInput.addEventListener('input', () => { meetingTitle = mtInput.value; localStorage.setItem('meeting_recorder_meeting_title', meetingTitle); });
     console.log('✅ SmartMeeting Pro ready — all locale-aware');
 }
 document.addEventListener('DOMContentLoaded', initApp);

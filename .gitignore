@@ -1,5 +1,10 @@
 node_modules/
 uploads/
 *.log
+server.lock
+server.pid
 .DS_Store
 Thumbs.db
+config.json
+public-url.txt
+url-history.log
