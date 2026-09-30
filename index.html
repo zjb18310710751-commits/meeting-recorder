@@ -1088,7 +1088,7 @@ body::before {
     50%{opacity:1;transform:translateY(-5px)}
 }
 
-.translation-result { color: var(--text); }
+.translation-result { color: var(--text); user-select: text; cursor: text; }
 .translation-result p { margin: 7px 0; }
 
 .translation-error {
@@ -2668,7 +2668,7 @@ body::before {
     <span class="recording-timer" id="recordingTimer">00:00</span>
     <button class="btn btn-primary" id="btnStart" title="开始录音 (Ctrl+Shift+R)">🎤 开始录音</button>
     <button class="btn btn-danger" id="btnStop" title="停止录音 (Ctrl+Shift+R)" disabled>⏹ 停止录音</button>
-    <button class="btn" id="btnClear" title="清空内容">🗑 清空</button>
+    <button class="btn" id="btnClear" title="清空录音转写内容">🗑 清空转写</button>
     <button class="theme-toggle" id="themeToggle" title="切换深色/浅色模式">🌙</button>
 </div>
 <div class="main-content" id="mainContent">
@@ -2706,6 +2706,7 @@ body::before {
                     <span style="font-size:10px;color:var(--text-muted);">→</span>
                     <select class="trans-lang-select" id="transTargetLang" title="目标语言"><option value="zh-CN">🇨🇳 中文</option><option value="en-US">🇺🇸 English</option><option value="ja">🇯🇵 日本語</option><option value="ko">🇰🇷 한국어</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option><option value="es">🇪🇸 Español</option></select>
                     <span style="flex:1;"></span>
+                    <button class="btn-annotation-toggle" id="btnCopyTranslation" title="复制翻译结果" style="margin-right:6px;">📋 复制</button>
                     <button class="btn-annotation-toggle" id="btnAnnotationToggle" title="标注难词和复杂词汇" style="margin-right:6px;">🏷 难词标注</button>
                     <span class="collapse-arrow">▼</span>
                 </div>
@@ -2742,6 +2743,7 @@ body::before {
                 <div class="view-title"><span class="view-title-icon">🔍</span> 全文检索</div>
                 <div class="history-search-bar">
                     <input type="text" id="historySearchInput" placeholder="输入关键词搜索全部会议记录...">
+                    <button class="btn btn-sm" id="btnClearSearch" title="清空搜索关键词" style="flex-shrink:0;">✕ 清空</button>
                     <select id="historySearchFilter"><option value="all">全部语言</option><option value="zh-CN">中文</option><option value="en-US">英文</option></select>
                 </div>
                 <table class="search-results-table"><thead><tr><th>日期</th><th>标题</th><th>字数</th><th>语言</th><th>操作</th></tr></thead><tbody id="searchResultsBody"><tr><td colspan="5" class="sr-empty">🔍 在上方输入关键词开始搜索</td></tr></tbody></table>
@@ -3022,6 +3024,8 @@ function renderHistorySearch() {
 }
 $('#historySearchInput').addEventListener('input', renderHistorySearch);
 $('#historySearchFilter').addEventListener('change', renderHistorySearch);
+const btnClearSearch = document.getElementById('btnClearSearch');
+if (btnClearSearch) btnClearSearch.addEventListener('click', () => { const si = document.getElementById('historySearchInput'); if (si) si.value = ''; renderHistorySearch(); if (si) si.focus(); });
 
 // ═══ SHARE ═══
 function renderShare() {
@@ -3474,8 +3478,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // All other bindings
-    const cl = document.getElementById('btnClear'); if (cl) cl.addEventListener('click', () => { const re = document.getElementById('rawEditor'); if (re) re.value = ''; const oc = document.getElementById('organizedContent'); if (oc) oc.innerHTML = '<div class=\"placeholder\"><span class=\"icon\">📋</span>' + (_isEN() ? 'Cleared' : '已清空') + '</div>'; showToast(_isEN() ? '🗑 Cleared' : '🗑 已清空'); });
-    const re = document.getElementById('rawEditor'); if (re) re.addEventListener('input', () => { clearTimeout(re._dt); re._dt = setTimeout(triggerOrganize, 600); const wc = re.value.replace(/\s/g, '').length; const wcb = document.getElementById('wordCountBadge'); if (wcb) wcb.textContent = currentLang === 'zh-CN' ? wc + ' 字' : wc + ' words'; });
+    const cl = document.getElementById('btnClear'); if (cl) cl.addEventListener('click', () => { const re = document.getElementById('rawEditor'); if (re) re.value = ''; const oc = document.getElementById('organizedContent'); if (oc) oc.innerHTML = '<div class=\"placeholder\"><span class=\"icon\">📋</span>' + (_isEN() ? 'Cleared' : '已清空') + '</div>'; if (typeof resetTranslationState === 'function') resetTranslationState(); const st = document.getElementById('subtitlesText'); if (st) st.textContent = ''; const fs = document.getElementById('floatingSubtitles'); if (fs) fs.classList.remove('active'); showToast(_isEN() ? '🗑 Cleared' : '🗑 已清空'); });
+    const re = document.getElementById('rawEditor'); if (re) re.addEventListener('input', () => { clearTimeout(re._dt); re._dt = setTimeout(triggerOrganize, 600); triggerTranslation(); const wc = re.value.replace(/\s/g, '').length; const wcb = document.getElementById('wordCountBadge'); if (wcb) wcb.textContent = currentLang === 'zh-CN' ? wc + ' 字' : wc + ' words'; });
     const be = document.getElementById('btnExport'); if (be) be.addEventListener('click', ev => { ev.stopPropagation(); const m = document.getElementById('exportDropdownMenu'), bd = document.getElementById('exportDropdownBackdrop'); if (m) m.classList.toggle('open'); if (bd) bd.classList.toggle('open'); });
     const bd = document.getElementById('exportDropdownBackdrop'); if (bd) bd.addEventListener('click', () => { const m = document.getElementById('exportDropdownMenu'); if (m) m.classList.remove('open'); bd.classList.remove('open'); });
     document.querySelectorAll('#exportDropdownMenu button[data-export]').forEach(btn => { btn.addEventListener('click', ev => { ev.stopPropagation(); const m = document.getElementById('exportDropdownMenu'), bd = document.getElementById('exportDropdownBackdrop'); if (m) m.classList.remove('open'); if (bd) bd.classList.remove('open'); const t = btn.dataset.export; if (t === 'link') navigator.clipboard.writeText(window.location.href).then(() => showToast(_isEN() ? '✅ Link copied' : '✅ 已复制链接')); else if (t === 'word') exportWord(); else if (t === 'txt') exportTXT(); else if (t === 'md') exportMarkdown(); }); });
@@ -3495,6 +3499,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const legend = document.getElementById('annotationLegend');
         if (legend) legend.classList.toggle('active', annotationEnabled);
         showToast(annotationEnabled ? (_isEN() ? '🏷 Annotations ON' : '🏷 难词标注已开启') : (_isEN() ? '🏷 Annotations OFF' : '🏷 难词标注已关闭'));
+    });
+    // Copy translation result
+    const btnCopyTrans = document.getElementById('btnCopyTranslation');
+    if (btnCopyTrans) btnCopyTrans.addEventListener('click', () => {
+        const r = document.getElementById('translationResult');
+        let txt = (r && r.style.display !== 'none') ? (r.innerText || '').trim() : '';
+        if (!txt) txt = (typeof _translatedText !== 'undefined' ? _translatedText : '').trim();
+        if (!txt) { showToast(_isEN() ? '⚠️ No translation to copy' : '⚠️ 暂无翻译内容'); return; }
+        navigator.clipboard.writeText(txt).then(() => showToast(_isEN() ? '✅ Copied' : '✅ 已复制')).catch(() => showToast(_isEN() ? 'Copy failed' : '复制失败'));
     });
     // Language toggle buttons
     document.querySelectorAll('#langToggle button[data-lang]').forEach(btn => {
@@ -3620,6 +3633,23 @@ function extractKeywords(raw) {
     return found;
 }
 
+// Chinese stop-bigrams that carry little meaning for summarization.
+const CJK_STOP = new Set('我们,你们,他们,这个,那个,这些,那些,就是,然后,所以,因为,但是,如果,可以,需要,已经,还是,一个,一下,大家,还有,什么,怎么,现在,那么,这样,以及,或者,关于,对于,通过,进行,表示,时候,问题,事情,东西,没有,不是,知道,觉得,感觉,今天,明天,昨天,可能,应该,一定,非常,比较,特别,其实,只是,不过,一直,一点,很多,真的,而且,不能,不会,就是说,比如说,我们的,我的,你的,他的'.split(','));
+
+// Tokenize a sentence for centrality scoring: English words + Chinese bigrams/trigrams.
+function sentenceTokens(text) {
+    const set = new Set();
+    const t = (text || '').toLowerCase();
+    const en = t.match(/[a-z][a-z0-9'-]{2,}/g) || [];
+    for (const w of en) if (!EN_STOPWORDS.has(w)) set.add(w);
+    const runs = t.match(/[一-鿿]+/g) || [];
+    for (const run of runs) {
+        for (let i = 0; i + 2 <= run.length; i++) { const bi = run.slice(i, i + 2); if (!CJK_STOP.has(bi)) set.add('b:' + bi); }
+        for (let i = 0; i + 3 <= run.length; i++) set.add('t:' + run.slice(i, i + 3));
+    }
+    return set;
+}
+
 function organizeText(raw) {
     if (!raw || !raw.trim()) return { type: 'empty' };
     const lines = raw.split(/\n+/).map(l => l.trim()).filter(l => l);
@@ -3634,24 +3664,35 @@ function organizeText(raw) {
     for (const l of lines) if (ACTION_LEAD_RE.test(l) || /^[-•*#]\s/.test(l)) addKP(l);
     for (const s of sentences) if (DECISION_RE.test(s)) addKP(s);
 
-    // Extractive summary: score sentences, keep the top few in original order.
-    const kwSet = new Set(keywords.map(k => k.toLowerCase()));
-    const scored = sentences.map((s, i) => {
+    // Extractive summary (TextRank-style centrality): pick the sentences that
+    // best represent the whole transcript, then re-order them as they appear.
+    const isCJK = /[一-龥]/.test(raw);
+    const n = sentences.length;
+    const tokSets = sentences.map(s => sentenceTokens(s));
+    const ranked = sentences.map((s, i) => {
         const t = s.trim();
-        const lc = t.toLowerCase();
+        const a = tokSets[i];
         let score = 0;
-        for (const k of kwSet) if (lc.includes(k)) score += 2;
-        if (DECISION_RE.test(t)) score += 3;
-        if (i < 2) score += 2;
-        if (i >= sentences.length - 2) score += 1.5;
+        if (a.size > 0) {
+            for (let j = 0; j < n; j++) {
+                if (i === j || tokSets[j].size === 0) continue;
+                const b = tokSets[j];
+                let inter = 0;
+                for (const tok of a) if (b.has(tok)) inter++;
+                score += inter / Math.sqrt(a.size * b.size);
+            }
+        }
+        if (DECISION_RE.test(t)) score += 1.2;                 // conclusions / actions matter
+        if (n > 5 && i >= n - 3) score += 0.4;                  // wrap-ups usually at the end
         const len = t.length;
-        if (len < 6) score -= 2; else if (len > 90) score -= 1;
-        return { i, t, score: score / Math.sqrt(len) };
+        if (len < 6) score -= 1.5; else if (len > 120) score -= 0.6;
+        return { i, t, score };
     }).sort((a, b) => b.score - a.score);
 
-    const topCount = Math.min(3, sentences.length);
-    const isCJK = /[一-龥]/.test(raw);
-    const clean = scored.slice(0, topCount).sort((a, b) => a.i - b.i).map(x => x.t).map(t => t.replace(/[。！？!?；;，、.\s]+$/g, '').trim()).filter(Boolean);
+    const topCount = Math.min(4, Math.max(2, Math.round(n / 3)));
+    const clean = ranked.slice(0, topCount).sort((a, b) => a.i - b.i).map(x => x.t)
+        .map(t => t.replace(/[。！？!?；;，、.\s]+$/g, '').trim())
+        .filter(t => t.length >= 4);
     const summary = clean.join(isCJK ? '。' : '. ') + (clean.length ? (isCJK ? '。' : '') : '');
 
     return {
@@ -3800,7 +3841,7 @@ function triggerTranslation() {
     const raw = re.value.trim();
     if (!raw) { resetTranslationState(); return; }
     clearTimeout(_transDebounceTimer);
-    _transDebounceTimer = setTimeout(() => translateText(raw), 1200);
+    _transDebounceTimer = setTimeout(() => translateText(raw), 300);
 }
 
 function triggerOrganize() {
