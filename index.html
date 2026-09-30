@@ -1492,35 +1492,6 @@ body::before {
     background: rgba(16,185,129,0.08);
 }
 
-/* ========== Microphone Permission Modal ========== */
-.mic-perm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:600;display:flex;align-items:flex-end;justify-content:center;opacity:0;visibility:hidden;transition:all .35s ease}
-.mic-perm-overlay.open{opacity:1;visibility:visible}
-.mic-perm-sheet{width:100%;max-width:500px;background:var(--surface);border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:24px 22px 32px;box-shadow:var(--shadow-xl);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);max-height:85vh;overflow-y:auto}
-.mic-perm-overlay.open .mic-perm-sheet{transform:translateY(0)}
-.mic-perm-sheet .perm-icon{font-size:48px;text-align:center;margin-bottom:12px}
-.mic-perm-sheet h3{text-align:center;font-size:18px;font-weight:750;color:var(--text);margin-bottom:6px;letter-spacing:.3px}
-.mic-perm-sheet .perm-desc{text-align:center;font-size:13px;color:var(--text-secondary);margin-bottom:20px;line-height:1.6}
-.mic-perm-step{display:flex;gap:12px;padding:12px 14px;margin-bottom:8px;background:var(--bg);border-radius:var(--radius-sm);align-items:center;transition:all var(--transition)}
-.mic-perm-step .step-num{width:30px;height:30px;border-radius:50%;background:var(--primary-gradient);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
-.mic-perm-step .step-content{font-size:13px;color:var(--text);line-height:1.5}
-.mic-perm-step .step-content strong{color:var(--primary)}
-.mic-perm-sheet .perm-actions{display:flex;gap:10px;margin-top:18px}
-.mic-perm-sheet .perm-actions button{flex:1;padding:12px;border-radius:var(--radius-sm);font-size:14px;font-weight:650;cursor:pointer;transition:all var(--transition);font-family:inherit;letter-spacing:.2px}
-.perm-btn-primary{background:var(--primary-gradient);color:#fff;border:none;box-shadow:var(--shadow-primary)}
-.perm-btn-primary:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 6px 24px rgba(91,108,240,.4)}
-.perm-btn-secondary{background:var(--surface);color:var(--text);border:1.5px solid var(--border)}
-.perm-btn-secondary:hover{background:var(--bg);border-color:var(--primary);color:var(--primary)}
-.perm-btn-danger{background:var(--danger);color:#fff;border:none;box-shadow:var(--shadow-danger)}
-.perm-btn-danger:hover{filter:brightness(1.08)}
-.mic-status-bar{display:none;align-items:center;gap:8px;padding:8px 14px;background:var(--warning-light);border:1.5px solid rgba(245,158,11,.3);border-radius:var(--radius-sm);margin-bottom:8px;font-size:12px;color:#92400E;font-weight:550}
-.mic-status-bar.active{display:flex}
-.mic-status-bar .mic-status-dot{width:8px;height:8px;border-radius:50%;background:var(--warning);animation:recordingPulse 2s ease-in-out infinite;flex-shrink:0}
-.mic-status-bar.granted{background:var(--success-light);border-color:rgba(16,185,129,.3);color:#065F46;display:flex}
-.mic-status-bar.granted .mic-status-dot{background:var(--success)}
-.mic-status-btn{padding:3px 10px;border-radius:6px;border:1.5px solid #92400E;background:transparent;color:#92400E;cursor:pointer;font-size:11px;font-weight:600;white-space:nowrap;font-family:inherit;transition:all var(--transition);margin-left:auto}
-.mic-status-btn:hover{background:#92400E;color:#fff}
-.mobile .mic-status-bar{display:flex}
-
 /* ========== Responsive - Mobile ========== */
 @media (max-width: 768px) {
     #app { padding: 8px; gap: 6px; width: 100%; height: 100%; }
@@ -2454,10 +2425,10 @@ body::before {
 .sidebar-nav .nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);cursor:pointer;font-size:13.5px;font-weight:550;color:var(--text-secondary);transition:all var(--transition);margin-bottom:2px;white-space:nowrap;position:relative}
 .sidebar-nav .nav-item:hover{background:var(--bg);color:var(--text)}
 .sidebar-nav .nav-item.active{background:var(--primary-soft);color:var(--primary);font-weight:650}
-.sidebar-nav .nav-item .nav-icon{font-size:18px;width:22px;text-align:center;flex-shrink:0}
+.sidebar-nav .nav-item .nav-icon{font-size:18px;width:24px;text-align:center;flex-shrink:0;line-height:1}
 .sidebar-nav .nav-item .nav-label{flex:1;overflow:hidden;text-overflow:ellipsis}
 .sidebar.collapsed .nav-label,.sidebar.collapsed .nav-badge{display:none}
-.sidebar-nav .nav-item .nav-badge{padding:2px 7px;border-radius:10px;font-size:10.5px;font-weight:700;background:var(--danger);color:#fff}
+.sidebar-nav .nav-item .nav-badge{padding:2px 7px;border-radius:10px;font-size:10.5px;font-weight:700;background:var(--danger);color:#fff;flex-shrink:0;white-space:nowrap;line-height:1.4}
 .sidebar-user{padding:12px 16px;border-top:1.5px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
 .sidebar-user .user-avatar{width:34px;height:34px;border-radius:50%;background:var(--primary-gradient);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
 .sidebar.collapsed .user-info{display:none}
@@ -2515,14 +2486,6 @@ body::before {
 .settings-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-xs)}
 .settings-card .set-card-header{padding:14px 18px;border-bottom:1.5px solid var(--border);font-weight:650;font-size:14px;color:var(--text);display:flex;align-items:center;gap:8px}
 .settings-card .set-card-body{padding:10px 18px}
-.setting-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border-light)}
-.setting-row:last-child{border-bottom:none}
-.set-label{font-size:13.5px;font-weight:550;color:var(--text)}
-.set-desc{font-size:11.5px;color:var(--text-muted);margin-top:2px}
-.setting-row input[type="number"]{width:100px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-size:13px;font-family:var(--font-mono);outline:none;text-align:center;transition:all var(--transition)}
-.setting-row input[type="number"]:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--border-accent)}
-.setting-row .info-val{font-family:var(--font-mono);font-size:12px;color:var(--primary);word-break:break-all;max-width:220px;text-align:right;cursor:pointer;transition:all var(--transition);padding:4px 8px;border-radius:6px}
-.setting-row .info-val:hover{background:var(--primary-soft)}
 .setting-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border-light)}
 .setting-row:last-child{border-bottom:none}
 .setting-row .set-label{font-size:13.5px;font-weight:550;color:var(--text)}
@@ -2698,7 +2661,7 @@ body::before {
     <div class="header-logo"><span class="icon">🎙️</span><span>会议录音助手</span></div>
     <div class="lang-toggle" id="langToggle"><button data-lang="zh-CN" class="active">🇨🇳 中文</button><button data-lang="en-US">🇺🇸 English</button></div>
     <div class="header-spacer"></div>
-    <div class="live-clock" id="liveClock"><span class="clock-date" id="clockDate">2026/06/27</span><span class="clock-divider"></span><span class="clock-time" id="clockTime">00:00<span class="seconds">:00</span></span><span style="font-size:10px;color:var(--text-muted);" id="clockWeekday" class="clock-weekday">周几</span></div>
+    <div class="live-clock" id="liveClock"><span class="clock-date" id="clockDate"></span><span class="clock-divider"></span><span class="clock-time" id="clockTime"><span class="seconds"></span></span><span style="font-size:10px;color:var(--text-muted);" id="clockWeekday" class="clock-weekday"></span></div>
     <span style="width:8px;flex-shrink:0;"></span>
     <div class="waveform-container" id="waveformContainer"><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div><div class="waveform-bar" style="height:6px"></div></div>
     <div class="recording-dot" id="recordingDot" title="录音状态"></div>
@@ -2724,12 +2687,12 @@ body::before {
                     <button class="btn btn-sm btn-summary" id="btnSummary" title="AI 智能总结">🤖 总结</button>
                     <button class="btn btn-sm btn-typo" id="btnTypo" title="修正错别字">✏️ 纠错<span class="typo-count" id="typoCount"></span></button>
                     <button class="btn btn-sm bookmark-btn" id="btnBookmark" title="标记重点 (录音时可用)">🔖 标记<span class="bookmark-indicator" id="bookmarkIndicator"></span></button>
+                    <button class="btn btn-sm" id="btnUnbookmark" title="取消最后一个标记" style="color:var(--warning);border-color:var(--warning);" disabled>↩️ 取消标记</button>
                     <button class="btn btn-sm" id="btnCopy" title="复制整理结果">📋 复制</button>
                     <div class="export-dropdown-wrapper" id="exportDropdownWrapper"><button class="btn btn-sm" id="btnExport" title="导出">📥 导出 ▾</button><div class="export-dropdown-menu" id="exportDropdownMenu"><button data-export="link"><span class="icon">🔗</span> 复制分享链接</button><button data-export="word"><span class="icon">📄</span> 导出 Word (.doc)</button><button data-export="txt"><span class="icon">📝</span> 导出 TXT</button><button data-export="md"><span class="icon">📑</span> 导出 Markdown</button></div></div>
                     <div class="export-dropdown-backdrop" id="exportDropdownBackdrop"></div>
                 </div></div></div>
             <div class="panel-body">
-                <div class="mic-status-bar" id="micStatusBar"><span class="mic-status-dot"></span><span id="micStatusText">点击"开始录音"获取麦克风权限</span><button class="mic-status-btn" id="btnMicSettings">🔔 设置</button></div>
                 <div class="organizing-shimmer" id="organizingShimmer"><span>🧠 正在整理中</span><span class="shimmer-dot"></span><span class="shimmer-dot"></span><span class="shimmer-dot"></span></div>
                 <div class="typo-fixes-bar" id="typoFixesBar"><span>✏️</span> <span id="typoFixesCount"></span> <span>处已修正</span><button class="btn-undo-all" id="btnUndoAllTypo">↩ 全部撤销</button></div>
                 <div class="summary-loading" id="summaryLoading"><span>🤖 正在生成总结</span><span class="s-dot"></span><span class="s-dot"></span><span class="s-dot"></span></div>
@@ -2810,21 +2773,6 @@ body::before {
     </div>
     <div class="photo-fullscreen-overlay" id="photoFullscreenOverlay"><span class="photo-close" id="photoClose">✕</span><img id="photoFullscreenImg" src="" alt="照片预览"></div>
 
-    <!-- ====== Microphone Permission Modal ====== -->
-    <div class="mic-perm-overlay" id="micPermOverlay">
-        <div class="mic-perm-sheet" id="micPermSheet">
-            <div class="perm-icon">🎤</div>
-            <h3 id="micPermTitle">需要麦克风权限</h3>
-            <p class="perm-desc" id="micPermDesc">录音转文字需要访问您的麦克风。请按以下步骤启用：</p>
-            <div class="mic-perm-step"><span class="step-num">1</span><span class="step-content">点击下方 <strong>"启用麦克风"</strong> 按钮</span></div>
-            <div class="mic-perm-step"><span class="step-num">2</span><span class="step-content">浏览器弹出权限对话框时，选择 <strong>"允许"</strong></span></div>
-            <div class="mic-perm-step"><span class="step-num">3</span><span class="step-content">如果之前拒绝了，请打开 <strong>手机设置 → Safari/Chrome → 麦克风 → 允许</strong></span></div>
-            <div class="perm-actions">
-                <button class="perm-btn-secondary" id="btnMicSkip">跳过</button>
-                <button class="perm-btn-primary" id="btnMicEnable">🎤 启用麦克风</button>
-            </div>
-        </div>
-    </div>
     <div class="toast" id="toast"></div>
 
     
@@ -3056,7 +3004,7 @@ const MT = [
 ];
 function renderTemplates() {
     $('#templateGrid').innerHTML = MT.map(t => '<div class=\"template-card\" data-tmpl=\"' + t.name + '\">' + (t.badge ? '<span class=\"tmpl-badge\">' + t.badge + '</span>' : '') + '<div class=\"tmpl-icon\">' + t.icon + '</div><div class=\"tmpl-name\">' + t.name + '</div><div class=\"tmpl-desc\">' + t.desc + '</div><div class=\"tmpl-tags\">' + t.tags.map(g => '<span class=\"tmpl-tag\">' + g + '</span>').join('') + '</div></div>').join('');
-    $('#templateGrid').querySelectorAll('.template-card').forEach(card => { card.addEventListener('click', () => { const t = MT.find(t => t.name === card.dataset.tmpl); if (!t || false) return; const mtEl = document.getElementById('meetingTitle'); const re = document.getElementById('rawEditor'); const oc = document.getElementById('organizedContent'); if (!re || !oc) return; if (mtEl) mtEl.value = t.title; if (typeof meetingTitle !== 'undefined') { meetingTitle = t.title; try { localStorage.setItem('meeting_recorder_meeting_title', meetingTitle); } catch (_) { } } re.value = ''; renderOrganized({ type: 'empty' }); triggerOrganize(); switchView('recorder'); showToast((_isEN() ? '📋 Applied: ' : '📋 已应用: ') + t.name); }); });
+    $('#templateGrid').querySelectorAll('.template-card').forEach(card => { card.addEventListener('click', () => { const t = MT.find(t => t.name === card.dataset.tmpl); if (!t || typeof dom === 'undefined' || !dom.meetingTitle || !dom.rawEditor) return; dom.meetingTitle.value = t.title; if (typeof meetingTitle !== 'undefined') { meetingTitle = t.title; try { localStorage.setItem('meeting_recorder_meeting_title', meetingTitle); } catch (_) { } } dom.rawEditor.value = ''; dom.organizedContent.innerHTML = '<div class=\"placeholder\"><span class=\"icon\">📋</span>' + (_isEN() ? 'Template loaded: ' : '已加载模板: ') + t.name + '<br><small>' + (_isEN() ? 'Start recording or paste text...' : '开始录音或输入内容…') + '</small></div>'; switchView('recorder'); showToast((_isEN() ? '📋 Applied: ' : '📋 已应用: ') + t.name); }); });
 }
 
 // ═══ HISTORY SEARCH ═══
@@ -3066,9 +3014,10 @@ function renderHistorySearch() {
     let results = hist; if (filter !== 'all') results = results.filter(e => e.lang === filter);
     if (q) results = results.filter(e => (e.title || '').toLowerCase().includes(q) || (e.rawText || '').toLowerCase().includes(q));
     if (results.length === 0) { $('#searchResultsBody').innerHTML = '<tr><td colspan=\"5\" class=\"sr-empty\">' + (q ? (_isEN() ? '🔍 No results for \"' : '🔍 未找到 \"') + q + '\"' : (_isEN() ? '🔍 Type a keyword to search' : '🔍 输入关键词搜索')) + '</td></tr>'; }
-    else { $('#searchResultsBody').innerHTML = results.map(e => { const d = new Date(e.date), ds = fmtDateCompact(d); let t = (e.title || 'Untitled').slice(0, 40), th = t; if (q) { const idx = t.toLowerCase().indexOf(q); if (idx >= 0) th = t.slice(0, idx) + '<span class=\"sr-title\">' + t.slice(idx, idx + q.length) + '</span>' + t.slice(idx + q.length); } return '<tr data-hid=\"' + e.id + '\"><td>' + ds + '</td><td>' + th + '</td><td>' + (e.wordCount || 0) + 'w</td><td>' + (e.lang === 'en-US' ? '🇺🇸 EN' : '🇨🇳 CN') + '</td><td><button class=\"btn btn-xs\" data-load=\"' + e.id + '\">' + (_isEN() ? 'Load' : '📖 加载') + '</button></td></tr>'; }).join(''); }
+    else { $('#searchResultsBody').innerHTML = results.map(e => { const d = new Date(e.date), ds = fmtDateCompact(d); let t = (e.title || 'Untitled').slice(0, 40), th = t; if (q) { const idx = t.toLowerCase().indexOf(q); if (idx >= 0) th = t.slice(0, idx) + '<span class=\"sr-title\">' + t.slice(idx, idx + q.length) + '</span>' + t.slice(idx + q.length); } return '<tr data-hid=\"' + e.id + '\"><td>' + ds + '</td><td>' + th + '</td><td>' + (e.wordCount || 0) + 'w</td><td>' + (e.lang === 'en-US' ? '🇺🇸 EN' : '🇨🇳 CN') + '</td><td><button class=\"btn btn-xs\" data-load=\"' + e.id + '\">' + (_isEN() ? 'Load' : '📖 加载') + '</button> <button class=\"btn btn-xs\" data-del=\"' + e.id + '\" style=\"color:var(--danger);border-color:var(--danger);\">' + (_isEN() ? 'Del' : '🗑 删除') + '</button></td></tr>'; }).join(''); }
     $('#searchResultsBody').querySelectorAll('tr[data-hid]').forEach(row => { row.addEventListener('click', () => { if (typeof loadHistoryEntry === 'function') loadHistoryEntry(row.dataset.hid); switchView('recorder'); }); });
     $('#searchResultsBody').querySelectorAll('button[data-load]').forEach(btn => { btn.addEventListener('click', e => { e.stopPropagation(); if (typeof loadHistoryEntry === 'function') loadHistoryEntry(btn.dataset.load); switchView('recorder'); }); });
+    $('#searchResultsBody').querySelectorAll('button[data-del]').forEach(btn => { btn.addEventListener('click', e => { e.stopPropagation(); if (typeof deleteHistoryEntry === 'function') deleteHistoryEntry(btn.dataset.del); renderHistorySearch(); }); });
     const hlen = hist.length; $('#historyBadge').textContent = hlen; $('#historyBadge').style.display = hlen > 0 ? 'inline' : 'none';
 }
 $('#historySearchInput').addEventListener('input', renderHistorySearch);
@@ -3084,7 +3033,7 @@ function renderShare() {
         { icon: '📑', name: _isEN() ? 'Markdown' : '导出 MD', hint: '.md', action: 'md' },
         { icon: '📧', name: _isEN() ? 'Email' : '邮件发送', hint: _isEN() ? 'Copy to clipboard' : '复制到剪贴板', action: 'email' }
     ].map(s => '<button class=\"share-card\" data-action=\"' + s.action + '\"><span class=\"share-icon\">' + s.icon + '</span><span class=\"share-name\">' + s.name + '</span><span class=\"share-hint\">' + s.hint + '</span></button>').join('');
-    $('#shareMethods').querySelectorAll('.share-card').forEach(card => { card.addEventListener('click', async () => { const a = card.dataset.action, res = typeof getCurrentOrganizedResult === 'function' ? getCurrentOrganizedResult() : null; if (a === 'qrcode') { const url = window.location.href; $('#qrDisplay').innerHTML = '<img src=\"https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(url) + '\" alt=\"QR\"><div class=\"qr-url\">' + url + '</div>'; showToast(_isEN() ? '📱 QR generated' : '📱 二维码已生成'); } else if (a === 'link') { const url = window.location.href; navigator.clipboard.writeText(url).then(() => showToast(_isEN() ? '✅ Link copied!' : '✅ 链接已复制')).catch(() => showToast(_isEN() ? 'Copy failed' : '复制失败')); } else if (a === 'word' && res && typeof exportWord === 'function') exportWord(); else if (a === 'txt' && res && typeof exportTXT === 'function') exportTXT(); else if (a === 'md' && res && typeof exportMarkdown === 'function') exportMarkdown(); else if (a === 'email') { const txt = res && typeof generatePlainText === 'function' ? generatePlainText(res) : ''; navigator.clipboard.writeText(txt).then(() => showToast(_isEN() ? '✅ Copied to clipboard' : '✅ 已复制到剪贴板')).catch(() => showToast(_isEN() ? 'Copy failed' : '复制失败')); } else showToast(_isEN() ? '⚠️ Save content first' : '⚠️ 请先保存会议内容'); }); });
+    $('#shareMethods').querySelectorAll('.share-card').forEach(card => { card.addEventListener('click', async () => { const a = card.dataset.action, res = typeof getCurrentOrganizedResult === 'function' ? getCurrentOrganizedResult() : null; if (a === 'qrcode') { let url = window.location.href; try { const r = await fetch('/api/status'); url = (await r.json()).publicUrl || url; } catch (_) { } $('#qrDisplay').innerHTML = '<img src=\"https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(url) + '\" alt=\"QR\"><div class=\"qr-url\">' + url + '</div>'; showToast(_isEN() ? '📱 QR generated' : '📱 二维码已生成'); } else if (a === 'link') { let url = window.location.href; try { const r = await fetch('/api/status'); url = (await r.json()).publicUrl || url; } catch (_) { } navigator.clipboard.writeText(url).then(() => showToast(_isEN() ? '✅ Link copied!' : '✅ 链接已复制')).catch(() => showToast(_isEN() ? 'Copy failed' : '复制失败')); } else if (a === 'word' && res && typeof exportWord === 'function') exportWord(); else if (a === 'txt' && res && typeof exportTXT === 'function') exportTXT(); else if (a === 'md' && res && typeof exportMarkdown === 'function') exportMarkdown(); else if (a === 'email') { const txt = res && typeof generatePlainText === 'function' ? generatePlainText(res) : ''; navigator.clipboard.writeText(txt).then(() => showToast(_isEN() ? '✅ Copied to clipboard' : '✅ 已复制到剪贴板')).catch(() => showToast(_isEN() ? 'Copy failed' : '复制失败')); } else showToast(_isEN() ? '⚠️ Save content first' : '⚠️ 请先保存会议内容'); }); });
 }
 
 // ═══ SETTINGS ═══
@@ -3098,16 +3047,11 @@ function renderSettings() {
         { title: '🌐 ' + (_isEN() ? 'Translation' : '翻译'), rows: [{ label: _isEN() ? 'Enable' : '启用翻译', desc: _isEN() ? 'Auto-translate' : '自动翻译', type: 'toggle', key: 'translationEnabled', val: s.translationEnabled }, { label: _isEN() ? 'Word Annotation' : '难词标注', desc: _isEN() ? 'Highlight difficult words' : '高亮复杂词汇', type: 'toggle', key: 'annotationEnabled', val: s.annotationEnabled }] },
         { title: '🧠 AI', rows: [{ label: _isEN() ? 'Summary' : '智能总结', desc: _isEN() ? 'Auto-summarize' : '自动提取摘要', type: 'toggle', key: 'summaryEnabled', val: s.summaryEnabled }, { label: _isEN() ? 'Spell Check' : '错别字检测', desc: _isEN() ? 'Detect typos' : '标出疑似错别字', type: 'toggle', key: 'typoEnabled', val: s.typoEnabled }] },
         { title: '💾 ' + (_isEN() ? 'Storage' : '存储'), rows: [{ label: _isEN() ? 'Auto Save' : '自动保存', desc: _isEN() ? 'Save on stop' : '停止时保存', type: 'toggle', key: 'autoSave', val: s.autoSave }] },
-        { title: '🎨 ' + (_isEN() ? 'Appearance' : '外观'), rows: [{ label: _isEN() ? 'Theme' : '深色模式', desc: _isEN() ? 'Choose theme' : '界面颜色主题', type: 'select', key: 'darkMode', val: s.darkMode, opts: [{ v: 'auto', l: _isEN() ? 'Auto' : '跟随系统' }, { v: 'light', l: _isEN() ? 'Light' : '浅色' }, { v: 'dark', l: _isEN() ? 'Dark' : '深色' }] }] },
-    ].map(sec => '<div class=\"settings-card\"><div class=\"set-card-header\">' + sec.title + '</div><div class=\"set-card-body\">' + sec.rows.map(row => { let ctrl; if (row.type === 'toggle') ctrl = '<label class=\"toggle-switch\"><input type=\"checkbox\" data-setting=\"' + row.key + '\"' + (row.val ? ' checked' : '') + '><span class=\"slider\"></span></label>'; else if (row.type === 'number') ctrl = '<input type=\"number\" data-setting=\"' + row.key + '\" value=\"' + row.val + '\" min=\"' + (row._min||1024) + '\" max=\"' + (row._max||65535) + '\" placeholder=\"' + (row._placeholder||'') + '\" style=\"width:100px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-size:13px;font-family:var(--font-mono);outline:none;text-align:center;\">'; else if (row.type === 'info') ctrl = '<span style=\"font-family:var(--font-mono);font-size:12px;color:var(--primary);word-break:break-all;\" id=\"info_' + row.key + '\">' + row.val + '</span>'; else ctrl = '<select data-setting=\"' + row.key + '\">' + (row.opts || []).map(o => '<option value=\"' + o.v + '\"' + (row.val == o.v ? ' selected' : '') + '>' + o.l + '</option>').join('') + '</select>'; return '<div class=\"setting-row\"><div><div class=\"set-label\">' + row.label + '</div><div class=\"set-desc\">' + row.desc + '</div></div>' + ctrl + '</div>'; }).join('') + '</div></div>').join('');
+        { title: '🎨 ' + (_isEN() ? 'Appearance' : '外观'), rows: [{ label: _isEN() ? 'Theme' : '深色模式', desc: _isEN() ? 'Choose theme' : '界面颜色主题', type: 'select', key: 'darkMode', val: s.darkMode, opts: [{ v: 'auto', l: _isEN() ? 'Auto' : '跟随系统' }, { v: 'light', l: _isEN() ? 'Light' : '浅色' }, { v: 'dark', l: _isEN() ? 'Dark' : '深色' }] }] }
+    ].map(sec => '<div class=\"settings-card\"><div class=\"set-card-header\">' + sec.title + '</div><div class=\"set-card-body\">' + sec.rows.map(row => { let ctrl; if (row.type === 'toggle') ctrl = '<label class=\"toggle-switch\"><input type=\"checkbox\" data-setting=\"' + row.key + '\"' + (row.val ? ' checked' : '') + '><span class=\"slider\"></span></label>'; else ctrl = '<select data-setting=\"' + row.key + '\">' + (row.opts || []).map(o => '<option value=\"' + o.v + '\"' + (row.val == o.v ? ' selected' : '') + '>' + o.l + '</option>').join('') + '</select>'; return '<div class=\"setting-row\"><div><div class=\"set-label\">' + row.label + '</div><div class=\"set-desc\">' + row.desc + '</div></div>' + ctrl + '</div>'; }).join('') + '</div></div>').join('');
 }
-$('#btnSaveSettings').addEventListener('click', async () => {
-    const s = {}; document.querySelectorAll('[data-setting]').forEach(el => { const k = el.dataset.setting; if (el.type === 'checkbox') s[k] = el.checked; else s[k] = el.value; });
-    // 跳过服务器信息字段
-    delete s.serverPubUrl; delete s.serverLanUrl;
-    saveSettings(s); applySettings(s);
-
-    showToast(_isEN() ? '✅ Settings saved' : '✅ 配置已保存');
+$('#btnSaveSettings').addEventListener('click', () => {
+    const s = {}; document.querySelectorAll('[data-setting]').forEach(el => { const k = el.dataset.setting; if (el.type === 'checkbox') s[k] = el.checked; else s[k] = el.value; }); saveSettings(s); applySettings(s); showToast(_isEN() ? '✅ Settings saved' : '✅ 配置已保存');
 });
 function applySettings(s) {
     if (typeof translationEnabled !== 'undefined') translationEnabled = s.translationEnabled; if (typeof annotationEnabled !== 'undefined') annotationEnabled = s.annotationEnabled;
@@ -3120,7 +3064,14 @@ function applySettings(s) {
 // ═══ CORE RECORDER ENGINE ═══
 window.currentLang = 'zh-CN';
 let isRecording = false, recognition = null, recordingSeconds = 0, timerId = null, interimTranscript = '', pendingFinal = '', rafPending = false, isDarkMode = false;
+let recBaseLen = 0;
 let bookmarks = [], inspirations = [], photos = [], typoFixes = [];
+function updateBookmarkUI() {
+    const ind = document.getElementById('bookmarkIndicator');
+    if (ind) { ind.textContent = bookmarks.length; ind.classList.toggle('active', bookmarks.length > 0); }
+    const ub = document.getElementById('btnUnbookmark');
+    if (ub) ub.disabled = bookmarks.length === 0;
+}
 let meetingTitle = '', meetingDateTime = new Date();
 let translationEnabled = true, annotationEnabled = false, summaryEnabled = true, typoEnabled = false;
 let transSourceLang = 'auto', transTargetLang = 'zh-CN';
@@ -3160,7 +3111,14 @@ function shiftDateTime(days, hours, minutes) {
 function initMeetingDateTime() {
     try {
         const saved = JSON.parse(localStorage.getItem('meeting_recorder_meeting_dt') || '{}');
-        if (saved.date) meetingDateTime = new Date(saved.date + 'T' + (saved.time || '09:00'));
+        if (saved.date) {
+            const savedDate = new Date(saved.date + 'T' + (saved.time || '09:00'));
+            // Only restore if it's from today, otherwise start fresh
+            const today = new Date().toISOString().slice(0, 10);
+            if (saved.date === today) {
+                meetingDateTime = savedDate;
+            }
+        }
     } catch (_) { }
     syncDateInputs();
 }
@@ -3221,262 +3179,6 @@ function fmtTime(s) { return String(Math.floor(s / 60)).padStart(2, '0') + ':' +
 function startTimer() { recordingSeconds = 0; const rt = $('#recordingTimer'); if (rt) rt.classList.add('active'); timerId = setInterval(() => { recordingSeconds++; const r = $('#recordingTimer'); if (r) r.textContent = fmtTime(recordingSeconds); }, 1000); }
 function stopTimer() { clearInterval(timerId); const rt = $('#recordingTimer'); if (rt) { rt.classList.remove('active'); rt.textContent = '00:00'; } }
 
-// Speech recognition
-// ═══ Mobile & Mic Permission ═══
-const isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || (window.innerWidth <= 768 && 'ontouchstart' in window);
-if (isMobile) document.body.classList.add('mobile');
-let micPermGranted = false;
-
-// ═══ Speech Capability Detection ═══
-function testSpeechSupport() {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) return { ok: false, reason: 'no-api' };
-    try { const t = new SR(); t.abort(); return { ok: true }; }
-    catch (e) { return { ok: false, reason: 'instantiate-fail', error: e.message }; }
-}
-
-function showSpeechUnsupported() {
-    const ra = document.getElementById('rawEditor');
-    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-    const msg = isIOS
-        ? (_isEN() ? '<b>iOS: Audio Recording Mode</b><br><small>Safari cannot transcribe in real-time.<br>Tap <b>Start Recording</b> — audio will be saved.<br>Or <b>paste text</b> in the right panel.</small>' : '<b>iOS：音频录制模式</b><br><small>Safari 无法实时转写。<br>点击 <b>开始录音</b> 录制音频后保存。<br>也可在右侧面板<b>粘贴文字</b>。</small>')
-        : (_isEN() ? '<b>Speech not supported</b><br><small>Use Chrome/Edge or paste text.</small>' : '<b>当前浏览器不支持语音识别</b><br><small>请用 Chrome/Edge 或手动粘贴文字。</small>');
-    const oc = document.getElementById('organizedContent'); if (oc) oc.innerHTML = '<div class="placeholder"><span class="icon">🎤</span>' + msg + '</div>';
-    if (ra) { setTimeout(() => ra.focus(), 300); ra.placeholder = _isEN() ? 'Paste meeting notes...' : '请在此粘贴会议记录文字...'; }
-    showToast(isIOS ? (_isEN() ? 'iOS: Recording mode' : 'iOS：音频录制模式') : (_isEN() ? 'Speech not supported' : '不支持语音识别'));
-}
-
-function showMicPermModal() {
-    const ov = document.getElementById('micPermOverlay'); if (!ov) return;
-    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-    document.getElementById('micPermTitle').textContent = isIOS ? (_isEN() ? 'Audio Recording' : '音频录制转文字') : (_isEN() ? 'Microphone Access' : '麦克风权限');
-    document.getElementById('micPermDesc').textContent = isIOS ? (_isEN() ? 'Record audio then auto-transcribe.' : '录制音频后自动上传转写。') : (_isEN() ? 'Recording needs mic access:' : '录音需要麦克风权限：');
-    document.getElementById('btnMicSkip').textContent = _isEN() ? 'Got it' : '知道了';
-    document.getElementById('btnMicEnable').textContent = isIOS ? (_isEN() ? 'Start Recording' : '开始录制') : (_isEN() ? 'Try Again' : '重试录音');
-    ov.querySelectorAll('.mic-perm-step').forEach(s => s.style.display = '');
-    ov.classList.add('open');
-}
-function hideMicPermModal() { const ov = document.getElementById('micPermOverlay'); if (ov) ov.classList.remove('open'); }
-
-function updateMicStatusBar(granted) {
-    const msBar = document.getElementById('micStatusBar'), msText = document.getElementById('micStatusText'), msBtn = document.getElementById('btnMicSettings');
-    if (!msBar) return;
-    if (granted) { msBar.classList.add('granted'); msBar.classList.remove('active'); if (msText) msText.textContent = _isEN() ? 'Mic ready' : '麦克风就绪'; if (msBtn) msBtn.textContent = ''; setTimeout(() => msBar.classList.remove('granted'), 3000); }
-    else { msBar.classList.add('active'); msBar.classList.remove('granted'); if (msText) msText.textContent = _isEN() ? 'Tap Start Recording' : '点击开始录音'; if (msBtn) msBtn.textContent = _isEN() ? 'Settings' : '设置'; }
-}
-
-// Modal buttons
-document.getElementById('btnMicEnable').addEventListener('click', () => { hideMicPermModal(); _actuallyStartRecording(); });
-document.getElementById('btnMicSkip').addEventListener('click', hideMicPermModal);
-document.getElementById('micPermOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) hideMicPermModal(); });
-document.getElementById('btnMicSettings').addEventListener('click', e => { e.stopPropagation(); showMicPermModal(); });
-
-async function prewarmMic() { try { const s = await navigator.mediaDevices.getUserMedia({ audio: true }); s.getTracks().forEach(t => t.stop()); return true; } catch (_) { return false; } }
-
-// ═══ RECORDING ENGINE ═══
-let useMediaRecorder = false, mediaRecorder = null, mediaStream = null, audioChunks = [];
-
-function startRec() {
-    const fmt = testSpeechSupport();
-    if (fmt.ok) { useMediaRecorder = false; return startSpeechRec(); }
-    useMediaRecorder = true; showSpeechUnsupported(); return startMediaRecorder();
-}
-
-function startSpeechRec() {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    recognition = new SR(); recognition.continuous = true; recognition.interimResults = true; recognition.lang = currentLang; recognition.maxAlternatives = 1;
-    pendingFinal = ''; rafPending = false;
-    recognition.onresult = (e) => { let ft = '', it = ''; interimTranscript = ''; for (let i = e.resultIndex; i < e.results.length; i++) { const t = e.results[i][0].transcript; if (e.results[i].isFinal) ft += t; else it += t; } if (ft) pendingFinal += ft; if (it && isRecording && !subDrag.active) { const st = document.getElementById('subtitlesText'), fs = document.getElementById('floatingSubtitles'); if (st && fs) { st.textContent = it.trim(); fs.classList.add('active'); applySubPos(); clearTimeout(fs._h); fs._h = setTimeout(() => { if (!subDrag.active) fs.classList.remove('active'); }, 5000); } } if (!rafPending) { rafPending = true; requestAnimationFrame(() => { rafPending = false; const a = pendingFinal; pendingFinal = ''; if (a) { const re = document.getElementById('rawEditor'); if (re) { const p = re.selectionStart; re.value = re.value.substring(0, p) + a + re.value.substring(p); re.selectionStart = re.selectionEnd = p + a.length; re.scrollTop = re.scrollHeight; re.dispatchEvent(new Event('input', { bubbles: true })); } } }); } };
-    recognition.onerror = (e) => { if (e.error === 'no-speech') return; if (e.error === 'not-allowed') { micPermGranted = false; stopRecording(); updateMicStatusBar(false); setTimeout(() => showMicPermModal(), 500); return; } if (e.error === 'audio-capture') { micPermGranted = false; stopRecording(); showToast(_isEN() ? 'No mic' : '未检测到麦克风'); return; } if (e.error === 'network' && isRecording) { setTimeout(() => { if (isRecording && recognition) recognition.start(); }, 500); } };
-    recognition.onend = () => { if (isRecording && recognition) { try { recognition.start(); } catch (_) { stopRecording(); } } };
-    try { recognition.start(); micPermGranted = true; return true; }
-    catch (err) { micPermGranted = false; showToast(_isEN() ? 'Failed' : '启动失败'); return false; }
-}
-
-async function startMediaRecorder() {
-    try { mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true }); micPermGranted = true; updateMicStatusBar(true); }
-    catch (err) { micPermGranted = false; updateMicStatusBar(false); if (err.name === 'NotAllowedError') showMicPermModal(); else showToast(_isEN() ? 'Mic denied' : '麦克风被拒绝'); return false; }
-    const mime = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
-    audioChunks = []; mediaRecorder = new MediaRecorder(mediaStream, { mimeType: mime });
-    mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
-    mediaRecorder.onstop = () => {
-        if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
-        if (audioChunks.length === 0) { showToast(_isEN() ? 'No audio' : '未录制到音频'); return; }
-        const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
-        const re = document.getElementById('rawEditor');
-        // Download audio file locally — no server needed
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url;
-        a.download = 'recording_' + new Date().toISOString().slice(0,19).replace(/:/g,'-') + '.webm';
-        a.click(); URL.revokeObjectURL(url);
-        if (re) { re.value += '\n[🎙 Audio: ' + fmtTime(recordingSeconds) + ']'; re.scrollTop = re.scrollHeight; re.dispatchEvent(new Event('input', { bubbles: true })); }
-        showToast(_isEN() ? '✅ Audio downloaded' : '✅ 音频已下载');
-        if (re) re.placeholder = _isEN() ? 'Paste or record...' : '粘贴或录音...';
-    };
-    mediaRecorder.start(1000);
-    const st = document.getElementById('subtitlesText'), fs = document.getElementById('floatingSubtitles');
-    if (st && fs) { st.textContent = _isEN() ? 'Recording audio...' : '正在录制音频...'; applySubPos(); fs.classList.add('active'); }
-    return true;
-}
-
-function stopRec() {
-    if (useMediaRecorder && mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); const fs = document.getElementById('floatingSubtitles'); if (fs) fs.classList.remove('active'); mediaRecorder = null; }
-    else if (recognition) { recognition.onend = null; try { recognition.stop(); } catch (_) {} recognition = null; }
-}
-
-function setRecUI(a) { if (a) { const rd = document.getElementById('recordingDot'); if (rd) rd.classList.add('active'); const ro = document.getElementById('recordingOverlay'); if (ro) ro.classList.add('active'); const bs = document.getElementById('btnStart'); if (bs) { bs.disabled = true; bs.innerHTML = (useMediaRecorder ? '🔴 Recording' : '🔴 Recording'); bs.classList.add('btn-danger'); bs.classList.remove('btn-primary'); } const bp = document.getElementById('btnStop'); if (bp) bp.disabled = false; const wf = document.getElementById('waveformContainer'); if (wf) wf.classList.add('active'); } else { const rd = document.getElementById('recordingDot'); if (rd) rd.classList.remove('active'); const ro = document.getElementById('recordingOverlay'); if (ro) ro.classList.remove('active'); const bs = document.getElementById('btnStart'); if (bs) { bs.disabled = false; bs.innerHTML = '🎤 ' + (_isEN() ? 'Start' : '开始录音'); bs.classList.remove('btn-danger'); bs.classList.add('btn-primary'); } const bp = document.getElementById('btnStop'); if (bp) bp.disabled = true; const wf = document.getElementById('waveformContainer'); if (wf) wf.classList.remove('active'); } }
-
-async function startRecording() { if (isRecording) return; if (isMobile && !micPermGranted) { const ok = await prewarmMic(); if (!ok) { updateMicStatusBar(false); showMicPermModal(); return; } micPermGranted = true; updateMicStatusBar(true); } _actuallyStartRecording(); }
-function _actuallyStartRecording() { const ok = startRec(); if (ok) { isRecording = true; setRecUI(true); startTimer(); micPermGranted = true; updateMicStatusBar(true); } else { setRecUI(false); } }
-function stopRecording() { if (!isRecording) return; if (pendingFinal) { const re = document.getElementById('rawEditor'); if (re) { re.value += pendingFinal; pendingFinal = ''; } } stopRec(); stopTimer(); isRecording = false; setRecUI(false); if (interimTranscript) { const re = document.getElementById('rawEditor'); if (re) { re.value += interimTranscript; interimTranscript = ''; } } const fs = document.getElementById('floatingSubtitles'); if (fs) fs.classList.remove('active'); const re = document.getElementById('rawEditor'); const wc = re ? re.value.trim().length : 0; if (wc > 0) { showToast((_isEN() ? 'Done: ' : '录音完成: ') + wc + (_isEN() ? ' chars ' : ' 字符 ') + fmtTime(recordingSeconds)); addHistoryEntry(); } }
-// ═══ BIND RECORDER BUTTONS ═══
-document.addEventListener('DOMContentLoaded', () => {
-    // Start/Stop/Bookmark — immediate binding for SpeechRecognition gesture context
-    ['click'].forEach(evt => {
-        const s = document.getElementById('btnStart'); if (s) s.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); startRecording(); });
-        const p = document.getElementById('btnStop'); if (p) p.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); stopRecording(); });
-        const bm = document.getElementById('btnBookmark'); if (bm) bm.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); const re = document.getElementById('rawEditor'); if (!re || !re.value.trim()) return; const sents = re.value.split(/[。！？.!?]+/); const last = sents.filter(s => s.trim().length > 2).pop() || ''; bookmarks.push({ id: Date.now().toString(36), time: fmtTime(recordingSeconds), seconds: recordingSeconds, text: last.trim().slice(0, 80) }); const ind = document.getElementById('bookmarkIndicator'); if (ind) { ind.textContent = bookmarks.length; ind.classList.add('active'); } showToast(_isEN() ? '🔖 Bookmarked' : '🔖 已标记'); });
-    });
-    // Touch events separately
-    ['touchend'].forEach(evt => {
-        const s = document.getElementById('btnStart'); if (s) s.addEventListener(evt, e => { e.preventDefault(); startRecording(); });
-        const p = document.getElementById('btnStop'); if (p) p.addEventListener(evt, e => { e.preventDefault(); stopRecording(); });
-    });
-
-    // All other bindings
-    const cl = document.getElementById('btnClear'); if (cl) cl.addEventListener('click', () => { const re = document.getElementById('rawEditor'); if (re) re.value = ''; const oc = document.getElementById('organizedContent'); if (oc) oc.innerHTML = '<div class=\"placeholder\"><span class=\"icon\">📋</span>' + (_isEN() ? 'Cleared' : '已清空') + '</div>'; showToast(_isEN() ? '🗑 Cleared' : '🗑 已清空'); });
-    const re = document.getElementById('rawEditor'); if (re) re.addEventListener('input', () => { clearTimeout(re._dt); re._dt = setTimeout(triggerOrganize, 600); const wc = re.value.replace(/\s/g, '').length; const wcb = document.getElementById('wordCountBadge'); if (wcb) wcb.textContent = currentLang === 'zh-CN' ? wc + ' 字' : wc + ' words'; });
-    const be = document.getElementById('btnExport'); if (be) be.addEventListener('click', ev => { ev.stopPropagation(); const m = document.getElementById('exportDropdownMenu'), bd = document.getElementById('exportDropdownBackdrop'); if (m) m.classList.toggle('open'); if (bd) bd.classList.toggle('open'); });
-    const bd = document.getElementById('exportDropdownBackdrop'); if (bd) bd.addEventListener('click', () => { const m = document.getElementById('exportDropdownMenu'); if (m) m.classList.remove('open'); bd.classList.remove('open'); });
-    document.querySelectorAll('#exportDropdownMenu button[data-export]').forEach(btn => { btn.addEventListener('click', ev => { ev.stopPropagation(); const m = document.getElementById('exportDropdownMenu'), bd = document.getElementById('exportDropdownBackdrop'); if (m) m.classList.remove('open'); if (bd) bd.classList.remove('open'); const t = btn.dataset.export; if (t === 'link') navigator.clipboard.writeText(window.location.href).then(() => showToast(_isEN() ? '✅ Link copied' : '✅ 已复制链接')); else if (t === 'word') exportWord(); else if (t === 'txt') exportTXT(); else if (t === 'md') exportMarkdown(); }); });
-    const tt = document.getElementById('themeToggle'); if (tt) tt.addEventListener('click', () => { const next = !isDarkMode; applyTheme(next); try { const s = JSON.parse(localStorage.getItem('sm_settings') || '{}'); s.darkMode = next ? 'dark' : 'light'; localStorage.setItem('sm_settings', JSON.stringify(s)); } catch (_) {} localStorage.setItem('meeting_recorder_theme', next ? 'dark' : 'light'); });
-    const pf = document.getElementById('photoFileInput'); if (pf) pf.addEventListener('change', ev => { for (const f of ev.target.files) { const r = new FileReader(); r.onload = e => { photos.push({ id: Date.now().toString(36), dataUrl: e.target.result, time: fmtTime(recordingSeconds) }); showToast(_isEN() ? '📷 Photo added' : '📷 照片已插入'); }; r.readAsDataURL(f); } pf.value = ''; });
-    const ii = document.getElementById('inspirationInput'); if (ii) ii.addEventListener('keydown', ev => { if (ev.key === 'Enter' && !ev.shiftKey) { ev.preventDefault(); const t = ii.value.trim(); if (t) { inspirations.push({ id: Date.now().toString(36), text: t, time: fmtTime(recordingSeconds) }); ii.value = ''; const il = document.getElementById('inspirationList'); if (il) il.innerHTML = inspirations.map(i => '<div class=\"inspiration-entry\"><div class=\"insp-time\">💡 ' + i.time + '</div><div>' + escapeHTML(i.text) + '</div></div>').join(''); showToast(_isEN() ? '💡 Saved' : '💡 已记录'); } } });
-    const tph = document.getElementById('translationPanelHeader'); if (tph) tph.addEventListener('click', e => { if (!e.target.closest('button') && !e.target.closest('select')) { const tp = document.getElementById('translationPanel'); if (tp) tp.classList.toggle('expanded'); } });
-    // Translation language selector change → re-translate
-    const tsl = document.getElementById('transSourceLang'); if (tsl) tsl.addEventListener('change', () => { transSourceLang = tsl.value; triggerTranslation(); });
-    const ttl = document.getElementById('transTargetLang'); if (ttl) ttl.addEventListener('change', () => { transTargetLang = ttl.value; triggerTranslation(); });
-    // Annotation toggle button
-    const btnAnno = document.getElementById('btnAnnotationToggle');
-    if (btnAnno) btnAnno.addEventListener('click', e => {
-        e.stopPropagation();
-        annotationEnabled = !annotationEnabled;
-        btnAnno.classList.toggle('active', annotationEnabled);
-        const legend = document.getElementById('annotationLegend');
-        if (legend) legend.classList.toggle('active', annotationEnabled);
-        showToast(annotationEnabled ? (_isEN() ? '🏷 Annotations ON' : '🏷 难词标注已开启') : (_isEN() ? '🏷 Annotations OFF' : '🏷 难词标注已关闭'));
-    });
-    const iph = document.getElementById('inspirationPanelHeader'); if (iph) iph.addEventListener('click', () => { const ip = document.getElementById('inspirationPanel'); if (ip) ip.classList.toggle('expanded'); });
-    // Language toggle buttons
-    document.querySelectorAll('#langToggle button[data-lang]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const lang = btn.dataset.lang;
-            if (!lang || lang === currentLang) return;
-            currentLang = lang;
-            window.currentLang = lang;
-            // Toggle active class
-            document.querySelectorAll('#langToggle button[data-lang]').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
-            // Update word count badge
-            const re = document.getElementById('rawEditor');
-            const wcb = document.getElementById('wordCountBadge');
-            if (re && wcb) {
-                const wc = re.value.replace(/\s/g, '').length;
-                wcb.textContent = currentLang === 'zh-CN' ? wc + ' 字' : wc + ' words';
-            }
-            // Update placeholder text
-            if (re) {
-                re.placeholder = lang === 'en-US'
-                    ? 'Paste transcript here, or click "Start Recording" to begin...'
-                    : '在这里粘贴录音转文字内容，或点击「开始录音」按钮直接录音...';
-            }
-            // Re-trigger organize to update locale-aware labels
-            if (re && re.value.trim()) triggerOrganize();
-            // Refresh other UI elements
-            renderHistoryList();
-            showToast(lang === 'en-US' ? '🌐 Switched to English' : '🌐 已切换到中文');
-        });
-    });
-    // Mic status bar bindings
-    const msBar = document.getElementById('micStatusBar'), msBtn = document.getElementById('btnMicSettings');
-    if (isMobile && msBar) msBar.classList.add('active');
-    if (msBtn) msBtn.addEventListener('click', e => { e.stopPropagation(); showMicPermModal(); });
-    // Copy organized content button
-    const btnCopy = document.getElementById('btnCopy');
-    if (btnCopy) btnCopy.addEventListener('click', () => {
-        const result = getCurrentOrganizedResult();
-        const txt = generatePlainText(result) || (document.getElementById('rawEditor')?.value || '');
-        navigator.clipboard.writeText(txt).then(() => showToast(_isEN() ? '✅ Copied' : '✅ 已复制')).catch(() => showToast(_isEN() ? 'Copy failed' : '复制失败'));
-    });
-    // Summary button
-    const btnSummary = document.getElementById('btnSummary');
-    if (btnSummary) btnSummary.addEventListener('click', () => {
-        triggerOrganize();
-        if (lastOrganizedResult && lastOrganizedResult.summary) {
-            showToast(_isEN() ? '🤖 Summary generated' : '🤖 总结已生成');
-        } else {
-            showToast(_isEN() ? '🤖 Enter text first to summarize' : '🤖 请先输入会议内容');
-        }
-    });
-    // Typo check button (basic)
-    const btnTypo = document.getElementById('btnTypo');
-    if (btnTypo) btnTypo.addEventListener('click', () => {
-        showToast(_isEN() ? '✏️ Typo check: manually review (basic mode)' : '✏️ 错别字检测：请手动检查（基础模式）');
-    });
-    // Undo typo fixes
-    const btnUndo = document.getElementById('btnUndoAllTypo');
-    if (btnUndo) btnUndo.addEventListener('click', () => {
-        typoFixes = [];
-        const bar = document.getElementById('typoFixesBar');
-        if (bar) bar.classList.remove('active');
-        showToast(_isEN() ? '↩ All typo fixes undone' : '↩ 已撤销所有修正');
-    });
-});
-// Keyboard shortcuts
-document.addEventListener('keydown', e => {
-    if (e.ctrlKey && e.shiftKey && e.key === 'R') { e.preventDefault(); isRecording ? stopRecording() : startRecording(); }
-    if (e.key === 'Escape' && isRecording) { e.preventDefault(); stopRecording(); }
-    if (e.ctrlKey && !e.shiftKey && !e.altKey) { const vs = ['dashboard', 'recorder', 'templates', 'history-search', 'share', 'settings']; const n = parseInt(e.key); if (n >= 1 && n <= 6) { e.preventDefault(); switchView(vs[n - 1]); } }
-});
-
-// ═══ UTILITY ═══
-function escapeHTML(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-
-// ═══ SUBTITLE DRAG ═══
-const subDrag = { active: false, x: 0, y: 0, startX: 0, startY: 0 };
-function applySubPos() {
-	const fs = document.getElementById('floatingSubtitles');
-	if (!fs || !fs.dataset._x) return;
-	fs.style.left = fs.dataset._x + 'px';
-	fs.style.top = fs.dataset._y + 'px';
-	fs.style.transform = 'none';
-}
-// Subtitle drag deferred
-document.addEventListener('DOMContentLoaded', () => {
-	const fs = document.getElementById('floatingSubtitles');
-	const handle = document.getElementById('subtitlesDragHandle');
-	if (!fs || !handle) return;
-	fs.addEventListener('dblclick', () => {
-		delete fs.dataset._x; delete fs.dataset._y;
-		fs.style.left = ''; fs.style.top = ''; fs.style.transform = '';
-	});
-	handle.addEventListener('pointerdown', e => {
-		subDrag.active = true; fs.classList.add('dragging');
-		const rect = fs.getBoundingClientRect();
-		subDrag.startX = e.clientX - rect.left; subDrag.startY = e.clientY - rect.top;
-		e.preventDefault();
-	});
-	document.addEventListener('pointermove', e => {
-		if (!subDrag.active) return;
-		subDrag.x = e.clientX - subDrag.startX; subDrag.y = e.clientY - subDrag.startY;
-		fs.style.left = subDrag.x + 'px'; fs.style.top = subDrag.y + 'px'; fs.style.transform = 'none';
-	});
-	document.addEventListener('pointerup', () => {
-		if (!subDrag.active) return;
-		subDrag.active = false; fs.classList.remove('dragging');
-		fs.dataset._x = subDrag.x; fs.dataset._y = subDrag.y;
-	});
-});
-
 // ═══ HISTORY STORAGE ═══
 let lastOrganizedResult = null;
 function getCurrentOrganizedResult() { return lastOrganizedResult; }
@@ -3512,7 +3214,7 @@ function loadHistoryEntry(id) {
 	if (e.title2) meetingTitle = e.title2;
 	if (e.date) meetingDateTime = new Date(e.date);
 	syncDateInputs();
-	if (e.bookmarks) bookmarks = e.bookmarks.slice();
+	if (e.bookmarks) { bookmarks = e.bookmarks.slice(); updateBookmarkUI(); }
 	if (e.inspirations) inspirations = e.inspirations.slice();
 	if (e.photos) photos = e.photos.slice();
 	if (e.organizedHtml && e.organizedHtml !== '') {
@@ -3542,34 +3244,426 @@ function renderHistoryList() {
 	});
 }
 
-// ═══ CONTENT ORGANIZER ═══
-function organizeText(raw) {
-	if (!raw || !raw.trim()) return { type: 'empty' };
-	const lines = raw.split(/\n+/).filter(l => l.trim());
-	const keywords = new Set();
-	const keyPoints = [];
-	const keywordRegex = /(?:项目|产品|需求|设计|开发|测试|部署|上线|风险|预算|进度|里程碑|周报|KPI|OKR|客户端|服务端|数据库|API|接口|架构|性能|安全|数据|用户|体验|优化|迭代|review|MVP|scrum|sprint|release|meeting|plan|report|status|update|issue|task|deadline|timeline|milestone|client|server|data|api|key|action|goal|priority|quality|team|launch|demo|slide|deck|note)/gi;
-	let wordCount = 0;
-	for (const line of lines) {
-		wordCount += line.replace(/\s/g, '').length;
-		const kws = line.match(keywordRegex) || [];
-		kws.forEach(k => keywords.add(k.toLowerCase()));
-		if (/^[-•*#]\s|^(关键|重点|结论|决定|行动|问题|风险|注意|结论|任务|目标|事项)/.test(line.trim())
-			|| /(关键是|重点是|决定|需要做|必须|务必|注意|结论|总结|下一步|行动计划)/.test(line)) {
-			keyPoints.push({ text: line.trim(), ts: [] });
-		}
-	}
-	const first3 = lines.slice(0, Math.min(3, lines.length)).map(l => l.trim().slice(0, 60));
-	const summary = first3.join('；') + (lines.length > 3 ? '...' : '');
-	return {
-		type: 'result',
-		summary,
-		wordCount,
-		keyPoints: keyPoints.slice(0, 8),
-		keywords: [...new Set([...keywords])].slice(0, 15),
-		totalLines: lines.length
-	};
+function escapeHTML(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+// ═══ SUBTITLE DRAG ═══
+const subDrag = { active: false, x: 0, y: 0, startX: 0, startY: 0 };
+function applySubPos() {
+	const fs = document.getElementById('floatingSubtitles');
+	if (!fs || !fs.dataset._x) return;
+	fs.style.left = fs.dataset._x + 'px';
+	fs.style.top = fs.dataset._y + 'px';
+	fs.style.transform = 'none';
 }
+
+// Speech recognition
+// ═══ Mobile Detection ═══
+const isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || (window.innerWidth <= 768 && 'ontouchstart' in window);
+if (isMobile) document.body.classList.add('mobile');
+
+// ═══ Speech Capability Detection ═══
+function testSpeechSupport() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return { ok: false, reason: 'no-api' };
+    try { const t = new SR(); t.abort(); return { ok: true }; }
+    catch (e) { return { ok: false, reason: 'instantiate-fail', error: e.message }; }
+}
+
+function showSpeechUnsupported() {
+    const ra = document.getElementById('rawEditor');
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    const msg = isIOS
+        ? (_isEN() ? '<b>iOS: Audio Recording Mode</b><br><small>Safari cannot transcribe in real-time.<br>Tap <b>Start Recording</b> — audio will be saved.<br>Or <b>paste text</b> in the right panel.</small>' : '<b>iOS：音频录制模式</b><br><small>Safari 无法实时转写。<br>点击 <b>开始录音</b> 录制音频后保存。<br>也可在右侧面板<b>粘贴文字</b>。</small>')
+        : (_isEN() ? '<b>Speech not supported</b><br><small>Use Chrome/Edge or paste text.</small>' : '<b>当前浏览器不支持语音识别</b><br><small>请用 Chrome/Edge 或手动粘贴文字。</small>');
+    const oc = document.getElementById('organizedContent'); if (oc) oc.innerHTML = '<div class="placeholder"><span class="icon">🎤</span>' + msg + '</div>';
+    if (ra) { setTimeout(() => ra.focus(), 300); ra.placeholder = _isEN() ? 'Paste meeting notes...' : '请在此粘贴会议记录文字...'; }
+    showToast(isIOS ? (_isEN() ? 'iOS: Recording mode' : 'iOS：音频录制模式') : (_isEN() ? 'Speech not supported' : '不支持语音识别'));
+}
+
+// ═══ RECORDING ENGINE ═══
+let useMediaRecorder = false, mediaRecorder = null, mediaStream = null, audioChunks = [];
+
+async function startRec() {
+    const fmt = testSpeechSupport();
+    if (fmt.ok) { useMediaRecorder = false; return startSpeechRec(); }
+    useMediaRecorder = true; showSpeechUnsupported(); return await startMediaRecorder();
+}
+
+function startSpeechRec() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SR();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = currentLang;
+    recognition.maxAlternatives = 1;
+    pendingFinal = ''; rafPending = false;
+
+    console.log('[REC] SpeechRecognition created, lang:', currentLang, 'continuous:', recognition.continuous, 'interimResults:', recognition.interimResults);
+
+    recognition.onspeechstart = () => {
+        console.log('[REC] 🎤 Speech detected!');
+        const fs = document.getElementById('floatingSubtitles');
+        if (fs) { fs.classList.add('active'); applySubPos(); }
+    };
+    recognition.onsoundstart = () => { console.log('[REC] 🔊 Sound detected'); };
+    recognition.onsoundend = () => { console.log('[REC] 🔇 Silence'); };
+
+    recognition.onresult = (e) => {
+        let ft = '', it = '';
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+            const t = e.results[i][0].transcript;
+            if (e.results[i].isFinal) { ft += t; } else { it += t; }
+        }
+        if (ft) pendingFinal += ft;
+        interimTranscript = it;
+        // Write committed final + live interim straight into the editor so it keeps up.
+        const re = document.getElementById('rawEditor');
+        if (re) {
+            re.value = re.value.slice(0, recBaseLen) + pendingFinal + interimTranscript;
+            re.selectionStart = re.selectionEnd = re.value.length;
+            re.scrollTop = re.scrollHeight;
+            re.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        // Live subtitles
+        const st = document.getElementById('subtitlesText'), fs = document.getElementById('floatingSubtitles');
+        if (st && fs) {
+            st.textContent = (interimTranscript || pendingFinal.slice(-80)).trim();
+            fs.classList.add('active'); applySubPos();
+            clearTimeout(fs._h);
+            fs._h = setTimeout(() => { if (!subDrag.active) fs.classList.remove('active'); }, 8000);
+        }
+    };
+
+    recognition.onerror = (e) => {
+        console.error('[REC] SpeechRecognition error:', e.error, e.message);
+        if (e.error === 'no-speech') return;
+        if (e.error === 'not-allowed') { stopRecording(); showToast(_isEN() ? 'Mic blocked' : '麦克风被屏蔽'); return; }
+        if (e.error === 'audio-capture') { stopRecording(); showToast(_isEN() ? 'No mic' : '未检测到麦克风'); return; }
+        if (e.error === 'language-not-supported') {
+            showToast(_isEN() ? 'Language not supported, trying English' : '语言不支持，尝试英文');
+            recognition.lang = 'en-US';
+        }
+        if (e.error === 'network' && isRecording) {
+            console.log('[REC] Network error, retrying in 500ms...');
+            setTimeout(() => { if (isRecording && recognition) { try { recognition.start(); } catch (_) {} } }, 500);
+        }
+    };
+
+    recognition.onend = () => {
+        console.log('[REC] recognition.onend fired, isRecording=' + isRecording);
+        if (isRecording && recognition) {
+            console.log('[REC]   restarting recognition...');
+            try { recognition.start(); } catch (err) {
+                console.error('[REC]   restart failed:', err);
+                stopRecording();
+            }
+        }
+    };
+
+    try {
+        recognition.start();
+        console.log('[REC] ✅ recognition.start() succeeded');
+        return true;
+    } catch (err) {
+        console.error('[REC] ❌ recognition.start() threw:', err);
+        recognition = null;
+        showToast(_isEN() ? 'Speech recognition unavailable' : '语音识别不可用，改用录音');
+        return false;
+    }
+}
+
+async function startMediaRecorder() {
+    // Reuse stream obtained by startRecording(), or get a new one
+    if (!mediaStream) {
+        try { mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+        catch (err) { if (err.name === 'NotAllowedError') showToast(_isEN() ? 'Mic blocked' : '麦克风被屏蔽'); else showToast(_isEN() ? 'Mic denied' : '麦克风被拒绝'); return false; }
+    }
+    const mime = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
+    audioChunks = []; mediaRecorder = new MediaRecorder(mediaStream, { mimeType: mime });
+    mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
+    const mrMime = mime;
+    mediaRecorder.onstop = () => {
+        if (audioChunks.length === 0) { showToast(_isEN() ? 'No audio' : '未录制到音频'); return; }
+        const blob = new Blob(audioChunks, { type: mrMime });
+        const re = document.getElementById('rawEditor');
+        // Download audio file locally — no server needed (GitHub Pages compatible)
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url;
+        a.download = 'recording_' + new Date().toISOString().slice(0,19).replace(/:/g,'-') + '.webm';
+        a.click(); URL.revokeObjectURL(url);
+        if (re) { re.value += '\n[🎙 Audio: ' + fmtTime(recordingSeconds) + ']'; re.scrollTop = re.scrollHeight; re.dispatchEvent(new Event('input', { bubbles: true })); }
+        showToast(_isEN() ? '✅ Audio downloaded' : '✅ 音频已下载');
+        if (re) re.placeholder = _isEN() ? 'Paste or record...' : '粘贴或录音...';
+    };
+    mediaRecorder.start(1000);
+    const st = document.getElementById('subtitlesText'), fs = document.getElementById('floatingSubtitles');
+    if (st && fs) { st.textContent = _isEN() ? 'Recording audio...' : '正在录制音频...'; applySubPos(); fs.classList.add('active'); }
+    return true;
+}
+
+function stopRec() {
+    console.log('[REC] stopRec() called');
+    if (useMediaRecorder && mediaRecorder && mediaRecorder.state === 'recording') {
+        // Save ref before stop() which triggers async onstop
+        const mr = mediaRecorder;
+        mediaRecorder = null;
+        mr.stop();
+        const fs = document.getElementById('floatingSubtitles'); if (fs) fs.classList.remove('active');
+        // Release stream after MediaRecorder finishes (onstop fires async)
+        setTimeout(() => { if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; } }, 500);
+        console.log('[REC] MediaRecorder stopped');
+    }
+    else if (recognition) { recognition.onend = null; try { recognition.stop(); } catch (_) {} recognition = null; console.log('[REC] SpeechRecognition stopped'); }
+    // Release mic stream for SpeechRecognition path
+    if (!useMediaRecorder && mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; console.log('[REC] Mic stream released'); }
+}
+
+function setRecUI(a) { if (a) { const rd = document.getElementById('recordingDot'); if (rd) rd.classList.add('active'); const ro = document.getElementById('recordingOverlay'); if (ro) ro.classList.add('active'); const bs = document.getElementById('btnStart'); if (bs) { bs.disabled = true; bs.innerHTML = (useMediaRecorder ? '🔴 Recording' : '🔴 Recording'); bs.classList.add('btn-danger'); bs.classList.remove('btn-primary'); } const bp = document.getElementById('btnStop'); if (bp) bp.disabled = false; const wf = document.getElementById('waveformContainer'); if (wf) wf.classList.add('active'); } else { const rd = document.getElementById('recordingDot'); if (rd) rd.classList.remove('active'); const ro = document.getElementById('recordingOverlay'); if (ro) ro.classList.remove('active'); const bs = document.getElementById('btnStart'); if (bs) { bs.disabled = false; bs.innerHTML = '🎤 ' + (_isEN() ? 'Start' : '开始录音'); bs.classList.remove('btn-danger'); bs.classList.add('btn-primary'); } const bp = document.getElementById('btnStop'); if (bp) bp.disabled = true; const wf = document.getElementById('waveformContainer'); if (wf) wf.classList.remove('active'); } }
+
+async function startRecording() {
+    if (isRecording) return;
+    console.log('[REC] startRecording() called');
+    // Must get AND KEEP mic permission — don't release the stream
+    // Chrome revokes mic permission when all tracks are stopped
+    try {
+        mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        console.log('[REC] ✅ getUserMedia granted');
+    } catch (err) {
+        console.error('[REC] ❌ getUserMedia denied:', err.name, err.message);
+        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError')
+            showToast(_isEN() ? 'Mic blocked - allow in browser settings' : '麦克风被屏蔽 - 请在浏览器设置中允许');
+        else
+            showToast(_isEN() ? 'Mic access denied' : '麦克风被拒绝');
+        return;
+    }
+    // Snapshot the editor so live transcript appends from here.
+    const re0 = document.getElementById('rawEditor');
+    recBaseLen = re0 ? re0.value.length : 0;
+    pendingFinal = ''; interimTranscript = '';
+    const ok = await startRec();
+    if (ok) {
+        isRecording = true; setRecUI(true); startTimer();
+        console.log('[REC] 🟢 Recording started');
+        // If no speech result within 5 seconds, the engine might be struggling with the language
+        setTimeout(() => {
+            if (isRecording && pendingFinal === '' && !interimTranscript) {
+                console.warn('[REC] ⚠️ 5s with no results — browser might not support ' + currentLang);
+                showToast(_isEN() ? 'No speech detected. Try speaking louder or switch language.' : '未检测到语音，试试大声说话或切换语言');
+            }
+        }, 5000);
+    } else {
+        setRecUI(false);
+        // Release stream if recording failed to start
+        if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
+    }
+}
+function stopRecording() { if (!isRecording) return; stopRec(); stopTimer(); isRecording = false; setRecUI(false); pendingFinal = ''; interimTranscript = ''; recBaseLen = 0; const fs = document.getElementById('floatingSubtitles'); if (fs) fs.classList.remove('active'); const re = document.getElementById('rawEditor'); const wc = re ? re.value.trim().length : 0; if (wc > 0) { showToast((_isEN() ? 'Done: ' : '录音完成: ') + wc + (_isEN() ? ' chars ' : ' 字符 ') + fmtTime(recordingSeconds)); addHistoryEntry(); } }
+// ═══ BIND RECORDER BUTTONS ═══
+document.addEventListener('DOMContentLoaded', () => {
+    // Start/Stop/Bookmark — immediate binding for SpeechRecognition gesture context
+    ['click'].forEach(evt => {
+        const s = document.getElementById('btnStart'); if (s) s.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); startRecording(); });
+        const p = document.getElementById('btnStop'); if (p) p.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); stopRecording(); });
+        const bm = document.getElementById('btnBookmark'); if (bm) bm.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); const re = document.getElementById('rawEditor'); if (!re || !re.value.trim()) return; const sents = re.value.split(/[。！？.!?]+/); const last = sents.filter(s => s.trim().length > 2).pop() || ''; bookmarks.push({ id: Date.now().toString(36), time: fmtTime(recordingSeconds), seconds: recordingSeconds, text: last.trim().slice(0, 80) }); updateBookmarkUI(); showToast(_isEN() ? '🔖 Bookmarked' : '🔖 已标记'); });
+        const ub = document.getElementById('btnUnbookmark'); if (ub) ub.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); if (bookmarks.length === 0) { showToast(_isEN() ? 'No bookmark to cancel' : '没有可取消的标记'); return; } bookmarks.pop(); updateBookmarkUI(); showToast(_isEN() ? '↩️ Bookmark removed' : '↩️ 已取消标记'); });
+    });
+    // Touch events separately
+    ['touchend'].forEach(evt => {
+        const s = document.getElementById('btnStart'); if (s) s.addEventListener(evt, e => { e.preventDefault(); startRecording(); });
+        const p = document.getElementById('btnStop'); if (p) p.addEventListener(evt, e => { e.preventDefault(); stopRecording(); });
+    });
+
+    // All other bindings
+    const cl = document.getElementById('btnClear'); if (cl) cl.addEventListener('click', () => { const re = document.getElementById('rawEditor'); if (re) re.value = ''; const oc = document.getElementById('organizedContent'); if (oc) oc.innerHTML = '<div class=\"placeholder\"><span class=\"icon\">📋</span>' + (_isEN() ? 'Cleared' : '已清空') + '</div>'; showToast(_isEN() ? '🗑 Cleared' : '🗑 已清空'); });
+    const re = document.getElementById('rawEditor'); if (re) re.addEventListener('input', () => { clearTimeout(re._dt); re._dt = setTimeout(triggerOrganize, 600); const wc = re.value.replace(/\s/g, '').length; const wcb = document.getElementById('wordCountBadge'); if (wcb) wcb.textContent = currentLang === 'zh-CN' ? wc + ' 字' : wc + ' words'; });
+    const be = document.getElementById('btnExport'); if (be) be.addEventListener('click', ev => { ev.stopPropagation(); const m = document.getElementById('exportDropdownMenu'), bd = document.getElementById('exportDropdownBackdrop'); if (m) m.classList.toggle('open'); if (bd) bd.classList.toggle('open'); });
+    const bd = document.getElementById('exportDropdownBackdrop'); if (bd) bd.addEventListener('click', () => { const m = document.getElementById('exportDropdownMenu'); if (m) m.classList.remove('open'); bd.classList.remove('open'); });
+    document.querySelectorAll('#exportDropdownMenu button[data-export]').forEach(btn => { btn.addEventListener('click', ev => { ev.stopPropagation(); const m = document.getElementById('exportDropdownMenu'), bd = document.getElementById('exportDropdownBackdrop'); if (m) m.classList.remove('open'); if (bd) bd.classList.remove('open'); const t = btn.dataset.export; if (t === 'link') navigator.clipboard.writeText(window.location.href).then(() => showToast(_isEN() ? '✅ Link copied' : '✅ 已复制链接')); else if (t === 'word') exportWord(); else if (t === 'txt') exportTXT(); else if (t === 'md') exportMarkdown(); }); });
+    const tt = document.getElementById('themeToggle'); if (tt) tt.addEventListener('click', () => { applyTheme(!isDarkMode); localStorage.setItem('meeting_recorder_theme', isDarkMode ? 'dark' : 'light'); });
+    const pf = document.getElementById('photoFileInput'); if (pf) pf.addEventListener('change', ev => { for (const f of ev.target.files) { const r = new FileReader(); r.onload = e => { photos.push({ id: Date.now().toString(36), dataUrl: e.target.result, time: fmtTime(recordingSeconds) }); showToast(_isEN() ? '📷 Photo added' : '📷 照片已插入'); }; r.readAsDataURL(f); } pf.value = ''; });
+    const ii = document.getElementById('inspirationInput'); if (ii) ii.addEventListener('keydown', ev => { if (ev.key === 'Enter' && !ev.shiftKey) { ev.preventDefault(); const t = ii.value.trim(); if (t) { inspirations.push({ id: Date.now().toString(36), text: t, time: fmtTime(recordingSeconds) }); ii.value = ''; const il = document.getElementById('inspirationList'); if (il) il.innerHTML = inspirations.map(i => '<div class=\"inspiration-entry\"><div class=\"insp-time\">💡 ' + i.time + '</div><div>' + escapeHTML(i.text) + '</div></div>').join(''); showToast(_isEN() ? '💡 Saved' : '💡 已记录'); } } });
+    const tph = document.getElementById('translationPanelHeader'); if (tph) tph.addEventListener('click', e => { if (!e.target.closest('button') && !e.target.closest('select')) { const tp = document.getElementById('translationPanel'); if (tp) tp.classList.toggle('expanded'); } });
+    // Translation language selector change → re-translate
+    const tsl = document.getElementById('transSourceLang'); if (tsl) tsl.addEventListener('change', () => { transSourceLang = tsl.value; triggerTranslation(); });
+    const ttl = document.getElementById('transTargetLang'); if (ttl) ttl.addEventListener('change', () => { transTargetLang = ttl.value; triggerTranslation(); });
+    // Annotation toggle button
+    const btnAnno = document.getElementById('btnAnnotationToggle');
+    if (btnAnno) btnAnno.addEventListener('click', e => {
+        e.stopPropagation();
+        annotationEnabled = !annotationEnabled;
+        btnAnno.classList.toggle('active', annotationEnabled);
+        const legend = document.getElementById('annotationLegend');
+        if (legend) legend.classList.toggle('active', annotationEnabled);
+        showToast(annotationEnabled ? (_isEN() ? '🏷 Annotations ON' : '🏷 难词标注已开启') : (_isEN() ? '🏷 Annotations OFF' : '🏷 难词标注已关闭'));
+    });
+    // Language toggle buttons
+    document.querySelectorAll('#langToggle button[data-lang]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const lang = btn.dataset.lang;
+            if (!lang || lang === currentLang) return;
+            currentLang = lang;
+            window.currentLang = lang;
+            document.querySelectorAll('#langToggle button[data-lang]').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+            const re = document.getElementById('rawEditor');
+            const wcb = document.getElementById('wordCountBadge');
+            if (re && wcb) {
+                const wc = re.value.replace(/\s/g, '').length;
+                wcb.textContent = currentLang === 'zh-CN' ? wc + ' 字' : wc + ' words';
+            }
+            if (re) {
+                re.placeholder = lang === 'en-US'
+                    ? 'Paste transcript here, or click "Start Recording" to begin...'
+                    : '在这里粘贴录音转文字内容，或点击「开始录音」按钮直接录音...';
+            }
+            if (re && re.value.trim()) triggerOrganize();
+            renderHistoryList();
+            showToast(lang === 'en-US' ? '🌐 Switched to English' : '🌐 已切换到中文');
+        });
+    });
+    // Copy organized content button
+    const btnCopy = document.getElementById('btnCopy');
+    if (btnCopy) btnCopy.addEventListener('click', () => {
+        const result = getCurrentOrganizedResult();
+        const txt = generatePlainText(result) || (document.getElementById('rawEditor')?.value || '');
+        navigator.clipboard.writeText(txt).then(() => showToast(_isEN() ? '✅ Copied' : '✅ 已复制')).catch(() => showToast(_isEN() ? 'Copy failed' : '复制失败'));
+    });
+    // Summary button
+    const btnSummary = document.getElementById('btnSummary');
+    if (btnSummary) btnSummary.addEventListener('click', () => {
+        triggerOrganize();
+        if (lastOrganizedResult && lastOrganizedResult.summary) {
+            showToast(_isEN() ? '🤖 Summary generated' : '🤖 总结已生成');
+        } else {
+            showToast(_isEN() ? '🤖 Enter text first to summarize' : '🤖 请先输入会议内容');
+        }
+    });
+    // Typo check button (basic)
+    const btnTypo = document.getElementById('btnTypo');
+    if (btnTypo) btnTypo.addEventListener('click', () => {
+        showToast(_isEN() ? '✏️ Typo check: manually review (basic mode)' : '✏️ 错别字检测：请手动检查（基础模式）');
+    });
+    // Undo typo fixes
+    const btnUndo = document.getElementById('btnUndoAllTypo');
+    if (btnUndo) btnUndo.addEventListener('click', () => {
+        typoFixes = [];
+        const bar = document.getElementById('typoFixesBar');
+        if (bar) bar.classList.remove('active');
+        showToast(_isEN() ? '↩ All typo fixes undone' : '↩ 已撤销所有修正');
+    });
+    const iph = document.getElementById('inspirationPanelHeader'); if (iph) iph.addEventListener('click', () => { const ip = document.getElementById('inspirationPanel'); if (ip) ip.classList.toggle('expanded'); });
+    // Clear history
+    const btnClearHist = document.getElementById('btnClearHistory');
+    if (btnClearHist) btnClearHist.addEventListener('click', () => {
+        saveHistory([]);
+        renderHistoryList();
+        showToast(_isEN() ? '🗑 History cleared' : '🗑 历史已清空');
+    });
+    // Subtitle drag
+    const fs = document.getElementById('floatingSubtitles');
+    const handle = document.getElementById('subtitlesDragHandle');
+    if (fs && handle) {
+        fs.addEventListener('dblclick', () => {
+            delete fs.dataset._x; delete fs.dataset._y;
+            fs.style.left = ''; fs.style.top = ''; fs.style.transform = '';
+        });
+        handle.addEventListener('pointerdown', e => {
+            subDrag.active = true; fs.classList.add('dragging');
+            const rect = fs.getBoundingClientRect();
+            subDrag.startX = e.clientX - rect.left; subDrag.startY = e.clientY - rect.top;
+            e.preventDefault();
+        });
+        document.addEventListener('pointermove', e => {
+            if (!subDrag.active) return;
+            subDrag.x = e.clientX - subDrag.startX; subDrag.y = e.clientY - subDrag.startY;
+            fs.style.left = subDrag.x + 'px'; fs.style.top = subDrag.y + 'px'; fs.style.transform = 'none';
+        });
+        document.addEventListener('pointerup', () => {
+            if (!subDrag.active) return;
+            subDrag.active = false; fs.classList.remove('dragging');
+            fs.dataset._x = subDrag.x; fs.dataset._y = subDrag.y;
+        });
+    }
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+    if (e.ctrlKey && e.shiftKey && e.key === 'R') { e.preventDefault(); isRecording ? stopRecording() : startRecording(); }
+    if (e.key === 'Escape' && isRecording) { e.preventDefault(); stopRecording(); }
+    if (e.ctrlKey && !e.shiftKey && !e.altKey) { const vs = ['dashboard', 'recorder', 'templates', 'history-search', 'share', 'settings']; const n = parseInt(e.key); if (n >= 1 && n <= 6) { e.preventDefault(); switchView(vs[n - 1]); } }
+});
+
+// ═══ TEXT ANALYSIS HELPERS ═══
+const EN_STOPWORDS = new Set('the,a,an,and,or,but,if,then,else,for,to,of,in,on,at,by,with,is,are,was,were,be,been,has,have,had,do,does,did,will,would,can,could,should,may,might,must,this,that,these,those,it,we,you,they,he,she,our,your,their,my,his,her,not,no,so,as,up,down,about,from,into,out,over,under,also,just,very,too,all,any,some,more,most,other,each,such,than,now,next,get,got,going,been'.split(','));
+const DOMAIN_KEYWORD_RE = /(?:项目|产品|需求|设计|开发|测试|部署|上线|风险|预算|进度|里程碑|周报|客户端|服务端|数据库|接口|架构|性能|安全|用户|体验|优化|迭代|review|MVP|scrum|sprint|release|meeting|plan|report|status|update|issue|task|deadline|timeline|milestone|client|server|data|api|goal|priority|quality|team|launch|demo|deck|note)/gi;
+const DECISION_RE = /(?:关键|重点|结论|决定|行动|问题|风险|注意|任务|目标|事项|下一步|行动计划|需要|必须|务必|总结|达成|确认|跟进|负责|期限|截止|预算|排期|验收|上线|里程碑|decid|decision|next step|action item|action|must|deadline|milestone|follow up|responsible|confirm|agree|conclusion|summary|risk|issue|problem|launch|deploy|pending|blocked|todo|to-do|target|goal)/i;
+const ACTION_LEAD_RE = /^[-•*#]\s|^(关键|重点|结论|决定|行动|问题|风险|任务|目标|事项)/;
+
+function splitSentences(text) {
+    const hard = text.split(/(?<=[。！？!?；;])|(?<=[.])\s+|\n+/).map(s => s.trim()).filter(s => s.length >= 2);
+    // Speech output often has no punctuation; break long runs by commas too.
+    if (hard.length <= 1 && text.length > 80) {
+        return text.split(/(?<=[。！？!?；;，、])|(?<=[.])\s+/).map(s => s.trim()).filter(s => s.length >= 2);
+    }
+    return hard;
+}
+
+function extractKeywords(raw) {
+    const found = [];
+    const seen = new Set();
+    const dm = raw.match(DOMAIN_KEYWORD_RE) || [];
+    for (const k of dm) { const lk = k.toLowerCase(); if (!seen.has(lk)) { seen.add(lk); found.push(lk); } }
+    const freq = {};
+    const words = raw.match(/[A-Za-z][A-Za-z-]{2,}/g) || [];
+    for (const w of words) { const lw = w.toLowerCase(); if (EN_STOPWORDS.has(lw)) continue; freq[lw] = (freq[lw] || 0) + 1; }
+    const topEn = Object.entries(freq).filter(([w, c]) => c >= 2).sort((a, b) => b[1] - a[1]).map(([w]) => w);
+    for (const w of topEn) { if (!seen.has(w)) { seen.add(w); found.push(w); } }
+    return found;
+}
+
+function organizeText(raw) {
+    if (!raw || !raw.trim()) return { type: 'empty' };
+    const lines = raw.split(/\n+/).map(l => l.trim()).filter(l => l);
+    const sentences = splitSentences(raw);
+    const wordCount = raw.replace(/\s/g, '').length;
+    const keywords = extractKeywords(raw);
+
+    // Key points: bullet/lead lines + decision-marked sentences (deduped, in order).
+    const keyPoints = [];
+    const kpSeen = new Set();
+    const addKP = (t) => { const s = t.trim(); if (s && !kpSeen.has(s)) { kpSeen.add(s); keyPoints.push({ text: s, ts: [] }); } };
+    for (const l of lines) if (ACTION_LEAD_RE.test(l) || /^[-•*#]\s/.test(l)) addKP(l);
+    for (const s of sentences) if (DECISION_RE.test(s)) addKP(s);
+
+    // Extractive summary: score sentences, keep the top few in original order.
+    const kwSet = new Set(keywords.map(k => k.toLowerCase()));
+    const scored = sentences.map((s, i) => {
+        const t = s.trim();
+        const lc = t.toLowerCase();
+        let score = 0;
+        for (const k of kwSet) if (lc.includes(k)) score += 2;
+        if (DECISION_RE.test(t)) score += 3;
+        if (i < 2) score += 2;
+        if (i >= sentences.length - 2) score += 1.5;
+        const len = t.length;
+        if (len < 6) score -= 2; else if (len > 90) score -= 1;
+        return { i, t, score: score / Math.sqrt(len) };
+    }).sort((a, b) => b.score - a.score);
+
+    const topCount = Math.min(3, sentences.length);
+    const isCJK = /[一-龥]/.test(raw);
+    const clean = scored.slice(0, topCount).sort((a, b) => a.i - b.i).map(x => x.t).map(t => t.replace(/[。！？!?；;，、.\s]+$/g, '').trim()).filter(Boolean);
+    const summary = clean.join(isCJK ? '。' : '. ') + (clean.length ? (isCJK ? '。' : '') : '');
+
+    return {
+        type: 'result',
+        summary: summary || (lines[0] || '').slice(0, 60),
+        wordCount,
+        keyPoints: keyPoints.slice(0, 8),
+        keywords: keywords.slice(0, 15),
+        totalLines: lines.length
+    };
+}
+
 function renderOrganized(result) {
 	const oc = document.getElementById('organizedContent'); if (!oc) return;
 	oc.classList.remove('fade-in');
@@ -3605,131 +3699,108 @@ function renderOrganized(result) {
 }
 // ═══ TRANSLATION ENGINE ═══
 let _transDebounceTimer = null;
+let _translatedLen = 0, _translatedText = '', _translatedSrc = '', _translatedTgt = '', _transSeq = 0;
 function getLangPair() {
-	// Determine effective source/target
-	const srcEl = document.getElementById('transSourceLang');
-	const tgtEl = document.getElementById('transTargetLang');
-	const src = (srcEl ? srcEl.value : transSourceLang) || 'auto';
-	const tgt = (tgtEl ? tgtEl.value : transTargetLang) || 'zh-CN';
-	// If source is 'auto', detect based on content
-	return { src, tgt };
+    const srcEl = document.getElementById('transSourceLang');
+    const tgtEl = document.getElementById('transTargetLang');
+    let src = (srcEl ? srcEl.value : transSourceLang) || 'auto';
+    const tgt = (tgtEl ? tgtEl.value : transTargetLang) || 'zh-CN';
+    // Resolve "auto" to the recording language so the API gets a concrete pair.
+    if (src === 'auto') src = currentLang || 'en-US';
+    return { src, tgt };
 }
 function shouldTranslate() {
-	if (!translationEnabled) return false;
-	const { src, tgt } = getLangPair();
-	return src !== tgt;
+    if (!translationEnabled) return false;
+    const { src, tgt } = getLangPair();
+    return src !== tgt;
 }
-async function translateText(text) {
-	if (!text || !text.trim() || !shouldTranslate()) {
-		document.getElementById('translationResult').style.display = 'none';
-		document.getElementById('translationPlaceholder').style.display = 'block';
-		return;
-	}
-	const { src, tgt } = getLangPair();
-	const loading = document.getElementById('translationLoading');
-	const resultEl = document.getElementById('translationResult');
-	const errorEl = document.getElementById('translationError');
-	const placeholder = document.getElementById('translationPlaceholder');
-	const badge = document.getElementById('translationBadge');
-
-	// Show loading
-	if (placeholder) placeholder.style.display = 'none';
-	if (resultEl) resultEl.style.display = 'none';
-	if (errorEl) errorEl.style.display = 'none';
-	if (loading) loading.style.display = 'flex';
-	if (badge) badge.style.display = 'inline';
-
-	// Use MyMemory API (free, no key)
-	const langPair = (src === 'auto' ? 'Autodetect' : src) + '|' + tgt;
-	try {
-		const chunks = splitTextForTranslation(text);
-		let translated = '';
-		for (const chunk of chunks) {
-			const resp = await fetch(
-				'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(chunk) + '&langpair=' + encodeURIComponent(langPair) + '&mt=1'
-			);
-			const data = await resp.json();
-			if (data.responseStatus === 200 && data.responseData) {
-				translated += (translated ? ' ' : '') + data.responseData.translatedText;
-			} else {
-				// Fallback: try google translate endpoint
-				translated += (translated ? ' ' : '') + await googleTranslateFallback(chunk, src, tgt);
-			}
-		}
-		if (loading) loading.style.display = 'none';
-		if (badge) badge.style.display = 'none';
-		if (translated.trim()) {
-			if (resultEl) {
-				resultEl.innerHTML = translated.split('\n').map(l => '<p>' + escapeHTML(l) + '</p>').join('');
-				resultEl.style.display = 'block';
-			}
-		} else {
-			if (placeholder) { placeholder.innerHTML = '（翻译结果为空）'; placeholder.style.display = 'block'; }
-		}
-	} catch (e) {
-		if (loading) loading.style.display = 'none';
-		if (badge) badge.style.display = 'none';
-		// Try Google fallback for all chunks
-		try {
-			let translated = '';
-			const chunks = splitTextForTranslation(text);
-			for (const chunk of chunks) {
-				translated += (translated ? ' ' : '') + await googleTranslateFallback(chunk, src, tgt);
-			}
-			if (translated.trim() && resultEl) {
-				resultEl.innerHTML = translated.split('\n').map(l => '<p>' + escapeHTML(l) + '</p>').join('');
-				resultEl.style.display = 'block';
-				return;
-			}
-		} catch (_) {}
-		if (errorEl) {
-			errorEl.innerHTML = '<span>⚠️ ' + (_isEN() ? 'Translation unavailable (network error)' : '翻译服务暂时不可用（网络错误）') + '</span>';
-			errorEl.style.display = 'block';
-		}
-	}
+function resetTranslationState() {
+    _translatedLen = 0; _translatedText = ''; _translatedSrc = ''; _translatedTgt = '';
+    _transSeq++;
+    const resultEl = document.getElementById('translationResult');
+    const placeholder = document.getElementById('translationPlaceholder');
+    const errorEl = document.getElementById('translationError');
+    const loading = document.getElementById('translationLoading');
+    const badge = document.getElementById('translationBadge');
+    if (resultEl) resultEl.style.display = 'none';
+    if (errorEl) errorEl.style.display = 'none';
+    if (loading) loading.style.display = 'none';
+    if (badge) badge.style.display = 'none';
+    if (placeholder) { placeholder.innerHTML = (_isEN() ? 'Live translation will appear here' : '实时翻译结果将显示在此区域'); placeholder.style.display = 'block'; }
 }
-async function googleTranslateFallback(text, src, tgt) {
-	// Google translate unofficial API (free)
-	const sl = src === 'auto' ? 'auto' : src;
-	const tl = tgt;
-	const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=' + sl + '&tl=' + tl + '&dt=t&q=' + encodeURIComponent(text);
-	const resp = await fetch(url);
-	const data = await resp.json();
-	// Google returns an array of arrays
-	if (data && data[0]) {
-		return data[0].map(item => item[0]).join('');
-	}
-	throw new Error('Google translate failed');
+async function translateChunk(text, src, tgt) {
+    const resp = await fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(text) + '&langpair=' + encodeURIComponent(src + '|' + tgt) + '&mt=1');
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    if (data.responseStatus === 200 && data.responseData && data.responseData.translatedText) return data.responseData.translatedText;
+    throw new Error('MyMemory empty response');
+}
+async function translateText(raw) {
+    const { src, tgt } = getLangPair();
+    if (!raw || !raw.trim() || !shouldTranslate()) { resetTranslationState(); return; }
+    // Restart if language pair changed or text got shorter (edited/cleared).
+    if (src !== _translatedSrc || tgt !== _translatedTgt || raw.length < _translatedLen) {
+        _translatedSrc = src; _translatedTgt = tgt; _translatedLen = 0; _translatedText = '';
+    }
+    const newText = raw.slice(_translatedLen);
+    if (!newText.trim()) return;
+
+    const loading = document.getElementById('translationLoading');
+    const resultEl = document.getElementById('translationResult');
+    const errorEl = document.getElementById('translationError');
+    const placeholder = document.getElementById('translationPlaceholder');
+    const badge = document.getElementById('translationBadge');
+    if (placeholder) placeholder.style.display = 'none';
+    if (errorEl) errorEl.style.display = 'none';
+    if (loading) loading.style.display = 'flex';
+    if (badge) badge.style.display = 'inline';
+
+    const seq = ++_transSeq;
+    const startLen = _translatedLen;
+    try {
+        let translated = '';
+        for (const chunk of splitTextForTranslation(newText)) {
+            translated += (translated ? ' ' : '') + await translateChunk(chunk, src, tgt);
+        }
+        if (seq !== _transSeq) return; // superseded by a newer request
+        _translatedLen = startLen + newText.length;
+        _translatedText += (_translatedText ? ' ' : '') + translated;
+        if (loading) loading.style.display = 'none';
+        if (badge) badge.style.display = 'none';
+        if (resultEl && _translatedText.trim()) {
+            resultEl.innerHTML = _translatedText.split('\n').map(l => '<p>' + escapeHTML(l) + '</p>').join('');
+            resultEl.style.display = 'block';
+        }
+    } catch (e) {
+        if (seq !== _transSeq) return;
+        if (loading) loading.style.display = 'none';
+        if (badge) badge.style.display = 'none';
+        if (errorEl) {
+            errorEl.innerHTML = '<span>⚠️ ' + (_isEN() ? 'Translation unavailable (network or quota limit)' : '翻译服务暂时不可用（网络或额度限制）') + '</span>';
+            errorEl.style.display = 'block';
+        }
+    }
 }
 function splitTextForTranslation(text) {
-	// Split into chunks of ~500 chars to avoid API limits
-	const maxLen = 500;
-	if (text.length <= maxLen) return [text];
-	const chunks = [];
-	const sentences = text.split(/(?<=[。！？.!?\n])/);
-	let current = '';
-	for (const s of sentences) {
-		if (current.length + s.length > maxLen && current.length > 0) {
-			chunks.push(current.trim());
-			current = s;
-		} else {
-			current += s;
-		}
-	}
-	if (current.trim()) chunks.push(current.trim());
-	return chunks.length > 0 ? chunks : [text];
+    const maxLen = 500;
+    if (text.length <= maxLen) return [text];
+    const chunks = [];
+    const sentences = text.split(/(?<=[。！？.!?\n])/);
+    let current = '';
+    for (const s of sentences) {
+        if (current.length + s.length > maxLen && current.length > 0) { chunks.push(current.trim()); current = s; }
+        else { current += s; }
+    }
+    if (current.trim()) chunks.push(current.trim());
+    return chunks.length > 0 ? chunks : [text];
 }
 function triggerTranslation() {
-	if (!translationEnabled) return;
-	const re = document.getElementById('rawEditor'); if (!re) return;
-	const raw = re.value.trim();
-	if (!raw) {
-		document.getElementById('translationResult').style.display = 'none';
-		document.getElementById('translationPlaceholder').style.display = 'block';
-		return;
-	}
-	clearTimeout(_transDebounceTimer);
-	_transDebounceTimer = setTimeout(() => translateText(raw), 800);
+    if (!translationEnabled) return;
+    const re = document.getElementById('rawEditor'); if (!re) return;
+    const raw = re.value.trim();
+    if (!raw) { resetTranslationState(); return; }
+    clearTimeout(_transDebounceTimer);
+    _transDebounceTimer = setTimeout(() => translateText(raw), 1200);
 }
 
 function triggerOrganize() {
@@ -3851,26 +3922,14 @@ function loadTheme() {
 }
 
 // ═══ INIT ═══
-
 function initApp() {
     if (localStorage.getItem('sm_sidebar_collapsed') === 'true') { const sb = $('#sidebar'); if (sb) sb.classList.add('collapsed'); }
     loadTheme();
     updateLiveClock();
     setInterval(updateLiveClock, 1000);
-    // Restore meeting title from localStorage
-    const savedTitle = localStorage.getItem('meeting_recorder_meeting_title');
-    if (savedTitle) meetingTitle = savedTitle;
-    const mtInput = document.getElementById('meetingTitle');
-    if (mtInput && meetingTitle) mtInput.value = meetingTitle;
-    initMeetingDateTime();
     renderHistoryList();
     if (checkAuth()) { const lv = localStorage.getItem('sm_last_view') || 'dashboard'; switchView(lv); }
     const s = loadSettings(); applySettings(s);
-    // Bind clear history button
-    const btnCH = document.getElementById('btnClearHistory');
-    if (btnCH) btnCH.addEventListener('click', () => { saveHistory([]); renderHistoryList(); showToast(_isEN() ? '🗑 History cleared' : '🗑 历史已清空'); });
-    // Bind meeting title input
-    if (mtInput) mtInput.addEventListener('input', () => { meetingTitle = mtInput.value; localStorage.setItem('meeting_recorder_meeting_title', meetingTitle); });
     console.log('✅ SmartMeeting Pro ready — all locale-aware');
 }
 document.addEventListener('DOMContentLoaded', initApp);
@@ -3903,6 +3962,9 @@ window._isEN = _isEN;
 window.fmtDateFull = fmtDateFull;
 window.fmtDateLabel = fmtDateLabel;
 window.fmtDateCompact = fmtDateCompact;
+
+// ═══ Immediately update clock (before DOMContentLoaded) ═══
+updateLiveClock();
 
 </script>
 </body>
